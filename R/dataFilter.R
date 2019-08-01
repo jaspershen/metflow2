@@ -17,7 +17,7 @@ setGeneric(
                  min.fraction = 0.8,
                  min.subject.qc.ratio = 2,
                  dl.qc.r2.cutoff = 0.7) {
-    requireNamespace(magrittr)
+    requireNamespace("magrittr")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
@@ -246,9 +246,9 @@ setGeneric(
   name = "filterSample",
   def = function(object,
                  min.fraction.peak = 0.8) {
-    requireNamespace(ggplot2)
-    requireNamespace(tidyverse)
-    requireNamespace(magrittr)
+    requireNamespace("ggplot2")
+    requireNamespace("tidyverse")
+    requireNamespace("magrittr")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }

@@ -37,7 +37,7 @@ setGeneric(
       Class = "metflowClass",
       ms1.data = ms1.data,
       sample.info = sample.info,
-      version = "0.0.1"
+      version = "0.0.2"
     )
     invisible(object)
   }
@@ -59,7 +59,7 @@ setMethod(
   f = "show",
   signature = "metflowClass",
   definition = function(object) {
-    requireNamespace(magrittr)
+    requireNamespace("magrittr")
     cat(paste(rep("-", 20), collapse = ""), "\n")
     cat("metflow2 version:", object@version, "\n")
     cat(paste(rep("-", 20), collapse = ""), "\n")
@@ -119,7 +119,7 @@ setGeneric(
   name = "getData",
   def = function(object,
                  slot = c("Subject", "QC", "QC.DL", "Blank", "Tags")) {
-    requireNamespace(magrittr)
+    requireNamespace("magrittr")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
@@ -218,7 +218,7 @@ setGeneric(
 setGeneric(
   name = "getParams",
   def = function(object) {
-    requireNamespace(tidyverse)
+    requireNamespace("tidyverse")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }

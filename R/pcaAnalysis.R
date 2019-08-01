@@ -11,8 +11,8 @@ doPCA <- function(object,
                   scale.method = c("no", "auto", "pareto", "center"),
                   slot = c("QC", "Subject")) {
   
-  requireNamespace(tidyverse)
-  requireNamespace(dplyr)
+  requireNamespace("tidyverse")
+  requireNamespace("dplyr")
   if(class(object) != "metflowClass"){
     stop("Only the metflowClass is supported!\n")
   }

@@ -75,7 +75,7 @@ processData <- function(path = ".",
     )
   
   cat("Reading raw data, it will take a while...\n")
-  requireNamespace(xcms)
+  requireNamespace("xcms")
   if (any(dir(file.path(path, "Result")) == "raw_data")) {
     load(file.path(path, "Result/raw_data"))
   } else{

@@ -17,8 +17,8 @@ setGeneric(name = "dotsne",
                     perplexity = 30,
                     colour.index = c("class", "group", "batch"),
                     verbose = TRUE) {
-             requireNamespace(tidyverse)
-             requireNamespace(ggplot2)
+             requireNamespace("tidyverse")
+             requireNamespace("ggplot2")
              colour.index <- match.arg(colour.index)
              if (class(object) != "metflowClass") {
                stop("Only the metflowClass is supported!\n")

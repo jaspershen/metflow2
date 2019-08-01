@@ -80,7 +80,7 @@ setGeneric(
     
     sample_info <- object@sample.info
     subject_qc_data <- cbind(qc_data, subject_data)
-    requireNamespace(magrittr)
+    requireNamespace("magrittr")
     subject_qc_name <- dplyr::filter(.data = sample_info, class %in% c("Subject", "QC")) %>% 
       dplyr::pull(., sample.name)
     
