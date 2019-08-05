@@ -33,7 +33,6 @@ processData <- function(path = ".",
                         fill.peaks = FALSE) {
   output.path <- file.path(path, "Result")
   dir.create(output.path)
-  
   ##paramters
   parameters <- list(
     path = path,
@@ -50,9 +49,10 @@ processData <- function(path = ".",
     min.fraction = 0.8,
     fill.peaks = FALSE
   )
-  save(parameters, file = file.path(output.path, "parameters"))
   
+  save(parameters, file = file.path(output.path, "parameters"))
   ##peak detection
+  
   f.in <- list.files(path = path,
                      pattern = '\\.(mz[X]{0,1}ML|cdf)',
                      recursive = TRUE)
@@ -74,15 +74,16 @@ processData <- function(path = ".",
       stringsAsFactors = FALSE
     )
   
+  # requireNamespace("xcms")
   cat("Reading raw data, it will take a while...\n")
-  requireNamespace("xcms")
   if (any(dir(file.path(path, "Result")) == "raw_data")) {
     load(file.path(path, "Result/raw_data"))
   } else{
     raw_data <- MSnbase::readMSData(
       files = f.in,
       pdata = new("NAnnotatedDataFrame", pd),
-      mode = "onDisk"
+      mode = "onDisk",
+      verbose = TRUE
     )
     
     save(raw_data,
@@ -390,3 +391,48 @@ setGeneric(
     plot
   }
 )
+
+
+
+setGeneric(
+  name = "extractEIC",
+  def = function(object,
+                 mz.range,
+                 rt.range,
+                 title.size = 15,
+                 lab.size = 15,
+                 axis.text.size = 15,
+                 alpha = 0.5,
+                 title = "") {
+    data <- data.frame(rt = object@.Data[1,1][[1]]@rtime,
+    intensity = object@.Data[1,1][[1]]@intensity,
+    stringsAsFactors = FALSE)
+    
+    # fit <- MASS::fitdistr(data$intensity, densfun = "normal")
+    # temp.data <- rnorm(n = nrow(data), mean = fit$sd[1], sd = fit$sd[2])
+    
+    plot <-
+      ggplot2::ggplot(data = data, ggplot2::aes(x = rt, y = intensity)) +
+      ggplot2::geom_point() +
+      ggplot2::geom_line() +
+      ggplot2::theme_bw() +
+      ggplot2::labs(x = "Retention time (second)", y = "Intensity") +
+      ggplot2::theme(
+        legend.position = "none",
+        axis.title = ggplot2::element_text(
+          color = "black",
+          size = lab.size,
+          face = "plain"
+        ),
+        axis.text = ggplot2::element_text(
+          color = "black",
+          size = axis.text.size,
+          face = "plain"
+        )
+      )
+    plot
+  }
+)
+
+
+

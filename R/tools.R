@@ -12,7 +12,7 @@ calFC <- function(object,
                   control.group,
                   case.group,
                   type = c("median", "mean")) {
-  requireNamespace("tidyverse")
+  # requireNamespace("tidyverse")
   type <- match.arg(type)
   if(missing(control.group) | missing(case.group)){
     stop("Please set control.group or case.group.\n")
@@ -640,7 +640,7 @@ setGeneric(
     data <-
       data.frame(p.value, fc, marker, stringsAsFactors = FALSE)
     
-    requireNamespace("ggplot2")
+    # requireNamespace("ggplot2")
     plot <- ggplot(data, aes(log(fc, 2), -log(p.value, 10),
                              colour = marker)) +
       geom_point() +

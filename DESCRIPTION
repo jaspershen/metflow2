@@ -1,8 +1,8 @@
 Package: metflow2
 Type: Package
 Title: Comprehensitive tools for metabolomics data processing and data analysis.
-Version: 0.0.2
-Date: 2019-07-31
+Version: 0.0.3
+Date: 2019-08-05
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-9608-9964")
@@ -30,7 +30,9 @@ Imports:
     pROC,
     e1071,
     snow,
+    tidyverse,
     methods,
+    MSnbase,
     pander,
     graphics,
     grDevices,
