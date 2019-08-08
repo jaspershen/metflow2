@@ -31,6 +31,7 @@ processData <- function(path = ".",
                         output.rt.correction.plot = TRUE,
                         min.fraction = 0.8,
                         fill.peaks = FALSE) {
+  
   output.path <- file.path(path, "Result")
   dir.create(output.path)
   ##paramters
@@ -107,7 +108,8 @@ processData <- function(path = ".",
   } else{
     xdata <- xcms::findChromPeaks(raw_data,
                                   param = cwp,
-                                  BPPARAM = BiocParallel::SnowParam(workers = threads))
+                                  BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                                                    progressbar = TRUE))
     
     save(xdata,
          file = file.path(output.path, "xdata"),

@@ -2,7 +2,7 @@
 % Please edit documentation in R/pcaAnalysis.R
 \name{doPCA}
 \alias{doPCA}
-\title{PCAanalysis}
+\title{doPCA}
 \usage{
 doPCA(object, scale.method = c("no", "auto", "pareto", "center"),
   slot = c("QC", "Subject"))

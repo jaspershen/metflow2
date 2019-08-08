@@ -1,10 +1,11 @@
-#' @title PCAanalysis
+#' @title doPCA
 #' @description PCA analysis for MetFlowData.
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param object A metflowClass object.
 #' @param scale.method Scale method.
 #' @param slot Class of data.
+#' @export
 #' @return A ggplot object.
 
 doPCA <- function(object,

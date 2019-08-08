@@ -1,7 +1,7 @@
 Package: metflow2
 Type: Package
 Title: Comprehensitive tools for metabolomics data processing and data analysis.
-Version: 0.0.3
+Version: 0.0.4
 Date: 2019-08-05
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
@@ -14,6 +14,7 @@ LazyData: true
 Depends: R (>= 3.5)
 Imports:
     BiocParallel,
+    dplyr,
     faahKO,
     ggplot2,
     pcaMethods,
