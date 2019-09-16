@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataProcessing.R
 \name{processData}
 \alias{processData}
-\title{doxcms}
+\title{processData}
 \usage{
 processData(path = ".", polarity = c("positive", "negative"),
   ppm = 15, peakwidth = c(5, 30), snthresh = 10, mzdiff = -0.001,

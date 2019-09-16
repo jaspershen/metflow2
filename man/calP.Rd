@@ -2,34 +2,32 @@
 % Please edit documentation in R/tools.R
 \name{calP}
 \alias{calP}
-\title{UnivariateTest}
+\title{calP}
 \usage{
 calP(object, control.group, case.group, test.method = c("t", "wilcox"),
   adjust.method = c("holm", "hochberg", "hommel", "bonferroni", "BH",
   "BY", "fdr", "none"), log.scale = FALSE, ...)
 }
 \arguments{
-\item{test.method}{Which test you want to use? "t" means stutent t test
-and "wilcox" mean wilcoxon test.}
+\item{object}{object}
 
-\item{adjust.method}{p value correction method. See p.adjust function.}
+\item{control.group}{control.group.}
 
-\item{log.scale}{Data transformation method, defaulst is FALSE.}
+\item{case.group}{case.group.}
 
-\item{MetFlowData}{MetFlowData.}
+\item{test.method}{test.method.}
 
-\item{class}{Class used to do test.}
+\item{adjust.method}{adjust.method.}
+
+\item{log.scale}{log.scale.}
+
+\item{...}{other arguments.}
 }
 \value{
-MetFlowData which has been added p and AUC information in tags.
+p values.
 }
 \description{
 Calculate p value and AUC for each feature.
-}
-\seealso{
-The details of univariate test can
-be found in \code{\link[stats]{t.test}},
-\code{\link[stats]{p.adjust}} and \code{\link[stats]{wilcox.test}}.
 }
 \author{
 Xiaotao Shen

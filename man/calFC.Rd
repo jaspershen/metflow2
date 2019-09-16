@@ -12,6 +12,8 @@ calFC(object, control.group, case.group, type = c("median", "mean"))
 \item{control.group}{Control group name.}
 
 \item{case.group}{Case group name.}
+
+\item{type}{type}
 }
 \value{
 Fold change.

@@ -1,4 +1,4 @@
-#' @title doxcms
+#' @title processData
 #' @description Raw MS data processing using xcms.
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
@@ -17,6 +17,8 @@
 #' @param fill.peaks Fill peaks NA or not.
 #' @return Peak table.
 #' @export
+#' @import xcms 
+#' @import MSnbase
 
 processData <- function(path = ".",
                         polarity = c("positive", "negative"),
@@ -106,10 +108,12 @@ processData <- function(path = ".",
   if (any(dir(file.path(path, "Result")) == "xdata")) {
     load(file.path(path, "Result/xdata"))
   } else{
-    xdata <- xcms::findChromPeaks(raw_data,
-                                  param = cwp,
-                                  BPPARAM = BiocParallel::SnowParam(workers = threads,
-                                                                    progressbar = TRUE))
+    xdata <- xcms::findChromPeaks(
+      raw_data,
+      param = cwp,
+      BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                        progressbar = TRUE)
+    )
     
     save(xdata,
          file = file.path(output.path, "xdata"),
@@ -246,6 +250,7 @@ processData <- function(path = ".",
 #' @param axis.text.size Font size of axis text.
 #' @param alpha alpha.
 #' @param title Title of the plot..
+#' @param interactive interactive.
 #' @return A ggplot2 object.
 #' @export
 
@@ -256,7 +261,8 @@ setGeneric(
                  lab.size = 15,
                  axis.text.size = 15,
                  alpha = 0.5,
-                 title = "") {
+                 title = "",
+                 interactive = FALSE) {
     options(warn = -1)
     info <- object@phenoData@data
     data <- object@.Data
@@ -299,15 +305,16 @@ setGeneric(
     
     # data <- plyr::dlply(.data = data, .variables = plyr::.(sample))
     
-    plot <- ggplot2::ggplot(data = data,
-                            ggplot2::aes(x = mz, y = intensity)) +
+    plot <-
+      ggplot2::ggplot(data = data,
+                      ggplot2::aes(x = mz, y = intensity)) +
       ggplot2::geom_line(
         data = data,
         mapping = ggplot2::aes(colour = group, shape = sample),
         alpha = alpha
       ) +
       ggplot2::theme_bw() +
-      ggplot2::labs(x = "Mass to charge ratio (m/z)", y = "Intensity", title = title) +
+      ggplot2::labs(x = "Retention time (RT, second)", y = "Intensity", title = title) +
       ggplot2::theme(
         plot.title = ggplot2::element_text(
           color = "black",
@@ -326,6 +333,13 @@ setGeneric(
           face = "plain"
         )
       )
+    
+    if (interactive) {
+      plot <- plotly::ggplotly(plot)
+    }
+    
+    return(plot)
+    
   }
 )
 
@@ -406,9 +420,11 @@ setGeneric(
                  axis.text.size = 15,
                  alpha = 0.5,
                  title = "") {
-    data <- data.frame(rt = object@.Data[1,1][[1]]@rtime,
-    intensity = object@.Data[1,1][[1]]@intensity,
-    stringsAsFactors = FALSE)
+    data <- data.frame(
+      rt = object@.Data[1, 1][[1]]@rtime,
+      intensity = object@.Data[1, 1][[1]]@intensity,
+      stringsAsFactors = FALSE
+    )
     
     # fit <- MASS::fitdistr(data$intensity, densfun = "normal")
     # temp.data <- rnorm(n = nrow(data), mean = fit$sd[1], sd = fit$sd[2])
@@ -438,3 +454,169 @@ setGeneric(
 
 
 
+extractPeaks <- function(path = ".",
+                         ppm = 5,
+                         threads = 4,
+                         peak.table,
+                         rt.expand = 1) {
+  output.path <- path
+  # dir.create(output.path)
+  ##peak detection
+  
+  f.in <- list.files(path = path,
+                     pattern = '\\.(mz[X]{0,1}ML|cdf)',
+                     recursive = TRUE)
+  
+  sample_group <-
+    unlist(lapply(stringr::str_split(string = f.in, pattern = "/"), function(x) {
+      x[1]
+    }))
+  
+  pd <-
+    data.frame(
+      sample_name = sub(
+        basename(f.in),
+        pattern = ".mzXML",
+        replacement = "",
+        fixed = TRUE
+      ),
+      sample_group = sample_group,
+      stringsAsFactors = FALSE
+    )
+  
+  # requireNamespace("xcms")
+  cat("Reading raw data, it will take a while...\n")
+  if (any(dir(path) == "raw_data")) {
+    load(file.path(path, "raw_data"))
+  } else{
+    raw_data <- MSnbase::readMSData(
+      files = f.in,
+      pdata = new("NAnnotatedDataFrame", pd),
+      mode = "onDisk",
+      verbose = TRUE
+    )
+    
+    save(raw_data,
+         file = file.path(output.path, "raw_data"),
+         compress = "xz")
+  }
+  
+  peak.table <- readxl::read_xlsx(file.path(path, peak.table))
+  
+  mz <-
+    peak.table %>%
+    dplyr::pull(2)
+  
+  mz_range <-
+    lapply(mz, function(x) {
+      c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
+    })
+  
+  mz_range <- do.call(rbind, mz_range)
+  
+  
+  peak_data <- xcms::chromatogram(object = raw_data,
+                                  mz = mz_range)
+  
+  save(peak_data, file = file.path(output.path, "peak_data"))
+  return(peak_data)
+}
+
+
+
+
+setGeneric(
+  name = "showPeak",
+  def = function(object,
+                 peak.index = 1,
+                 title.size = 15,
+                 lab.size = 15,
+                 axis.text.size = 15,
+                 alpha = 0.5,
+                 title = "",
+                 interactive = TRUE) {
+    options(warn = -1)
+    info <- object@phenoData@data
+    data <- object@.Data
+    rm(list = c("object"))
+    if (peak.index > nrow(data)) {
+      peak.index <- nrow(data)
+      cat("peak.index is ", nrow(data), '\n')
+    }
+    data <- apply(data, 2, function(x) {
+      x <- x[[peak.index]]
+      x <-
+        data.frame(
+          "rt" = x@rtime,
+          "intensity" = x@intensity,
+          stringsAsFactors = FALSE
+        )
+      list(x)
+    })
+    
+    data <- lapply(data, function(x) {
+      x[[1]]
+    })
+    
+    data <- mapply(
+      FUN = function(x, y, z) {
+        x <- data.frame(
+          x,
+          "group" = y,
+          "sample" = z,
+          stringsAsFactors = FALSE
+        )
+        list(x)
+      },
+      x = data,
+      y = info[, 2],
+      z = info[, 1]
+    )
+    
+    data <- do.call(rbind, args = data)
+    data$intensity[is.na(data$intensity)] <- 0
+    
+    plot <-
+      ggplot2::ggplot(data = data,
+                      ggplot2::aes(x = rt, y = intensity)) +
+      ggplot2::geom_line(
+        data = data,
+        mapping = ggplot2::aes(colour = group)
+      ) +
+      ggplot2::geom_area( mapping = ggplot2::aes(fill = group),
+                          alpha = alpha) +
+      # ggsci::scale_color_tron(alpha = alpha) +
+      # ggsci::scale_fill_tron(alpha = alpha) +
+      # ggplot2::scale_y_continuous(breaks = intensity,
+      #   labels = ecoflux::scientific_10x(values = intensity, digits = 2)) + 
+      # ggplot2::scale_y_continuous(breaks = intensity,
+      #                             labels = scales::math_format(10^.intensity)) + 
+      
+      ggplot2::theme_bw() +
+      ggplot2::labs(x = "Retention time (RT, second)", 
+                    y = "Intensity", title = title) +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(
+          color = "black",
+          size = title.size,
+          face = "plain",
+          hjust = 0.5
+        ),
+        axis.title = ggplot2::element_text(
+          color = "black",
+          size = lab.size,
+          face = "plain"
+        ),
+        axis.text = ggplot2::element_text(
+          color = "black",
+          size = axis.text.size,
+          face = "plain"
+        )
+      )
+    
+    if(interactive){
+      plot <- plotly::ggplotly(plot)  
+    }
+    return(plot)
+  }
+)

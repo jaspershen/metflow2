@@ -10,5 +10,11 @@ Version 0.0.3 (20190805)
 --------------
 o Fix bug.
 
+Version 0.0.5 (20190915)
+--------------
+o Fix bug.
+o Data normalization (loess).
+o Data integration.
+
 
 

@@ -8,33 +8,23 @@ volcanoPlot(p.value, fc, p.cutoff = 0.05, fc.cutoff = 1.3,
   xlab = "Log2 (Fold change)", ylab = "-Log10 (P-value)")
 }
 \arguments{
-\item{p.cutoff}{p value cutoff.}
+\item{p.value}{p.value.}
 
-\item{MetFlowData}{MetFlowData.}
+\item{fc}{fc.}
 
-\item{x}{x axis factor.}
+\item{p.cutoff}{p.cutoff.}
 
-\item{y}{y axis factor.}
+\item{fc.cutoff}{fc.cutoff.}
 
-\item{z}{z axis factor.}
+\item{xlab}{xlab.}
 
-\item{col}{Colour for markers and non-markers.}
-
-\item{foldchange.cutoff}{Fold chagne cutoff.}
-
-\item{vip.cutoff}{VIP value cutoff.}
-
-\item{path}{The directory you want to write results.}
+\item{ylab}{ylab.}
 }
 \value{
 volcano plot.
 }
 \description{
 Draw volcano plot.
-}
-\examples{
-\donttest{
-}
 }
 \author{
 Xiaotao Shen

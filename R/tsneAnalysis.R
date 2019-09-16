@@ -67,7 +67,7 @@ setGeneric(name = "dotsne",
              
              sample_info <- sample_info$sample.name %>%
                match(., rownames(data)) %>%
-               `[`(sample_info, .,)
+               `[`(sample_info, ., )
              colour.index <- pull(sample_info, var = colour.index)
              # colour.index <- factor(colour.index)
              tsne_object <- Rtsne::Rtsne(

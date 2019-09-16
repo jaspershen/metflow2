@@ -4,8 +4,9 @@
 \alias{normalizeData}
 \title{normalizeData}
 \usage{
-normalizeData(object, method = c("svr", "total", "median", "mean",
-  "pqn"), keep.scale = TRUE)
+normalizeData(object, method = c("svr", "total", "median", "mean", "pqn",
+  "loess"), keep.scale = TRUE, begin = 0.5, end = 1, step = 0.2,
+  threads = 4)
 }
 \arguments{
 \item{object}{A metflowClass object.}
@@ -14,6 +15,14 @@ normalizeData(object, method = c("svr", "total", "median", "mean",
 default is svr. Please see the details.}
 
 \item{keep.scale}{Remain scale or not. Default is TRUE.}
+
+\item{begin}{0.5}
+
+\item{end}{1}
+
+\item{step}{0.2}
+
+\item{threads}{4}
 }
 \value{
 A new metflowClass object.

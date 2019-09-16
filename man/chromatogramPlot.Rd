@@ -5,7 +5,8 @@
 \title{chromatogramPlot}
 \usage{
 chromatogramPlot(object, title.size = 15, lab.size = 15,
-  axis.text.size = 15, alpha = 0.5, title = "")
+  axis.text.size = 15, alpha = 0.5, title = "",
+  interactive = FALSE)
 }
 \arguments{
 \item{object}{Object for tic.plot or bpc.plot.}
@@ -19,6 +20,8 @@ chromatogramPlot(object, title.size = 15, lab.size = 15,
 \item{alpha}{alpha.}
 
 \item{title}{Title of the plot..}
+
+\item{interactive}{interactive.}
 }
 \value{
 A ggplot2 object.

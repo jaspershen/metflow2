@@ -7,6 +7,8 @@
 #' @param min.fraction Peaks minimun fraction in subject samples.
 #' @param min.subject.qc.ratio Peak intensity ratio in subject and blank samples.
 #' @param dl.qc.r2.cutoff R2 cutoff for dilution QC.
+#' @import tidyverse
+#' @import tibble
 #' @return A new metflowClass object.
 #' @export
 
@@ -17,7 +19,6 @@ setGeneric(
                  min.fraction = 0.8,
                  min.subject.qc.ratio = 2,
                  dl.qc.r2.cutoff = 0.7) {
-    # requireNamespace("magrittr")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
@@ -271,6 +272,7 @@ setGeneric(
       sum(is.na(x) / nrow(subject_qc_data))
     })
     
+    
     remove.idx.na.fraction <-
       which(na.fraction > 1 - min.fraction.peak)
     
@@ -292,10 +294,12 @@ setGeneric(
         stringsAsFactors = FALSE
       )
     
+    na.fraction <-
+      left_join(na.fraction, object@sample.info[,c(1,2)], by = c("peak.name" = "sample.name"))
     
     plot <- ggplot(data = na.fraction) +
       geom_point(aes(
-        x = index,
+        x = injection.order,
         y = na.fraction * 100,
         colour = class
       ), size = 2) +
@@ -305,7 +309,7 @@ setGeneric(
         name = "Class"
       ) +
       scale_colour_manual(values = c("#E64B35FF", "#4DBBD5FF")) +
-      labs(x = "Sample index", y = "Missing value ratio (%)") +
+      labs(x = "Injection order", y = "Missing value ratio (%)") +
       geom_hline(
         yintercept = 100 - min.fraction.peak * 100,
         color = "red",
@@ -314,7 +318,7 @@ setGeneric(
       ggrepel::geom_text_repel(
         data = dplyr::filter(na.fraction,
                              na.fraction > 1 - min.fraction.peak),
-        mapping = aes(x = index, y = na.fraction * 100,
+        mapping = aes(x = injection.order, y = na.fraction * 100,
                       label = peak.name)
       ) +
       theme_bw() +

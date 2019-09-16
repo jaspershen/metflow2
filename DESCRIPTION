@@ -1,8 +1,8 @@
 Package: metflow2
 Type: Package
-Title: Comprehensitive tools for metabolomics data processing and data analysis.
-Version: 0.0.4
-Date: 2019-08-05
+Title: Comprehensitive tools for metabolomics data processing and data analysis
+Version: 0.0.5
+Date: 2019-09-15
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-9608-9964")
@@ -17,6 +17,7 @@ Imports:
     dplyr,
     faahKO,
     ggplot2,
+    ggfortify,
     pcaMethods,
     impute,
     missForest,
@@ -24,8 +25,11 @@ Imports:
     scatterplot3d,
     pbapply,
     pheatmap,
+    plyr,
+    purrr,
     beeswarm,
     ellipse,
+    patchwork,
     pls,
     plsdepot,
     pROC,
@@ -43,6 +47,7 @@ Imports:
     readxl,
     RColorBrewer,
     stringr,
+    tibble,
     xcms
 License: GPL-2 | file LICENSE
 URL: https://github.com/jaspershen/metTools
