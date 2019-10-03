@@ -17,7 +17,7 @@ setGeneric(name = "alignBatch",
              }
              
              ms1_data <- object@ms1.data
-             if (lenght(ms1_data) == 1) {
+             if (length(ms1_data) == 1) {
                return(object)
              }
              
