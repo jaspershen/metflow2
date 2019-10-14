@@ -9,9 +9,7 @@ enrichPathway(id, database, method = c("hypergeometric", "fisher"))
 \arguments{
 \item{id}{The vector of gene IDs.}
 
-\item{method}{Hypergeometric or fisher test.}
-
-\item{species}{The species. "hsa" is Homo sapiens (human),
+\item{database}{The species. "hsa" is Homo sapiens (human),
 "dme" is Drosophlia melanogaster (fruit fly),
 "mmu" is Mus musculus (mouse), "rat" is Rattus norvegicus (rat),
 "bta" is Bos taurus (cow), "gga" is Gallus domesticus (chicken),
@@ -20,6 +18,8 @@ enrichPathway(id, database, method = c("hypergeometric", "fisher"))
  "smm" is Schistosoma mansoni, "pfa" is Plasmodum falciparum 3D7,
  "tbr" is Trypanosoma brucei, "eco" is Escherichia coli K-12 MG1655,
 "ppu" is Pseudomonas putida KT2440, "syf" is Synechococcus elongatus.}
+
+\item{method}{Hypergeometric or fisher test.}
 }
 \value{
 The MSE analysis result.

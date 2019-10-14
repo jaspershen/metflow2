@@ -3,7 +3,7 @@
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param id The vector of gene IDs.
-#' @param species The species. "hsa" is Homo sapiens (human),
+#' @param database The species. "hsa" is Homo sapiens (human),
 #' "dme" is Drosophlia melanogaster (fruit fly),
 #' "mmu" is Mus musculus (mouse), "rat" is Rattus norvegicus (rat),
 #' "bta" is Bos taurus (cow), "gga" is Gallus domesticus (chicken),

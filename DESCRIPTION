@@ -48,6 +48,7 @@ Imports:
     RColorBrewer,
     stringr,
     tibble,
+    tidyr,
     xcms
 License: GPL-2 | file LICENSE
 URL: https://github.com/jaspershen/metTools
