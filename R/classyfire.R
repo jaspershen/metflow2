@@ -134,19 +134,39 @@ get_metclass <-
           silent = TRUE)
     
     if (class(compound_info)[1] == "try-error") {
-      compound_info <- NA
+      compound_info <-
+        tibble(
+          name = c("SMILES", "InChIKey", "Formula", "Mass"),
+          value = rep(NA, 4)
+        )
     }
     
     if (class(classification_info)[1] == "try-error") {
-      classification_info <- NA
+      classification_info <-
+        tibble(
+          name = c(
+            "Kingdom",
+            "Superclass",
+            "Class",
+            "Subclass",
+            "Intermediate Tree Nodes",
+            "Direct Parent",
+            "Alternative Parents",
+            "Molecular Framework",
+            "Substituents"
+          ),
+          value = rep(NA, 9)
+        )
     }
     
     if (class(description)[1] == "try-error") {
-      description <- NA
+      description <- tibble(name = "Description",
+                            value = NA)
     }
     
     if (class(external_descriptors)[1] == "try-error") {
-      external_descriptors <- NA
+      external_descriptors <-  tibble(name = "External Descriptors",
+                                      value = NA)
     }
     
     result <- new(Class = "classyfire")
@@ -161,10 +181,10 @@ get_metclass <-
 setClass(
   Class = 'classyfire',
   representation = representation(
-    compound_info = 'list',
-    classification_info = 'list',
-    description = 'list',
-    external_descriptors = 'list'
+    compound_info = 'tbl_df',
+    classification_info = 'tbl_df',
+    description = 'tbl_df',
+    external_descriptors = 'tbl_df'
   )
 )
 
