@@ -5,12 +5,14 @@
 \title{get_metclass}
 \usage{
 get_metclass(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
-  server = "http://classyfire.wishartlab.com/entities/")
+  server = "http://classyfire.wishartlab.com/entities/", sleep = 5)
 }
 \arguments{
 \item{inchikey}{The inchikey ID of a metabolite.}
 
 \item{server}{server.}
+
+\item{sleep}{Sleep time for system. Second.}
 }
 \value{
 A classyfire class object.

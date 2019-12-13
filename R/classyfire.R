@@ -4,6 +4,7 @@
 #'\email{shenxt1990@@163.com}
 #'@param inchikey The inchikey ID of a metabolite.
 #'@param server server.
+#'@param sleep Sleep time for system. Second.
 #'@return A classyfire class object.
 #'@import xml2
 #'@import rvest
@@ -15,13 +16,17 @@
 
 get_metclass <-
   function(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
-           server = "http://classyfire.wishartlab.com/entities/") {
+           server = "http://classyfire.wishartlab.com/entities/",
+           sleep = 5) {
     url <- paste(server, inchikey, sep = "")
-    
+    Sys.sleep(time = sleep)
     result <- try(expr = xml2::read_html(url), silent = TRUE)
     if (class(result)[1] == "try-error") {
-      warning("This metabolite is not availbale. Please try to use borwser to check this link.\n",
-              url)
+      message(crayon::red(
+        clisymbols::symbol$cross,
+        inchikey,
+        "is not available in website.\nPlease check this link:\n",url
+      ))
       return(NA)
     }
     
@@ -31,8 +36,11 @@ get_metclass <-
           silent = TRUE)
     
     if (class(result)[1] == "try-error") {
-      warning("This metabolite is not availbale. Please try to use borwser to check this link.\n",
-              url)
+      message(crayon::red(
+        clisymbols::symbol$cross,
+        inchikey,
+        "is not available in website.\nPlease check this link:\n", url
+      ))
       return(NA)
     }
     
@@ -40,19 +48,13 @@ get_metclass <-
       try(rvest::html_text(x = result, trim = TRUE))
     
     if (class(result)[1] == "try-error") {
-      warning("This metabolite is not availbale. Please try to use borwser to check this link.\n",
-              url)
+      message(crayon::red(
+        clisymbols::symbol$cross,
+        inchikey,
+        "is not available in website.\nPlease check this link:\n",url
+      ))
       return(NA)
     }
-    
-    message(crayon::green(
-      clisymbols::symbol$tick,
-      inchikey,
-      "is available in website.\n"
-    ))
-    
-    
-    
     
     compound_info <-
       try(result[[1]] %>%
@@ -72,8 +74,6 @@ get_metclass <-
             tibble::as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
-    
-    
     
     classification_info <-
       try(result[[2]] %>%
@@ -108,7 +108,18 @@ get_metclass <-
                    "Subclass"),
           value = rep(NA, 4)
         )
-    }
+      message(crayon::red(
+        clisymbols::symbol$cross,
+        inchikey,
+        "is not available in website.\n"
+      ))
+    }else{
+        message(crayon::green(
+          clisymbols::symbol$tick,
+          inchikey,
+          "is available in website.\n"
+        ))
+      }
     
     
     classification_info <-
