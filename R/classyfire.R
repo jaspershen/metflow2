@@ -1,5 +1,5 @@
 #'@title get_metclass
-#'@description Get the class information of a metabolite using classyfire. 
+#'@description Get the class information of a metabolite using classyfire.
 #'@author Xiaotao Shen
 #'\email{shenxt1990@@163.com}
 #'@param inchkey The inchkey ID of a metabolite.
@@ -47,8 +47,6 @@ get_metclass <-
       return(NA)
     }
     
-    
-    
     compound_info <-
       try(result[[1]] %>%
             stringr::str_replace_all("\n", "{}") %>%
@@ -56,18 +54,17 @@ get_metclass <-
             `[[`(1) %>%
             stringr::str_trim(side = "both") %>%
             as_tibble() %>%
-            filter(value != "") %>%
+            dplyr::filter(value != "") %>%
             pull(value) %>%
             lapply(function(x) {
               if (x %in% c("SMILES", "InChIKey", "Formula", "Mass")) {
                 tibble(name = x, value = .[which(x == .) + 1])
               }
             }) %>%
-            do.call(rbind, .) %>% 
-            as_tibble() %>% 
+            do.call(rbind, .) %>%
+            as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
-    
     
     classification_info <-
       try(result[[2]] %>%
@@ -76,7 +73,7 @@ get_metclass <-
             `[[`(1) %>%
             stringr::str_trim(side = "both") %>%
             as_tibble() %>%
-            filter(value != "") %>%
+            dplyr::filter(value != "") %>%
             pull(value) %>%
             lapply(function(x) {
               if (x %in% c(
@@ -93,8 +90,8 @@ get_metclass <-
                 tibble(name = x, value = .[which(x == .) + 1])
               }
             }) %>%
-            do.call(rbind, .) %>% 
-            as_tibble() %>% 
+            do.call(rbind, .) %>%
+            as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
     
@@ -105,15 +102,15 @@ get_metclass <-
             `[[`(1) %>%
             stringr::str_trim(side = "both") %>%
             as_tibble() %>%
-            filter(value != "") %>%
+            dplyr::filter(value != "") %>%
             pull(value) %>%
             lapply(function(x) {
               if (x %in% c("Description")) {
                 tibble(name = x, value = .[which(x == .) + 1])
               }
             }) %>%
-            do.call(rbind, .) %>% 
-            as_tibble() %>% 
+            do.call(rbind, .) %>%
+            as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
     
@@ -124,15 +121,15 @@ get_metclass <-
             `[[`(1) %>%
             stringr::str_trim(side = "both") %>%
             as_tibble() %>%
-            filter(value != "") %>%
+            dplyr::filter(value != "") %>%
             pull(value) %>%
             lapply(function(x) {
               if (x %in% c("External Descriptors")) {
                 tibble(name = x, value = .[which(x == .) + 1])
               }
             }) %>%
-            do.call(rbind, .) %>% 
-            as_tibble() %>% 
+            do.call(rbind, .) %>%
+            as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
     
@@ -152,7 +149,6 @@ get_metclass <-
       external_descriptors <- NA
     }
     
-    
     result <- new(Class = "classyfire")
     result@compound_info <- compound_info
     result@classification_info <- classification_info
@@ -161,11 +157,6 @@ get_metclass <-
     
     return(result)
   }
-
-#
-#
-
-
 
 setClass(
   Class = 'classyfire',
@@ -176,8 +167,6 @@ setClass(
     external_descriptors = 'list'
   )
 )
-
-
 
 setMethod('show',
           signature = 'classyfire',
@@ -196,32 +185,37 @@ setMethod('show',
             
             cat(crayon::green('Information:'), '\n')
             
-            cat('SMILES\t', pull(object@compound_info, "value")[1], '\n')
-            cat('InChIKey\t', pull(object@compound_info, "value")[2], '\n')
-            cat('Formula\t', pull(object@compound_info, "value")[3], '\n')
-            cat('Mass\t', pull(object@compound_info, "value")[4], '\n')
+            cat('SMILES:\t', pull(object@compound_info, "value")[1], '\n')
+            cat('InChIKey:\t', pull(object@compound_info, "value")[2], '\n')
+            cat('Formula:\t', pull(object@compound_info, "value")[3], '\n')
+            cat('Mass:\t', pull(object@compound_info, "value")[4], '\n')
             
-            # TreeList <- list()
-            tree_list <- 
-              object@classification_info %>% 
-              filter(name %in% c("Kingdom", "Superclass", "Class", "Subclass", 
-                                 "Intermediate Tree Nodes", "Direct Parent"))
+            tree_list <-
+              object@classification_info %>%
+              dplyr::filter(
+                name %in% c(
+                  "Kingdom",
+                  "Superclass",
+                  "Class",
+                  "Subclass",
+                  "Intermediate Tree Nodes",
+                  "Direct Parent"
+                )
+              )
             
             tree_df <- data.frame(
               stringsAsFactors = FALSE,
               id = tree_list$name,
-              connections = I(c(as.list(tree_list$name)[-1], list(character(0))))
+              connections = I(c(
+                as.list(tree_list$name)[-1], list(character(0))
+              ))
             )
             
             tree_df$label <-
-              paste0(
-                crayon::bold(tree_df$id),
-                ' : ',
-                cli::col_cyan(tree_list$value)
-              )
+              paste0(crayon::bold(tree_df$id),
+                     ' : ',
+                     cli::col_cyan(tree_list$value))
             
             print(cli::tree(tree_df))
             
           })
-
-
