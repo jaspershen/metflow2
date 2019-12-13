@@ -4,11 +4,11 @@
 \alias{get_metclass}
 \title{get_metclass}
 \usage{
-get_metclass(inchkey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
+get_metclass(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
   server = "http://classyfire.wishartlab.com/entities/")
 }
 \arguments{
-\item{inchkey}{The inchkey ID of a metabolite.}
+\item{inchikey}{The inchikey ID of a metabolite.}
 
 \item{server}{server.}
 }
