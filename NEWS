@@ -16,5 +16,10 @@ o Fix bug.
 o Data normalization (loess).
 o Data integration.
 
+Version 0.0.6 (20191212)
+--------------
+o New functions can be used to translate ID of metabolite using oliver Fiech website.
+o New functions can be used to get class of metabolites using calssyfire.
+
 
 

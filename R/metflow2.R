@@ -14,11 +14,11 @@ metflow2 <- function(){
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.5 (20191014)")
+Version 0.0.6 (20191212)")
 }
 
 packageStartupMessage("metflow2,
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.5 (20191014)")
+Version 0.0.6 (20191212)")

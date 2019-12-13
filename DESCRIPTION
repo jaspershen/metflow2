@@ -1,8 +1,8 @@
 Package: metflow2
 Type: Package
 Title: Comprehensitive tools for metabolomics data processing and data analysis
-Version: 0.0.5
-Date: 2019-09-15
+Version: 0.0.6
+Date: 2019-12-12
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-9608-9964")
@@ -14,6 +14,8 @@ LazyData: true
 Depends: R (>= 3.5)
 Imports:
     BiocParallel,
+    cli,
+    crayon,
     dplyr,
     faahKO,
     ggplot2,
@@ -42,6 +44,7 @@ Imports:
     graphics,
     grDevices,
     utils,
+    rvest,
     stats,
     readr,
     readxl,
@@ -49,9 +52,10 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    xcms
+    xcms,
+    xml2
 License: GPL-2 | file LICENSE
-URL: https://github.com/jaspershen/metTools
+URL: https://github.com/jaspershen/metflow2
 RoxygenNote: 6.1.1
 Suggests: knitr,
     rmarkdown,
