@@ -24,4 +24,5 @@ o New functions can be used to get class of metabolites using calssyfire.
 Version 0.0.7 (20191216)
 --------------
 o Functions to extract peaks from mzXML data.
+o Fix a small bug in dataProcesssing.
 

@@ -42,15 +42,15 @@ processData <- function(path = ".",
     polarity = polarity,
     ppm = ppm,
     peakwidth = peakwidth,
-    snthresh = peakwidth,
+    snthresh = snthresh,
     mzdiff = mzdiff,
     noise = noise,
     threads = threads,
-    output.tic = TRUE,
-    output.bpc = TRUE,
-    output.rt.correction.plot = TRUE,
-    min.fraction = 0.8,
-    fill.peaks = FALSE
+    output.tic = output.tic,
+    output.bpc = output.bpc,
+    output.rt.correction.plot = output.rt.correction.plot,
+    min.fraction = min.fraction,
+    fill.peaks = fill.peaks
   )
   
   save(parameters, file = file.path(output.path, "parameters"))
