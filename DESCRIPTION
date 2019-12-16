@@ -1,8 +1,8 @@
 Package: metflow2
 Type: Package
 Title: Comprehensitive tools for metabolomics data processing and data analysis
-Version: 0.0.6
-Date: 2019-12-12
+Version: 0.0.7
+Date: 2019-12-16
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-9608-9964")

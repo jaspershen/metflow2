@@ -25,7 +25,7 @@ get_metclass <-
       message(crayon::red(
         clisymbols::symbol$cross,
         inchikey,
-        "is not available in website.\nPlease check this link:\n",url
+        "is not available in website.\nPlease check this link:\n",url,'\n'
       ))
       return(NA)
     }
@@ -39,7 +39,7 @@ get_metclass <-
       message(crayon::red(
         clisymbols::symbol$cross,
         inchikey,
-        "is not available in website.\nPlease check this link:\n", url
+        "is not available in website.\nPlease check this link:\n", url, '\n'
       ))
       return(NA)
     }
@@ -51,7 +51,7 @@ get_metclass <-
       message(crayon::red(
         clisymbols::symbol$cross,
         inchikey,
-        "is not available in website.\nPlease check this link:\n",url
+        "is not available in website.\nPlease check this link:\n",url, '\n'
       ))
       return(NA)
     }

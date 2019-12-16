@@ -453,12 +453,28 @@ setGeneric(
 )
 
 
+#' @title extractPeaks
+#' @description From mzXML data extract peaks according to IS table.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param path Work directory.
+#' @param ppm see xcms.
+#' @param threads Number of threads.
+#' @param peak.table Peak table. Two columns, column 1 is name of peak, column 2 is m/z of peaks.
+#' @return Result contains EIC of peaks.
+#' @export
+#' @import xcms 
+#' @import MSnbase
+#' @import stringr
+#' @import tidyverse
+
 
 extractPeaks <- function(path = ".",
                          ppm = 5,
                          threads = 4,
-                         peak.table,
-                         rt.expand = 1) {
+                         peak.table
+                         # rt.expand = 1
+                         ) {
   output.path <- path
   # dir.create(output.path)
   ##peak detection
@@ -523,7 +539,25 @@ extractPeaks <- function(path = ".",
 }
 
 
+#' @title showPeak
+#' @description Show the peaks from result from extractPeaks function.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object Object from extractPeaks.
+#' @param peak.index Which peak to show. Index.
+#' @param title.size Title size.
+#' @param lab.size Lab titile size.
+#' @param axis.text.size Text size of axis.
+#' @param alpha alpha.
+#' @param title Title of the plot.
+#' @param interactive Interactive or not.
 
+#' @return Result contains EIC of peaks.
+#' @export
+#' @import xcms 
+#' @import MSnbase
+#' @import stringr
+#' @import tidyverse
 
 setGeneric(
   name = "showPeak",
