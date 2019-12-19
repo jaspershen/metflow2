@@ -37,7 +37,7 @@ setGeneric(
       Class = "metflowClass",
       ms1.data = ms1.data,
       sample.info = sample.info,
-      version = "0.0.5"
+      version = "0.0.7"
     )
     invisible(object)
   }
@@ -101,7 +101,7 @@ setMethod(
       x = names(process.info),
       y = process.info)
     } else{
-      cat("There are no processing for your data.\n")
+      cat(crayon::red("There are no processing for your data.\n"))
     }
   }
 )
@@ -224,7 +224,7 @@ setGeneric(
     }
     process_info <- object@process.info
     if (length(process_info) == 0) {
-      cat("No process for this dataset.\n")
+      cat(crayon::red("No process for this dataset.\n"))
       return(NULL)
     }
     
