@@ -6,7 +6,15 @@
 #' @export
 
 metflow2 <- function(){
-  cat("Thank you for using metflow2!\n")
+  cat(crayon::green("Thank you for using metflow2!\n"))
+  cat(crayon::green(
+    c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
+      "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
+      " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
+      "                                             ", "                                             "
+    )
+    
+  ), sep = "\n")
 }
 
 .onAttach <- function(libname, pkgname){
@@ -15,7 +23,7 @@ metflow2 <- function(){
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.7 (20191216)"
+Version 0.0.7 (20191219)"
   ),
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
@@ -33,7 +41,7 @@ packageStartupMessage(crayon::green(
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.7 (20191216)"
+Version 0.0.7 (20191219)"
 ),
 cat(crayon::green(
   c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",

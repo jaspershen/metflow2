@@ -60,7 +60,7 @@ You can use databaseName() function to check the databases this package support.
               data.frame(name = ., stringsAsFactors = FALSE) %>%
               dplyr::filter(!name %in% c("[", "]", "{", "}", "result:")) %>%
               dplyr::filter(!stringr::str_detect(name, "fromIdentifier|searchTerm|toIdentifier")) %>%
-              pull(name))
+              dplyr::pull(name))
       
       if (any(class(result) %in% "try-error")) {
         result <- NA
@@ -101,8 +101,8 @@ databaseName <- function(from.to = c("from", "to")) {
   
   chemical_database <-
     chemical_database %>%
-    html_nodes("p") %>%
-    html_text(TRUE) %>%
+    rvest::html_nodes("p") %>%
+    rvest::html_text(TRUE) %>%
     stringr::str_split(pattern = "\n") %>%
     `[[`(1) %>%
     sapply(function(x) {
@@ -119,6 +119,6 @@ databaseName <- function(from.to = c("from", "to")) {
     unname() %>%
     data.frame(name = ., stringsAsFactors = FALSE) %>%
     dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
-    pull(name)
+    dplyr::pull(name)
   chemical_database
 }

@@ -38,7 +38,7 @@ setGeneric(
       temp.data.record <- NULL
       data.col.name <- colnames(data[[x]])
       if (all(data.col.name != "name")) {
-        cat("Error: No name in data.\n")
+        cat(crayon::red(clisymbols::symbol$cross,"Error: No name in data.\n"))
         temp.data.record <- c(temp.data.record, "Error")
       } else{
         # cat("OK: The first column of data is name.\n")
@@ -46,7 +46,7 @@ setGeneric(
       }
 
       if (all(data.col.name != "mz")) {
-        cat("Error: No mz in data.\n")
+        cat(crayon::red(clisymbols::symbol$cross,"Error: No mz in data.\n"))
         temp.data.record <- c(temp.data.record, "Error")
       } else{
         # cat("OK: The second column of data is mz.\n")
@@ -54,7 +54,7 @@ setGeneric(
       }
 
       if (all(data.col.name != "rt")) {
-        cat("Error: No rt in data.\n")
+        cat(crayon::red(clisymbols::symbol$cross,"Error: No rt in data.\n"))
         temp.data.record <- c(temp.data.record, "Error")
       } else{
         # cat("OK: The third column of data is not rt.\n")
@@ -66,7 +66,8 @@ setGeneric(
     cat("--------------------------------------------------------------\n")
     ##check sample.info
     if (sum(is.na(sample.info)) > 0) {
-      cat("Error: There are", sum(is.na(sample.info)), "NAs in you sample.info.\n")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: There are", sum(is.na(sample.info)), "NAs in you sample.info.\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no NAs in you sample.info.\n")
@@ -74,16 +75,18 @@ setGeneric(
     }
 
     if (ifelse(is.na(sum(sample.info == "") > 0), FALSE, sum(sample.info == "") > 0)) {
-      cat("Error: There are",
-          sum(sample.info == ""),
-          "spaces in you sample.info.\n")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: There are",
+                      sum(sample.info == ""),
+                      "spaces in you sample.info.\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       sample.info.record <- c(sample.info.record, "OK")
     }
 
     if (colnames(sample.info)[1] != "sample.name") {
-      cat("Error: The column 1 of sample information must be sample.name")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The column 1 of sample information must be sample.name\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no spaces in you sample.info.\n")
@@ -91,7 +94,8 @@ setGeneric(
     }
 
     if (colnames(sample.info)[2] != "injection.order") {
-      cat("Error: The column 2 of sample information must be injection.order")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The column 2 of sample information must be injection.order\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no spaces in you sample.info.\n")
@@ -99,7 +103,8 @@ setGeneric(
     }
 
     if (colnames(sample.info)[3] != "class") {
-      cat("Error: The column 3 of sample information must be class")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The column 3 of sample information must be class"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no spaces in you sample.info.\n")
@@ -107,20 +112,23 @@ setGeneric(
     }
 
     if (colnames(sample.info)[4] != "batch") {
-      cat("Error: The column 4 of sample information must be batch")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The column 4 of sample information must be batch"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no spaces in you sample.info.\n")
       sample.info.record <- c(sample.info.record, "OK")
       if (any(table(sample.info[, "batch"]) <= 5)) {
-        cat("There are some batch only have less than 5 samples. Please check it.")
+        cat(crayon::yellow(clisymbols::symbol$warning,
+                        "There are some batch only have less than 5 samples. Please check it.\n"))
         sample.info.record <-
           c(sample.info.record, "Error")
       }
     }
 
     if (colnames(sample.info)[5] != "group") {
-      cat("Error: The column 5 of sample information must be group")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The column 5 of sample information must be group"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no spaces in you sample.info.\n")
@@ -131,7 +139,8 @@ setGeneric(
     if (all(c("QC", "Subject") %in% class)) {
       sample.info.record <- c(sample.info.record, "OK")
     } else{
-      cat("Error: The class of sample.information must be QC and Subject.\n")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The class of sample.information must be QC and Subject.\n"))
       sample.info.record <- c(sample.info.record, "Error")
     }
 
@@ -140,7 +149,8 @@ setGeneric(
                           colnames(x)))))
 
     if (any(is.na(sample.idx))) {
-      cat("Error: The sample names in sample.inforamtion and data are not same.\n")
+      cat(crayon::red(clisymbols::symbol$cross,
+                      "Error: The sample names in sample.inforamtion and data are not same.\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       sample.info.record <- c(sample.info.record, "OK")

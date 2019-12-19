@@ -147,7 +147,7 @@ get_metclass <-
               }
             }) %>%
             do.call(rbind, .) %>%
-            as_tibble() %>%
+            tibble::as_tibble() %>%
             dplyr::distinct(name, value),
           silent = TRUE)
     

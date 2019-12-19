@@ -16,6 +16,7 @@ Imports:
     BiocParallel,
     cli,
     crayon,
+    clisymbols,
     dplyr,
     faahKO,
     ggplot2,

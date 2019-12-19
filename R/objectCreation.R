@@ -61,9 +61,9 @@ setMethod(
   definition = function(object) {
     # requireNamespace("magrittr")
     cat(paste(rep("-", 20), collapse = ""), "\n")
-    cat("metflow2 version:", object@version, "\n")
+    cat(crayon::green("metflow2 version:", object@version, "\n"))
     cat(paste(rep("-", 20), collapse = ""), "\n")
-    cat("MS1 data\n")
+    cat(crayon::green("MS1 data\n"))
     cat("There are",
         length(object@ms1.data),
         "peak tables in your MS1 data.\n")
@@ -87,11 +87,11 @@ setMethod(
     colnames(group_info) <- c("Group", "Number")
     print(group_info)
     cat(paste(rep("-", 20), collapse = ""), "\n")
-    cat("Processing\n")
+    cat(crayon::green("Processing\n"))
     if (.hasSlot(object = object, name = "process.info")) {
       process.info <- object@process.info
       mapply(function(x, y) {
-        cat(x, paste(rep("-", 10), collapse = ""), "\n")
+        cat(crayon::green(x, paste(rep("-", 10), collapse = ""), "\n"))
         y <- y[which(names(y) != "plot")]
         y <- data.frame(names(unlist(y)), unlist(y))
         colnames(y) <- c("Parameter", "Value")

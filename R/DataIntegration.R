@@ -59,12 +59,12 @@ integrateData <- function(object,
   sample_info <- object@sample.info
   sample_info <- 
     sample_info %>% 
-    filter(class %in% c('QC', 'Subject'))
+    dplyr::filter(class %in% c('QC', 'Subject'))
   
   ms1_data <- object@ms1.data[[1]]
   ms1_data <- 
     ms1_data %>% 
-    select(one_of(sample_info$sample.name))
+    dplyr::select(one_of(sample_info$sample.name))
   
   ###split data according to batch
   ##sample_info is a list
@@ -75,14 +75,14 @@ integrateData <- function(object,
     lapply(sample_info, function(x){
       temp_subject_data <- 
         ms1_data %>% 
-        select(one_of(x$sample.name[x$class == "Subject"]))
+        dplyr::select(one_of(x$sample.name[x$class == "Subject"]))
     })
   
   qc_data <- 
     lapply(sample_info, function(x){
       temp_subject_data <- 
         ms1_data %>% 
-        select(one_of(x$sample.name[x$class == "QC"]))
+        dplyr::select(one_of(x$sample.name[x$class == "QC"]))
     })
   
   correct_factor <- 
