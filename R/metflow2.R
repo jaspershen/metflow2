@@ -17,24 +17,24 @@ metflow2 <- function(){
   ), sep = "\n")
 }
 
-# .onAttach <- function(libname, pkgname){
-#   packageStartupMessage(crayon::green(
-#     "metflow2,
-# More information can be found at https://jaspershen.github.io/metflow2/
-# Authors: Xiaotao Shen (shenxt@stanford.edu)
-# Maintainer: Xiaotao Shen.
-# Version 0.0.8 (20200108)"
-#   ),
-#   cat(crayon::green(
-#     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
-#       "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
-#       " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
-#       "                                             ", "                                             "
-#     )
-#     
-#   ), sep = "\n")
-#   )
-# }
+.onAttach <- function(libname, pkgname){
+  packageStartupMessage(crayon::green(
+    "metflow2,
+More information can be found at https://jaspershen.github.io/metflow2/
+Authors: Xiaotao Shen (shenxt@stanford.edu)
+Maintainer: Xiaotao Shen.
+Version 0.0.8 (20200108)"
+  ),
+  cat(crayon::green(
+    c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
+      "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
+      " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
+      "                                             ", "                                             "
+    )
+
+  ), sep = "\n")
+  )
+}
 
 packageStartupMessage(crayon::green(
 "metflow2,
