@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.8</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>chromatogramPlot</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/dataProcessing.R'><code>R/dataProcessing.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/functions4dataProcessing.R'><code>R/functions4dataProcessing.R</code></a></small>
     <div class="hidden name"><code>chromatogramPlot.Rd</code></div>
     </div>
 
@@ -122,7 +122,7 @@
 
     <pre class="usage"><span class='fu'>chromatogramPlot</span>(<span class='no'>object</span>, <span class='kw'>title.size</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>lab.size</span> <span class='kw'>=</span> <span class='fl'>15</span>,
   <span class='kw'>axis.text.size</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>interactive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>interactive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>group.for.figure</span> <span class='kw'>=</span> <span class='st'>"QC"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,6 +154,10 @@
     <tr>
       <th>interactive</th>
       <td><p>interactive.</p></td>
+    </tr>
+    <tr>
+      <th>group.for.figure</th>
+      <td><p>What groups to show EIC.</p></td>
     </tr>
     </table>
 

@@ -7,59 +7,155 @@
 #' @param ppm see xcms.
 #' @param peakwidth See xcms.
 #' @param snthresh See xcms.
-#' @param mzdiff See xcms.
+#' @param prefilter See xcms.
+#' @param fitgauss see xcms.
+#' @param integrate see xcms.
+#' @param mzdiff see xcms.
 #' @param noise See xcms.
 #' @param threads Number of threads.
+#' @param binSize see xcms.
+#' @param bw see xcms.
 #' @param output.tic Output TIC plot or not.
 #' @param output.bpc Output BPC plot or not.
 #' @param output.rt.correction.plot Output rt correction plot or not.
 #' @param min.fraction See xcms.
 #' @param fill.peaks Fill peaks NA or not.
+#' @param output.peak.eic Output some peaks EIC or not. 
+#' If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.
+#' @param is.table International standard table name.
+#' @param group.for.figure Which group you want to use to output TIC and BPC and EIC. Default is QC.
 #' @return Peak table.
 #' @export
 #' @import xcms 
 #' @import MSnbase
 #' @import mzR
+#' @import ggsci
+#' @import grDevices
 
 
-##debug
+#debug
 # sxtTools::setwd_project()
-# setwd("demo_data/POS/")
-# path <- "."
-# polarity <- "positive"
-# ppm <- 25
+# setwd("demo_data/NEG/extrackPeak/")
+# # rm(list = ls())
+# library(xcms)
+# library(MSnbase)
+# library(mzR)
+# library(tidyverse)
+# 
+# path = "."
+# polarity = "positive"
+# ppm = 15
 # peakwidth = c(5, 30)
-# snthresh = 10
-# mzdiff = -0.001
-# noise = 500
-# threads = 4
-# output.tic = FALSE
-# output.bpc = FALSE
-# output.rt.correction.plot = FALSE
-# min.fraction = 0
+# snthresh = 20
+# prefilter = c(3, 500)
+# fitgauss = FALSE
+# integrate = 2
+# mzdiff = 0.01
+# noise = 5000
+# threads = 20
+# binSize = 0.025
+# bw = 5
+# output.tic = TRUE
+# output.bpc = TRUE
+# output.rt.correction.plot = TRUE
+# min.fraction = 0.5
 # fill.peaks = FALSE
+# output.peak.eic = TRUE
+# is.table = "is.table.xlsx"
+# group.for.figure = "batch1"
 
 
+# processData(path = ".",
+#             polarity = "negative",
+#             ppm = 15,
+#             peakwidth = c(5, 30),
+#             snthresh = 10,
+#             prefilter = c(3, 500),
+#             fitgauss = FALSE,
+#             integrate = 2,
+#             mzdiff = 0.01,
+#             noise = 500,
+#             threads = 20,
+#             binSize = 0.025,
+#             bw = 5,
+#             output.tic = TRUE,
+#             output.bpc = TRUE,
+#             output.rt.correction.plot = TRUE,
+#             min.fraction = 0.5,
+#             fill.peaks = FALSE,
+#             output.peak.eic = TRUE,
+#             is.table = "is.xlsx",
+#             group.for.figure = "QC"
+# )
 
-# processData()
+# peak_table1 <- readr::read_csv("Result/Peak_table.csv")
+# peak_table2 <- readr::read_tsv("results/result.tsv")
+# 
+# load("Result/intermediate_data/xdata3")
+# 
+# plot(peak_table1$mzmax - peak_table1$mzmin)
+# 
+# plot(peak_table2$mzmax - peak_table2$mzmin)
+# 
+# 
+# plot(peak_table1$rtmax - peak_table1$rtmin)
+# 
+# plot(c(peak_table2$rtmax - peak_table2$rtmin)*60)
+# 
+# 
+# is_table <- readxl::read_xlsx("is.xlsx")
+# is_table$mz
+# 
+# temp.idx <- which(abs(peak_table1$mzmed - is_table$mz[1])*10^6/is_table$mz[1] < 25 &
+#                     abs(peak_table1$rtmed - 123) < 50)
+# 
+# 
+# temp.idx
+# peak_table1[temp.idx,]$mzmed
+# peak_table1[temp.idx,]$rtmed
+# peak_table1[temp.idx,c("QC1.10", "QC2.3", "QCU1", "QCU17")]
+# 
+# temp.idx
+# outputFeatureEIC(object = xdata3,
+#                  feature.index = 11970,
+#                  interactive.plot = TRUE)
+# 
+# test <- extractPeaks(path = "extractPeak",
+#                                ppm = 15, 
+#                                threads = 10,
+#                                is.table = "is.xlsx")
+# metflow2::showPeak(object = test, peak.index = 6, alpha = 0)
+
 
 
 processData <- function(path = ".",
                         polarity = c("positive", "negative"),
-                        ppm = 25,
+                        ppm = 15,
                         peakwidth = c(5, 30),
                         snthresh = 10,
-                        mzdiff = -0.001,
+                        prefilter = c(3, 500),
+                        fitgauss = FALSE,
+                        integrate = 2,
+                        mzdiff = 0.01,
                         noise = 500,
-                        threads = 4,
+                        threads = 6,
+                        binSize = 0.025,
+                        bw = 5,
                         output.tic = TRUE,
                         output.bpc = TRUE,
                         output.rt.correction.plot = TRUE,
-                        min.fraction = 0,
-                        fill.peaks = FALSE) {
+                        min.fraction = 0.5,
+                        fill.peaks = FALSE,
+                        output.peak.eic = TRUE,
+                        is.table = "is.table.xlsx",
+                        group.for.figure = "QC") {
   
-  output.path <- file.path(path, "Result")
-  dir.create(output.path)
+  polarity <- match.arg(polarity)
+  output_path <- file.path(path, "Result")
+  dir.create(output_path)
+  intermediate_data_path <- file.path(output_path, "intermediate_data")
+  dir.create(intermediate_data_path)
+  
   ##paramters
   parameters <- list(
     path = path,
@@ -67,9 +163,14 @@ processData <- function(path = ".",
     ppm = ppm,
     peakwidth = peakwidth,
     snthresh = snthresh,
+    prefilter = prefilter,
+    fitgauss = fitgauss,
+    integrate = integrate,
     mzdiff = mzdiff,
     noise = noise,
     threads = threads,
+    binSize = binSize,
+    bw = bw,
     output.tic = output.tic,
     output.bpc = output.bpc,
     output.rt.correction.plot = output.rt.correction.plot,
@@ -77,8 +178,10 @@ processData <- function(path = ".",
     fill.peaks = fill.peaks
   )
   
-  save(parameters, file = file.path(output.path, "parameters"))
-  ##peak detection
+  save(parameters, file = file.path(output_path, "parameters"))
+  
+  ##------------------------------------------------------------------------------------
+  #peak detection
   
   f.in <- list.files(path = path,
                      pattern = '\\.(mz[X]{0,1}ML|cdf)',
@@ -88,6 +191,8 @@ processData <- function(path = ".",
     unlist(lapply(stringr::str_split(string = f.in, pattern = "/"), function(x) {
       x[1]
     }))
+  
+  sample_group[grep("\\.(mz[X]{0,1}ML|cdf)", sample_group)] <- "Group0"
   
   pd <-
     data.frame(
@@ -101,11 +206,19 @@ processData <- function(path = ".",
       stringsAsFactors = FALSE
     )
   
+  ## Define colors for different groups
+  group_colors <-
+    paste0(RColorBrewer::brewer.pal(9, "Set1")[1:length(unique(sample_group))], "60")
+  # group_colors <-
+  #   grDevices::colorRampPalette(ggsci::pal_npg()(10))(100)[1:length(unique(sample_group))]
+  names(group_colors) <- unique(sample_group)
   
   # requireNamespace("xcms")
   cat(crayon::green("Reading raw data, it will take a while...\n"))
-  if (any(dir(file.path(path, "Result")) == "raw_data")) {
-    load(file.path(path, "Result/raw_data"))
+  
+  if (any(dir(intermediate_data_path) == "raw_data")) {
+    cat(crayon::yellow("Use old saved data in Result.\n"))
+    load(file.path(intermediate_data_path, "raw_data"))
   } else{
     raw_data <- MSnbase::readMSData(
       files = f.in,
@@ -114,84 +227,75 @@ processData <- function(path = ".",
       verbose = TRUE
     )
     save(raw_data,
-         file = file.path(output.path, "raw_data"),
+         file = file.path(intermediate_data_path, "raw_data"),
          compress = "xz")
   }
   
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-  
-  
-  #----------------------------------------------------------------------------
-  #fix bug
-  ## Define the rt and m/z range of the peak area
-  # rtr <- c(100, 140)
-  # mzr <- c(207.1415 - 25 *  207.1415 / 10 ^ 6, 207.1415 + 25 *  207.1415 / 10 ^ 6)
-  # ## extract the chromatogram
-  # chr_raw <- xcms::chromatogram(object = raw_data, mz = mzr, rt = rtr)
-  # plot(chr_raw, col = group_colors[chr_raw$sample_group])
-  # 
-  # raw_data %>%
-  #   filterRt(rt = rtr) %>%
-  #   filterMz(mz = mzr) %>%
-  #   plot(type = "XIC")
-  # 
-  # xchr <- xcms::findChromPeaks(chr_raw, param = CentWaveParam(snthresh = 2))
-  # 
-  # head(chromPeaks(xchr))
-  # chromPeakData(xchr)
-  # 
-  # sample_colors <- group_colors[xchr$sample_group]
-  # layout(1)
-  # plot(xchr, 
-  #      col = sample_colors,
-  #      # peakBg = sample_colors[chromPeaks(xchr)[, "column"]],
-  #      peakBg = sample_colors
-  #      )
-  
-  
   
   #----------------------------------------------------------------------------
   cat(crayon::green("Peak detecting...\n"))
   ###peak detection
   cwp <- xcms::CentWaveParam(
     ppm = ppm,
+    prefilter = prefilter,
+    integrate = integrate,
     peakwidth = peakwidth,
     snthresh = snthresh,
     mzdiff = mzdiff,
-    noise = noise
+    noise = noise, 
+    fitgauss = fitgauss,
   )
   
-  if (any(dir(file.path(path, "Result")) == "xdata")) {
-    load(file.path(path, "Result/xdata"))
+  if (any(dir(intermediate_data_path) == "xdata")) {
+    cat(crayon::yellow("Use old saved data in Result.\n"))
+    load(file.path(intermediate_data_path, "xdata"))
   } else{
-    xdata <- xcms::findChromPeaks(
+    xdata <- 
+      try(xcms::findChromPeaks(
       raw_data,
       param = cwp,
       BPPARAM = BiocParallel::SnowParam(workers = threads,
                                         progressbar = TRUE)
-    )
+    ), silent = TRUE
+      )
+    
+    if(class(xdata) == "try-error"){
+      stop("Error in xcms::findChromPeaks.\n")
+    }
     
     save(xdata,
-         file = file.path(output.path, "xdata"),
+         file = file.path(intermediate_data_path, "xdata"),
          compress = "xz")
   }
   
+  rm(list = "raw_data")
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   
+  #--------------------------------------------------------------------------------
+  #retention time correction
+  #Alignment
   cat(crayon::green("Correcting rentention time...\n "))
   
-  if (any(dir(file.path(path, "Result")) == "xdata2")) {
-    load(file.path(path, "Result/xdata2"))
+  if (any(dir(intermediate_data_path) == "xdata2")) {
+    cat(crayon::yellow("Use old saved data in Result.\n"))
+    load(file.path(intermediate_data_path, "xdata2"))
   } else{
     xdata2 <- try(xcms::adjustRtime(xdata,
-                                    param = xcms::ObiwarpParam(binSize = 0.6)),
+                                    param = xcms::ObiwarpParam(binSize = 0.5)),
                   silent = TRUE)
+    save(xdata2,
+         file = file.path(intermediate_data_path, "xdata2"),
+         compress = "xz")
   }
   
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   
   if (class(xdata2) == "try-error") {
     xdata2 <- xdata
+    save(xdata2,
+         file = file.path(intermediate_data_path, "xdata2"),
+         compress = "xz")
   } else{
     ## Plot also the difference of adjusted to raw retention time.
     if (output.rt.correction.plot) {
@@ -199,11 +303,11 @@ processData <- function(path = ".",
       rt.correction.plot <- plotAdjustedRT(object = xdata2)
       save(
         rt.correction.plot,
-        file = file.path(output.path, "rt.correction.plot"),
+        file = file.path(intermediate_data_path, "rt.correction.plot"),
         compress = "xz"
       )
       ggplot2::ggsave(
-        filename = file.path(output.path, "RT correction plot.png"),
+        filename = file.path(output_path, "RT correction plot.png"),
         plot = rt.correction.plot,
         width = 20,
         height = 7
@@ -213,30 +317,31 @@ processData <- function(path = ".",
     }
   }
   
-  save(xdata2,
-       file = file.path(output.path, "xdata2"),
-       compress = "xz")
+  rm(list = "xdata")
   
   ###TIC
   if (output.tic) {
     cat(crayon::green("Drawing TIC plot..."))
     tic.plot <- xcms::chromatogram(object = xdata2,
                                    aggregationFun = "sum")
-    ## Define colors for different groups
-    group_colors <-
-      paste0(RColorBrewer::brewer.pal(9, "Set1")[1:length(unique(sample_group))], "60")
-    names(group_colors) <- unique(sample_group)
+
     ## Plot all chromatograms.
     save(tic.plot,
-         file = file.path(output.path, "tic.plot"),
+         file = file.path(intermediate_data_path, "tic.plot"),
          compress = "xz")
-    plot <- chromatogramPlot(object = tic.plot, title = "TIC")
-    ggplot2::ggsave(
-      filename = file.path(output.path, "TIC.png"),
-      plot = plot,
-      width = 20,
-      height = 7
-    )
+    plot <- chromatogramPlot(object = tic.plot,
+                             title = "TIC", 
+                             group.for.figure = group.for.figure)
+    
+    if(!is.null(plot)){
+      ggplot2::ggsave(
+        filename = file.path(output_path, "TIC.png"),
+        plot = plot,
+        width = 20,
+        height = 7
+      )  
+    }
+    
     rm(list = c("plot", "tic.plot"))
     cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   }
@@ -246,529 +351,247 @@ processData <- function(path = ".",
     cat(crayon::green("Drawing BPC plot..."))
     bpc.plot <- xcms::chromatogram(object = xdata2,
                                    aggregationFun = "max")
-    ## Define colors for different groups
-    group_colors <-
-      paste0(RColorBrewer::brewer.pal(9, "Set1")[1:length(unique(sample_group))], "60")
-    names(group_colors) <- unique(sample_group)
+    
     ## Plot all chromatograms.
     save(bpc.plot,
-         file = file.path(output.path, "bpc.plot"),
+         file = file.path(intermediate_data_path, "bpc.plot"),
          compress = "xz")
-    plot <- chromatogramPlot(object = bpc.plot, title = "BPC")
-    ggplot2::ggsave(
-      filename = file.path(output.path, "BPC.png"),
-      plot = plot,
-      width = 20,
-      height = 7
-    )
+    
+    plot <- chromatogramPlot(object = bpc.plot, title = "BPC", 
+                             group.for.figure = group.for.figure)
+    if(!is.null(plot)){
+      ggplot2::ggsave(
+        filename = file.path(output_path, "BPC.png"),
+        plot = plot,
+        width = 20,
+        height = 7
+      )      
+    }
+
     rm(list = c("plot", "bpc.plot"))
     cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   }
   
+  
+  #-------------------------------------------------------------------------------------
   ## Perform the correspondence
   cat(crayon::green("Grouping peaks across samples...\n"))
-  pdp <- xcms::PeakDensityParam(
-    sampleGroups = xdata2$sample_group,
-    minFraction = min.fraction,
-    bw = 20
-  )
-  xdata2 <- xcms::groupChromPeaks(xdata2, param = pdp)
+  
+  if (any(dir(intermediate_data_path) == "xdata3")) {
+    cat(crayon::yellow("Use old saved data in Result.\n"))
+    load(file.path(intermediate_data_path, "xdata3"))
+  } else{
+    pdp <- xcms::PeakDensityParam(
+      sampleGroups = xdata2$sample_group,
+      minFraction = min.fraction,
+      bw = bw, 
+      binSize = binSize, 
+      minSamples = 1, 
+      maxFeatures = 100
+    )
+    
+    xdata3 <- xcms::groupChromPeaks(xdata2, param = pdp)
+    save(xdata3,
+         file = file.path(intermediate_data_path, "xdata3"),
+         compress = "xz")
+  }
+  
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+  rm(list = "xdata2")
   
   if (fill.peaks) {
     ## Filling missing peaks using default settings. Alternatively we could
     ## pass a FillChromPeaksParam object to the method.
-    xdata2 <- xcms::fillChromPeaks(xdata2)
+    xdata3 <- xcms::fillChromPeaks(xdata3)
+    save(xdata3,
+         file = file.path(intermediate_data_path, "xdata3"),
+         compress = "xz")
   }
-  
+
   cat(crayon::green("Outputting peak table..."))
   ##output peak table
-  values <- xcms::featureValues(xdata2, value = "into")
-  definition <- xcms::featureDefinitions(object = xdata2)
+  values <- xcms::featureValues(xdata3, value = "into")
+  definition <- xcms::featureDefinitions(object = xdata3)
   definition <- definition[, -ncol(definition)]
-  peak.name <- xcms::groupnames(xdata2)
+  definition <- 
+    definition@listData %>% 
+    do.call(cbind, .) %>% 
+    as.data.frame()
   
-  peak.table <- data.frame(peak.name = peak.name,
+ peak_name <- xcms::groupnames(xdata3)
+ peak_name <- paste(peak_name, ifelse(polarity == "positive", "POS", "NEG"), sep = "_")
+  
+ peak_table <- data.frame(peak.name = peak_name,
                            definition,
                            values,
                            stringsAsFactors = FALSE)
-  rownames(peak.table) <- NULL
-  colnames(peak.table) <-
+ rownames(peak_table) <- NULL
+
+  colnames(peak_table) <-
     stringr::str_replace(
-      string = colnames(peak.table),
+      string = colnames(peak_table),
       pattern = "\\.mz[X]{0,1}ML",
       replacement = ""
     )
-  readr::write_csv(peak.table, path = file.path(output.path, "Peak.table.csv"))
+  
+  peak_table_for_cleaning <-
+    peak_table %>%
+    dplyr::select(-c("mzmin", 'mzmax', 'rtmin', 'rtmax', 'npeaks', unique(sample_group))) %>% 
+    dplyr::rename(name = peak.name, mz = mzmed, rt = rtmed)
+  
+  readr::write_csv(peak_table, path = file.path(output_path, "Peak_table.csv"))
+  readr::write_csv(peak_table_for_cleaning, path = file.path(output_path, "Peak_table_for_cleaning.csv"))
+  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+  
+  rm(list = c("peak_table", "peak_table_for_cleaning"))
+  ##-------------------------------------------------------------------------------------
+  ##output EIC of all peaks
+  
+  is_table <- 
+    try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
+  
+  if(class(is_table) != "try-error")  {
+    data1 <- as.matrix(is_table[,c(2,3)])
+    data2 <- as.matrix(definition[,c("mzmed", "rtmed")])
+    
+    match_result <- 
+      SXTMTmatch(data1 = data1, 
+                 data2 = data2,
+                 mz.tolerance = 25,
+                 rt.tolerance = 50)  
+    if(is.null(match_result) | nrow(match_result) == 0){
+      output.peak.eic <- FALSE
+    }
+  }else{
+    output.peak.eic <- FALSE
+  }
+  
+  
+  
+  
+  if(output.peak.eic){
+    cat(crayon::green("Outputting peak table...\n"))
+    feature_EIC_path <- file.path(output_path, "feature_EIC")
+    dir.create(feature_EIC_path)
+   
+    
+    temp_fun <- function(idx = 100,
+                         feature_eic_data,
+                         path = ".",
+                         peak.name) {
+      
+      suppressMessages(require(magrittr))
+      peak.name <- peak.name[idx]
+      plot.name <- paste("",peak.name, sep = "")
+      feature_eic_data <- 
+        feature_eic_data[[idx]]  
+      
+      rt_range <- c(min(feature_eic_data$rt, na.rm = TRUE), 
+                    max(feature_eic_data$rt, na.rm = TRUE))
+      
+      if(nrow(feature_eic_data) != 0){
+        plot <- 
+          feature_eic_data %>% 
+          ggplot2::ggplot(ggplot2::aes(rt, intensity, group = sample_name)) +
+          ggplot2::geom_line(ggplot2::aes(color = sample_group)) +
+          ggsci::scale_color_lancet() +
+          ggplot2::labs(x = "Retention time", title = paste("RT range:", rt_range[1], rt_range[2], sep = "_")) +
+          ggplot2::theme_bw()
+        
+        ggplot2::ggsave(plot, 
+                        file = file.path(path, paste(plot.name, "png", sep = ".")),
+                        width = 6, 
+                        height = 6) 
+      }
+    }
+    
+    
+    
+    
+    index2 <- sort(unique(match_result[, 2]))
+    feature_eic <-
+      xcms::featureChromatograms(
+        x = xdata3,
+        features = index2,
+        expandRt = 0,
+        BPPARAM =
+          BiocParallel::SnowParam(workers = threads,
+                                  progressbar = TRUE)
+      )
+    
+    feature_eic_data <- feature_eic@.Data %>% 
+    pbapply::pbapply(1, function(y){
+      y <- lapply(y, function(x){
+        if(nrow(x@chromPeaks) == 0){
+          data.frame(rt.med = NA,
+                     rt.min = NA,
+                     rt.max = NA,
+                     rt = NA, 
+                     min.intensity = 0,
+                     max.intensity = NA,
+                     intensity = NA,
+                     stringsAsFactors = FALSE) 
+        }else{
+          if(nrow(x@chromPeaks) > 1){
+            x@chromPeaks <- 
+              tibble::as_tibble(x@chromPeaks) %>%
+              dplyr::filter(maxo == max(maxo)) %>% 
+              as.matrix()
+          }
+          data.frame(rt.med = x@chromPeaks[,4],
+                     rt.min = x@chromPeaks[,5],
+                     rt.max = x@chromPeaks[,6],
+                     rt = x@rtime, 
+                     min.intensity = 0,
+                     max.intensity = x@chromPeaks[,"maxo"],
+                     intensity = x@intensity,
+                     stringsAsFactors = FALSE)  
+        }
+      }
+      )
+      y <- 
+        mapply(function(y, sample.group, sample.name){
+          data.frame(y, 
+                     sample_group = sample.group,
+                     sample_name = sample.name,
+                     stringsAsFactors = FALSE) %>% 
+            list()
+        },
+        y = y,
+        sample.group = feature_eic@phenoData@data$sample_group,
+        sample.name = feature_eic@phenoData@data$sample_name
+        )
+      
+      y <- do.call(rbind, y)
+      y
+      
+    })
+    
+    
+    feature_eic_data <- 
+      feature_eic_data %>% 
+      lapply(function(x){
+        x %>% 
+          filter(sample_group %in% group.for.figure)
+      })
+    
+    
+    BiocParallel::bplapply(1:length(index2), 
+                           FUN = temp_fun,
+                           BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                                             progressbar = TRUE),
+                           feature_eic_data = feature_eic_data, 
+                           path = feature_EIC_path, 
+                           peak.name = peak_name[index2]
+                           )
+
+  }
+  
+  rm(list = "xdata3")
+  
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   cat(crayon::bgGreen(clisymbols::symbol$tick ,"All is done!\n"))
 }
 
 
-#' @title chromatogramPlot
-#' @description Draw TIC or BPC.
-#' @author Xiaotao Shen
-#' \email{shenxt1990@@163.com}
-#' @param object Object for tic.plot or bpc.plot.
-#' @param title.size Font size of title..
-#' @param lab.size Font size of lab title.
-#' @param axis.text.size Font size of axis text.
-#' @param alpha alpha.
-#' @param title Title of the plot..
-#' @param interactive interactive.
-#' @return A ggplot2 object.
-#' @export
 
-setGeneric(
-  name = "chromatogramPlot",
-  def = function(object,
-                 title.size = 15,
-                 lab.size = 15,
-                 axis.text.size = 15,
-                 alpha = 0.5,
-                 title = "",
-                 interactive = FALSE) {
-    options(warn = -1)
-    info <- object@phenoData@data
-    data <- object@.Data
-    rm(list = c("object"))
-    data <- apply(data, 2, function(x) {
-      x <- x[[1]]
-      x <-
-        data.frame(
-          "mz" = x@rtime,
-          "intensity" = x@intensity,
-          stringsAsFactors = FALSE
-        )
-      list(x)
-    })
-    
-    data <- lapply(data, function(x) {
-      x[[1]]
-    })
-    
-    data <- mapply(
-      FUN = function(x, y, z) {
-        x <- data.frame(
-          x,
-          "group" = y,
-          "sample" = z,
-          stringsAsFactors = FALSE
-        )
-        list(x)
-      },
-      x = data,
-      y = info[, 2],
-      z = info[, 1]
-    )
-    
-    # data <- lapply(data, function(x){
-    #   x <- plyr::dlply(.data = x, .variables = plyr::.(sample))
-    # })
-    
-    data <- do.call(rbind, args = data)
-    
-    # data <- plyr::dlply(.data = data, .variables = plyr::.(sample))
-    
-    plot <-
-      ggplot2::ggplot(data = data,
-                      ggplot2::aes(x = mz, y = intensity)) +
-      ggplot2::geom_line(
-        data = data,
-        mapping = ggplot2::aes(colour = group, group = sample),
-        alpha = alpha
-      ) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(x = "Retention time (RT, second)", y = "Intensity", title = title) +
-      ggplot2::theme(
-        plot.title = ggplot2::element_text(
-          color = "black",
-          size = title.size,
-          face = "plain",
-          hjust = 0.5
-        ),
-        axis.title = ggplot2::element_text(
-          color = "black",
-          size = lab.size,
-          face = "plain"
-        ),
-        axis.text = ggplot2::element_text(
-          color = "black",
-          size = axis.text.size,
-          face = "plain"
-        )
-      )
-    
-    if (interactive) {
-      plot <- plotly::ggplotly(plot)
-    }
-    
-    return(plot)
-    
-  }
-)
-
-
-setGeneric(
-  name = "plotAdjustedRT",
-  def = function(object,
-                 title.size = 15,
-                 lab.size = 15,
-                 axis.text.size = 15) {
-    diffRt <- xcms::rtime(object, adjusted = TRUE) - xcms::rtime(object,
-                                                                 adjusted = FALSE)
-    diffRt <- split(diffRt, MSnbase::fromFile(object))
-    xRt <- xcms::rtime(object,
-                       adjusted = TRUE,
-                       bySample = TRUE)
-    
-    sample_name <- object@phenoData@data$sample_name
-    sample_group <- object@phenoData@data$sample_group
-    
-    diffRt <- mapply(
-      FUN = function(x, y) {
-        list(data.frame(x, y, stringsAsFactors = FALSE))
-      },
-      x = diffRt,
-      y = sample_name
-    )
-    
-    xRt <- mapply(
-      FUN = function(x, y) {
-        list(data.frame(x, y, stringsAsFactors = FALSE))
-      },
-      x = xRt,
-      y = sample_name
-    )
-    
-    diffRt <- do.call(what = rbind, args = diffRt)
-    xRt <- do.call(rbind, xRt)
-    
-    temp.data <-
-      data.frame(xRt, diffRt, stringsAsFactors = FALSE)
-    
-    colnames(temp.data) <-
-      c("rt", "sample.name", "diffRT", "sample.name2")
-    rm(list = c("object", "xRt", "diffRt"))
-    
-    plot <-
-      ggplot2::ggplot(data = temp.data, ggplot2::aes(x = rt, y = diffRT)) +
-      ggplot2::geom_line(data = temp.data, ggplot2::aes(color = sample.name)) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(x = "Retention time (second)", y = "RT deviation (second)") +
-      ggplot2::theme(
-        legend.position = "none",
-        axis.title = ggplot2::element_text(
-          color = "black",
-          size = lab.size,
-          face = "plain"
-        ),
-        axis.text = ggplot2::element_text(
-          color = "black",
-          size = axis.text.size,
-          face = "plain"
-        )
-      )
-    plot
-  }
-)
-
-
-
-setGeneric(
-  name = "extractEIC",
-  def = function(object,
-                 mz.range,
-                 rt.range,
-                 title.size = 15,
-                 lab.size = 15,
-                 axis.text.size = 15,
-                 alpha = 0.5,
-                 title = "") {
-    data <- data.frame(
-      rt = object@.Data[1, 1][[1]]@rtime,
-      intensity = object@.Data[1, 1][[1]]@intensity,
-      stringsAsFactors = FALSE
-    )
-    
-    # fit <- MASS::fitdistr(data$intensity, densfun = "normal")
-    # temp.data <- rnorm(n = nrow(data), mean = fit$sd[1], sd = fit$sd[2])
-    
-    plot <-
-      ggplot2::ggplot(data = data, ggplot2::aes(x = rt, y = intensity)) +
-      ggplot2::geom_point() +
-      ggplot2::geom_line() +
-      ggplot2::theme_bw() +
-      ggplot2::labs(x = "Retention time (second)", y = "Intensity") +
-      ggplot2::theme(
-        legend.position = "none",
-        axis.title = ggplot2::element_text(
-          color = "black",
-          size = lab.size,
-          face = "plain"
-        ),
-        axis.text = ggplot2::element_text(
-          color = "black",
-          size = axis.text.size,
-          face = "plain"
-        )
-      )
-    plot
-  }
-)
-
-
-#' @title extractPeaks
-#' @description From mzXML data extract peaks according to IS table.
-#' @author Xiaotao Shen
-#' \email{shenxt1990@@163.com}
-#' @param path Work directory.
-#' @param ppm see xcms.
-#' @param threads Number of threads.
-#' @param is.table Peak table. Two columns, column 1 is name of peak, column 2 is m/z of peaks.
-#' @return Result contains EIC of peaks.
-#' @export
-#' @import xcms 
-#' @import MSnbase
-#' @importFrom MSnbase selectFeatureData
-#' @import mzR
-#' @import stringr
-#' @import tidyverse
-
-
-
-extractPeaks <- function(path = ".",
-                         ppm = 5,
-                         threads = 4,
-                         is.table = "is.xlsx"
-                         # rt.expand = 1
-                         ) {
-  output.path <- path
-  # dir.create(output.path)
-  ##peak detection
-  
-  f.in <- list.files(path = path,
-                     pattern = '\\.(mz[X]{0,1}ML|cdf)',
-                     recursive = TRUE)
-  
-  sample_group <-
-    unlist(lapply(stringr::str_split(string = f.in, pattern = "/"), function(x) {
-      x[1]
-    }))
-  
-  pd <-
-    data.frame(
-      sample_name = sub(
-        basename(f.in),
-        pattern = ".mzXML",
-        replacement = "",
-        fixed = TRUE
-      ),
-      sample_group = sample_group,
-      stringsAsFactors = FALSE
-    )
-  
-  # requireNamespace("xcms")
-  cat(crayon::green("Reading raw data, it will take a while...\n"))
-  
-  if (any(dir(path) == "raw_data")) {
-    load(file.path(path, "raw_data"))
-  } else{
-    raw_data <- MSnbase::readMSData(
-      files = f.in,
-      pdata = new("NAnnotatedDataFrame", pd),
-      mode = "onDisk",
-      verbose = TRUE
-    )
-    
-    save(raw_data,
-         file = file.path(output.path, "raw_data"),
-         compress = "xz")
-  }
-  
-  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-  
-  is.table <- readxl::read_xlsx(file.path(path, is.table))
-  
-  mz <-
-    is.table %>%
-    dplyr::pull(2)
-  
-  mz <- as.numeric(mz)
-  
-  mz_range <-
-    lapply(mz, function(x) {
-      c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
-    })
-  
-  mz_range <- do.call(rbind, mz_range)
-  
-  cat(crayon::green("Extracting peaks, it will take a while..."))
-  peak_data <- xcms::chromatogram(object = raw_data,
-                                  mz = mz_range)
-  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-  ##geth the extract peaks table of IS
-  # cat(crayon::green("Generating peak table, it will take a while...\n"))
-  # peak_table <- xcms::findChromPeaks(object = peak_data, 
-  #                      param = xcms::CentWaveParam(peakwidth = c(5, 60), 
-  #                                                  snthresh = 2,
-  #                                                  mzdiff = -0.001,
-  #                                                  noise = 0),
-  #                      BPPARAM = BiocParallel::SnowParam(workers = threads,
-  #                                                        progressbar = TRUE))
-  # 
-  # peak_table2 <- try(xcms::adjustRtime(peak_table,
-  #                                 param = xcms::ObiwarpParam(binSize = 0.6)),
-  #               silent = TRUE)
-  # 
-  # if(class(peak_table2) == 'try-error'){
-  #   peak_table2 <- peak_table 
-  # }
-  # 
-  # pdp <- xcms::PeakDensityParam(
-  #   sampleGroups = peak_table2$sample_group,
-  #   minFraction = 0,
-  #   bw = 20
-  # )
-  # 
-  # peak_table3 <- xcms::groupChromPeaks(peak_table2, param = pdp)
-  # cat(crayon::green("Outputting peak table...\n"))
-  # ##output peak table
-  # values <- xcms::featureValues(peak_table3, value = "into")
-  # definition <- xcms::featureDefinitions(object = peak_table3)
-  # definition <- definition[, -ncol(definition)]
-  # peak.name <- xcms::groupnames(peak_table3)
-  # 
-  # peak.table <- data.frame(peak.name = peak.name,
-  #                          definition,
-  #                          values,
-  #                          stringsAsFactors = FALSE)
-  # rownames(peak.table) <- NULL
-  # colnames(peak.table) <-
-  #   stringr::str_replace(
-  #     string = colnames(peak.table),
-  #     pattern = "\\.mz[X]{0,1}ML",
-  #     replacement = ""
-  #   )
-  # readr::write_csv(peak.table, path = file.path(output.path, "Peak.table.csv"))
-  
-  save(peak_data, file = file.path(output.path, "peak_data"))
-  return(peak_data)
-}
-
-
-#' @title showPeak
-#' @description Show the peaks from result from extractPeaks function.
-#' @author Xiaotao Shen
-#' \email{shenxt1990@@163.com}
-#' @param object Object from extractPeaks.
-#' @param peak.index Which peak to show. Index.
-#' @param title.size Title size.
-#' @param lab.size Lab titile size.
-#' @param axis.text.size Text size of axis.
-#' @param alpha alpha.
-#' @param title Title of the plot.
-#' @param interactive Interactive or not.
-
-#' @return Result contains EIC of peaks.
-#' @export
-#' @import xcms 
-#' @import MSnbase
-#' @import stringr
-#' @import tidyverse
-
-setGeneric(
-  name = "showPeak",
-  def = function(object,
-                 peak.index = 1,
-                 title.size = 15,
-                 lab.size = 15,
-                 axis.text.size = 15,
-                 alpha = 0.5,
-                 title = "",
-                 interactive = TRUE) {
-    options(warn = -1)
-    info <- object@phenoData@data
-    data <- object@.Data
-    rm(list = c("object"))
-    if (peak.index > nrow(data)) {
-      peak.index <- nrow(data)
-      cat("peak.index is ", nrow(data), '\n')
-    }
-    data <- apply(data, 2, function(x) {
-      x <- x[[peak.index]]
-      x <-
-        data.frame(
-          "rt" = x@rtime,
-          "intensity" = x@intensity,
-          stringsAsFactors = FALSE
-        )
-      list(x)
-    })
-    
-    data <- lapply(data, function(x) {
-      x[[1]]
-    })
-    
-    data <- mapply(
-      FUN = function(x, y, z) {
-        x <- data.frame(
-          x,
-          "group" = y,
-          "sample" = z,
-          stringsAsFactors = FALSE
-        )
-        list(x)
-      },
-      x = data,
-      y = info[, 2],
-      z = info[, 1]
-    )
-    
-    data <- do.call(rbind, args = data)
-    data$intensity[is.na(data$intensity)] <- 0
-    
-    plot <-
-      ggplot2::ggplot(data = data,
-                      ggplot2::aes(x = rt, y = intensity)) +
-      ggplot2::geom_line(
-        data = data,
-        mapping = ggplot2::aes(colour = group)
-      ) +
-      ggplot2::geom_area( mapping = ggplot2::aes(fill = group),
-                          alpha = alpha) +
-      # ggsci::scale_color_tron(alpha = alpha) +
-      # ggsci::scale_fill_tron(alpha = alpha) +
-      # ggplot2::scale_y_continuous(breaks = intensity,
-      #   labels = ecoflux::scientific_10x(values = intensity, digits = 2)) + 
-      # ggplot2::scale_y_continuous(breaks = intensity,
-      #                             labels = scales::math_format(10^.intensity)) + 
-      
-      ggplot2::theme_bw() +
-      ggplot2::labs(x = "Retention time (RT, second)", 
-                    y = "Intensity", title = title) +
-      ggplot2::theme(
-        plot.title = ggplot2::element_text(
-          color = "black",
-          size = title.size,
-          face = "plain",
-          hjust = 0.5
-        ),
-        axis.title = ggplot2::element_text(
-          color = "black",
-          size = lab.size,
-          face = "plain"
-        ),
-        axis.text = ggplot2::element_text(
-          color = "black",
-          size = axis.text.size,
-          face = "plain"
-        )
-      )
-    
-    if (interactive) {
-      plot <- plotly::ggplotly(plot)
-    }
-    return(plot)
-  }
-)

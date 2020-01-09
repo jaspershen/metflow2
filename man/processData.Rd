@@ -5,10 +5,13 @@
 \title{processData}
 \usage{
 processData(path = ".", polarity = c("positive", "negative"),
-  ppm = 15, peakwidth = c(5, 30), snthresh = 10, mzdiff = -0.001,
-  noise = 500, threads = 4, output.tic = TRUE, output.bpc = TRUE,
-  output.rt.correction.plot = TRUE, min.fraction = 0.8,
-  fill.peaks = FALSE)
+  ppm = 15, peakwidth = c(5, 30), snthresh = 10, prefilter = c(3,
+  500), fitgauss = FALSE, integrate = 2, mzdiff = 0.01,
+  noise = 500, threads = 6, binSize = 0.025, bw = 5,
+  output.tic = TRUE, output.bpc = TRUE,
+  output.rt.correction.plot = TRUE, min.fraction = 0.5,
+  fill.peaks = FALSE, output.peak.eic = TRUE,
+  is.table = "is.table.xlsx", group.for.figure = "QC")
 }
 \arguments{
 \item{path}{Work directory.}
@@ -21,11 +24,21 @@ processData(path = ".", polarity = c("positive", "negative"),
 
 \item{snthresh}{See xcms.}
 
-\item{mzdiff}{See xcms.}
+\item{prefilter}{See xcms.}
+
+\item{fitgauss}{see xcms.}
+
+\item{integrate}{see xcms.}
+
+\item{mzdiff}{see xcms.}
 
 \item{noise}{See xcms.}
 
 \item{threads}{Number of threads.}
+
+\item{binSize}{see xcms.}
+
+\item{bw}{see xcms.}
 
 \item{output.tic}{Output TIC plot or not.}
 
@@ -36,6 +49,13 @@ processData(path = ".", polarity = c("positive", "negative"),
 \item{min.fraction}{See xcms.}
 
 \item{fill.peaks}{Fill peaks NA or not.}
+
+\item{output.peak.eic}{Output some peaks EIC or not. 
+If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.}
+
+\item{is.table}{International standard table name.}
+
+\item{group.for.figure}{Which group you want to use to output TIC and BPC and EIC. Default is QC.}
 }
 \value{
 Peak table.

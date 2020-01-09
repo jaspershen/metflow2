@@ -26,3 +26,7 @@ Version 0.0.7 (20191216)
 o Functions to extract peaks from mzXML data.
 o Fix a small bug in dataProcesssing.
 
+Version 0.0.8 (20200108)
+--------------
+o Add a lot of new parameters to dataProcessing.
+

@@ -17,31 +17,31 @@ metflow2 <- function(){
   ), sep = "\n")
 }
 
-.onAttach <- function(libname, pkgname){
-  packageStartupMessage(crayon::green(
-    "metflow2,
-More information can be found at https://jaspershen.github.io/metflow2/
-Authors: Xiaotao Shen (shenxt@stanford.edu)
-Maintainer: Xiaotao Shen.
-Version 0.0.7 (20191219)"
-  ),
-  cat(crayon::green(
-    c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
-      "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
-      " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
-      "                                             ", "                                             "
-    )
-    
-  ), sep = "\n")
-  )
-}
+# .onAttach <- function(libname, pkgname){
+#   packageStartupMessage(crayon::green(
+#     "metflow2,
+# More information can be found at https://jaspershen.github.io/metflow2/
+# Authors: Xiaotao Shen (shenxt@stanford.edu)
+# Maintainer: Xiaotao Shen.
+# Version 0.0.8 (20200108)"
+#   ),
+#   cat(crayon::green(
+#     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
+#       "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
+#       " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
+#       "                                             ", "                                             "
+#     )
+#     
+#   ), sep = "\n")
+#   )
+# }
 
 packageStartupMessage(crayon::green(
 "metflow2,
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.7 (20191219)"
+Version 0.0.8 (20200108)"
 ),
 cat(crayon::green(
   c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
@@ -49,7 +49,8 @@ cat(crayon::green(
     " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
     "                                             ", "                                             "
   )
-), sep = "\n"))
+), sep = "\n")
+)
 
 
 # library(cowsay)
@@ -57,12 +58,12 @@ cat(crayon::green(
 # writeLines(capture.output(say("Hello"), type = "message"), con = "ascii_art.txt")
 # art <- readLines("ascii_art.txt")
 # dput(art)
-metflow_logo <-
-  c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
-    "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
-    " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
-    "                                             ", "                                             "
-  )
+# metflow_logo <-
+#   c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
+#     "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",
+#     " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|",
+#     "                                             ", "                                             "
+#   )
 # cat(metflow_logo, sep = "\n")
 # 
 # 

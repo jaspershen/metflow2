@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.8</span>
       </span>
     </div>
 
@@ -121,10 +121,13 @@
     </div>
 
     <pre class="usage"><span class='fu'>processData</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='kw'>polarity</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"positive"</span>, <span class='st'>"negative"</span>),
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>30</span>), <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>mzdiff</span> <span class='kw'>=</span> -<span class='fl'>0.001</span>,
-  <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>500</span>, <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>output.tic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>output.bpc</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>output.rt.correction.plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>min.fraction</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>fill.peaks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>30</span>), <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>prefilter</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,
+  <span class='fl'>500</span>), <span class='kw'>fitgauss</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>integrate</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mzdiff</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
+  <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>500</span>, <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.025</span>, <span class='kw'>bw</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>output.tic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>output.bpc</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>output.rt.correction.plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>min.fraction</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>fill.peaks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>output.peak.eic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>is.table</span> <span class='kw'>=</span> <span class='st'>"is.table.xlsx"</span>, <span class='kw'>group.for.figure</span> <span class='kw'>=</span> <span class='st'>"QC"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,8 +153,20 @@
       <td><p>See xcms.</p></td>
     </tr>
     <tr>
-      <th>mzdiff</th>
+      <th>prefilter</th>
       <td><p>See xcms.</p></td>
+    </tr>
+    <tr>
+      <th>fitgauss</th>
+      <td><p>see xcms.</p></td>
+    </tr>
+    <tr>
+      <th>integrate</th>
+      <td><p>see xcms.</p></td>
+    </tr>
+    <tr>
+      <th>mzdiff</th>
+      <td><p>see xcms.</p></td>
     </tr>
     <tr>
       <th>noise</th>
@@ -160,6 +175,14 @@
     <tr>
       <th>threads</th>
       <td><p>Number of threads.</p></td>
+    </tr>
+    <tr>
+      <th>binSize</th>
+      <td><p>see xcms.</p></td>
+    </tr>
+    <tr>
+      <th>bw</th>
+      <td><p>see xcms.</p></td>
     </tr>
     <tr>
       <th>output.tic</th>
@@ -180,6 +203,19 @@
     <tr>
       <th>fill.peaks</th>
       <td><p>Fill peaks NA or not.</p></td>
+    </tr>
+    <tr>
+      <th>output.peak.eic</th>
+      <td><p>Output some peaks EIC or not. 
+If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.</p></td>
+    </tr>
+    <tr>
+      <th>is.table</th>
+      <td><p>International standard table name.</p></td>
+    </tr>
+    <tr>
+      <th>group.for.figure</th>
+      <td><p>Which group you want to use to output TIC and BPC and EIC. Default is QC.</p></td>
     </tr>
     </table>
 

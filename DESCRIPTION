@@ -1,8 +1,8 @@
 Package: metflow2
 Type: Package
 Title: Comprehensitive tools for metabolomics data processing and data analysis
-Version: 0.0.7
-Date: 2019-12-16
+Version: 0.0.8
+Date: 2020-01-08
 Authors@R: c(
     person("Xiaotao", "Shen", , "shenxt1990@163.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-9608-9964")
@@ -20,7 +20,10 @@ Imports:
     dplyr,
     faahKO,
     ggplot2,
+    ggsci,
     ggfortify,
+    graphics,
+    grDevices,
     pcaMethods,
     impute,
     missForest,
@@ -41,15 +44,15 @@ Imports:
     tidyverse,
     methods,
     MSnbase,
+    mzR,
     pander,
-    graphics,
-    grDevices,
     utils,
     rvest,
     stats,
     readr,
     readxl,
     RColorBrewer,
+    plotly,
     stringr,
     tibble,
     tidyr,
