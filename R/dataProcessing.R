@@ -66,7 +66,7 @@
 
 
 # processData(path = ".",
-#             polarity = "negative",
+#             polarity = "positive",
 #             ppm = 15,
 #             peakwidth = c(5, 30),
 #             snthresh = 10,
@@ -78,9 +78,9 @@
 #             threads = 20,
 #             binSize = 0.025,
 #             bw = 5,
-#             output.tic = TRUE,
-#             output.bpc = TRUE,
-#             output.rt.correction.plot = TRUE,
+#             output.tic = FALSE,
+#             output.bpc = FALSE,
+#             output.rt.correction.plot = FALSE,
 #             min.fraction = 0.5,
 #             fill.peaks = FALSE,
 #             output.peak.eic = TRUE,
@@ -156,6 +156,7 @@ processData <- function(path = ".",
   intermediate_data_path <- file.path(output_path, "intermediate_data")
   dir.create(intermediate_data_path)
   
+  
   ##paramters
   parameters <- list(
     path = path,
@@ -178,7 +179,7 @@ processData <- function(path = ".",
     fill.peaks = fill.peaks
   )
   
-  save(parameters, file = file.path(output_path, "parameters"))
+  save(parameters, file = file.path(intermediate_data_path, "parameters"))
   
   ##------------------------------------------------------------------------------------
   #peak detection
@@ -227,8 +228,9 @@ processData <- function(path = ".",
       verbose = TRUE
     )
     save(raw_data,
-         file = file.path(intermediate_data_path, "raw_data"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "raw_data")
+         # compress = "xz"
+         )
   }
   
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
@@ -265,8 +267,9 @@ processData <- function(path = ".",
     }
     
     save(xdata,
-         file = file.path(intermediate_data_path, "xdata"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "xdata")
+         # compress = "xz"
+         )
   }
   
   rm(list = "raw_data")
@@ -285,8 +288,9 @@ processData <- function(path = ".",
                                     param = xcms::ObiwarpParam(binSize = 0.5)),
                   silent = TRUE)
     save(xdata2,
-         file = file.path(intermediate_data_path, "xdata2"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "xdata2")
+         # compress = "xz"
+         )
   }
   
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
@@ -294,18 +298,19 @@ processData <- function(path = ".",
   if (class(xdata2) == "try-error") {
     xdata2 <- xdata
     save(xdata2,
-         file = file.path(intermediate_data_path, "xdata2"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "xdata2")
+         # compress = "xz"
+         )
   } else{
     ## Plot also the difference of adjusted to raw retention time.
     if (output.rt.correction.plot) {
       cat(crayon::green("Drawing RT correction plot..."))
       rt.correction.plot <- plotAdjustedRT(object = xdata2)
-      save(
-        rt.correction.plot,
-        file = file.path(intermediate_data_path, "rt.correction.plot"),
-        compress = "xz"
-      )
+      # save(
+      #   rt.correction.plot,
+      #   file = file.path(intermediate_data_path, "rt.correction.plot"),
+      #   compress = "xz"
+      # )
       ggplot2::ggsave(
         filename = file.path(output_path, "RT correction plot.png"),
         plot = rt.correction.plot,
@@ -323,12 +328,16 @@ processData <- function(path = ".",
   if (output.tic) {
     cat(crayon::green("Drawing TIC plot..."))
     tic.plot <- xcms::chromatogram(object = xdata2,
-                                   aggregationFun = "sum")
+                                   aggregationFun = "sum",
+                                   BPPARAM =
+                                     BiocParallel::SnowParam(workers = threads,
+                                                             progressbar = TRUE)
+                                   )
 
     ## Plot all chromatograms.
-    save(tic.plot,
-         file = file.path(intermediate_data_path, "tic.plot"),
-         compress = "xz")
+    # save(tic.plot,
+    #      file = file.path(intermediate_data_path, "tic.plot"),
+    #      compress = "xz")
     plot <- chromatogramPlot(object = tic.plot,
                              title = "TIC", 
                              group.for.figure = group.for.figure)
@@ -350,12 +359,15 @@ processData <- function(path = ".",
   if (output.bpc) {
     cat(crayon::green("Drawing BPC plot..."))
     bpc.plot <- xcms::chromatogram(object = xdata2,
-                                   aggregationFun = "max")
+                                   aggregationFun = "max",
+                                   BPPARAM =
+                                     BiocParallel::SnowParam(workers = threads,
+                                                             progressbar = TRUE))
     
     ## Plot all chromatograms.
-    save(bpc.plot,
-         file = file.path(intermediate_data_path, "bpc.plot"),
-         compress = "xz")
+    # save(bpc.plot,
+    #      file = file.path(intermediate_data_path, "bpc.plot"),
+    #      compress = "xz")
     
     plot <- chromatogramPlot(object = bpc.plot, title = "BPC", 
                              group.for.figure = group.for.figure)
@@ -392,8 +404,9 @@ processData <- function(path = ".",
     
     xdata3 <- xcms::groupChromPeaks(xdata2, param = pdp)
     save(xdata3,
-         file = file.path(intermediate_data_path, "xdata3"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "xdata3")
+         # compress = "xz"
+         )
   }
   
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
@@ -404,11 +417,12 @@ processData <- function(path = ".",
     ## pass a FillChromPeaksParam object to the method.
     xdata3 <- xcms::fillChromPeaks(xdata3)
     save(xdata3,
-         file = file.path(intermediate_data_path, "xdata3"),
-         compress = "xz")
+         file = file.path(intermediate_data_path, "xdata3")
+         # compress = "xz"
+         )
   }
 
-  cat(crayon::green("Outputting peak table..."))
+  cat(crayon::green("Outputting peak table...\n"))
   ##output peak table
   values <- xcms::featureValues(xdata3, value = "into")
   definition <- xcms::featureDefinitions(object = xdata3)
@@ -444,6 +458,7 @@ processData <- function(path = ".",
   cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
   
   rm(list = c("peak_table", "peak_table_for_cleaning"))
+  cat(crayon::red("OK\n"))
   ##-------------------------------------------------------------------------------------
   ##output EIC of all peaks
   
@@ -478,11 +493,13 @@ processData <- function(path = ".",
     temp_fun <- function(idx = 100,
                          feature_eic_data,
                          path = ".",
-                         peak.name) {
+                         peak.name,
+                         metabolite.name) {
       
       suppressMessages(require(magrittr))
       peak.name <- peak.name[idx]
       plot.name <- paste("",peak.name, sep = "")
+      metabolite.name <- metabolite.name[idx]
       feature_eic_data <- 
         feature_eic_data[[idx]]  
       
@@ -493,22 +510,22 @@ processData <- function(path = ".",
         plot <- 
           feature_eic_data %>% 
           ggplot2::ggplot(ggplot2::aes(rt, intensity, group = sample_name)) +
-          ggplot2::geom_line(ggplot2::aes(color = sample_group)) +
+          ggplot2::geom_line(ggplot2::aes(color = sample_name)) +
           ggsci::scale_color_lancet() +
-          ggplot2::labs(x = "Retention time", title = paste("RT range:", rt_range[1], rt_range[2], sep = "_")) +
+          ggplot2::labs(x = "Retention time", 
+                        title = paste("RT range:", rt_range[1], rt_range[2], metabolite.name, sep = "_")) +
           ggplot2::theme_bw()
         
         ggplot2::ggsave(plot, 
                         file = file.path(path, paste(plot.name, "png", sep = ".")),
-                        width = 6, 
+                        width = 10, 
                         height = 6) 
       }
     }
     
     
-    
-    
     index2 <- sort(unique(match_result[, 2]))
+    metabolite_name <- is_table$name[match_result[match(index2, match_result[,2]), 1]]
     feature_eic <-
       xcms::featureChromatograms(
         x = xdata3,
@@ -571,8 +588,16 @@ processData <- function(path = ".",
     feature_eic_data <- 
       feature_eic_data %>% 
       lapply(function(x){
+        x <- 
         x %>% 
           filter(sample_group %in% group.for.figure)
+        
+        if(unique(x$sample_name) > 10){
+          idx <- which(x$sample_name %in% sort(sample(unique(x$sample_name), 10))) %>% 
+            sort()
+          x <- x[idx, , drop = FALSE]
+        }
+        x
       })
     
     
@@ -582,7 +607,8 @@ processData <- function(path = ".",
                                                              progressbar = TRUE),
                            feature_eic_data = feature_eic_data, 
                            path = feature_EIC_path, 
-                           peak.name = peak_name[index2]
+                           peak.name = peak_name[index2],
+                           metabolite.name = metabolite_name
                            )
 
   }

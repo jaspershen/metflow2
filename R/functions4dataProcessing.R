@@ -34,6 +34,12 @@ setGeneric(
       return(NULL)
     }
     
+    if(nrow(info) > 10){
+      idx <- sort(sample(1:nrow(info), 10))
+      info <- info[idx, , drop = FALSE]
+      data <- data[,idx,drop = FALSE]
+    }
+    
     rm(list = c("object"))
     data <- apply(data, 2, function(x) {
       x <- x[[1]]
