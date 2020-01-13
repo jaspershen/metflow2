@@ -259,7 +259,7 @@ processData <- function(path = ".",
       param = cwp,
       BPPARAM = BiocParallel::SnowParam(workers = threads,
                                         progressbar = TRUE)
-    ), silent = TRUE
+    ), silent = FALSE
       )
     
     if(class(xdata) == "try-error"){
@@ -286,7 +286,7 @@ processData <- function(path = ".",
   } else{
     xdata2 <- try(xcms::adjustRtime(xdata,
                                     param = xcms::ObiwarpParam(binSize = 0.5)),
-                  silent = TRUE)
+                  silent = FALSE)
     save(xdata2,
          file = file.path(intermediate_data_path, "xdata2")
          # compress = "xz"
@@ -463,7 +463,7 @@ processData <- function(path = ".",
   ##output EIC of all peaks
   
   is_table <- 
-    try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
+    try(readxl::read_xlsx(file.path(path, is.table)), silent = FALSE)
   
   if(class(is_table) != "try-error")  {
     data1 <- as.matrix(is_table[,c(2,3)])
@@ -482,10 +482,8 @@ processData <- function(path = ".",
   }
   
   
-  
-  
   if(output.peak.eic){
-    cat(crayon::green("Outputting peak table...\n"))
+    cat(crayon::green("Outputting peak EICs...\n"))
     feature_EIC_path <- file.path(output_path, "feature_EIC")
     dir.create(feature_EIC_path)
    
@@ -536,33 +534,40 @@ processData <- function(path = ".",
                                   progressbar = TRUE)
       )
     
+    
+    
     feature_eic_data <- feature_eic@.Data %>% 
     pbapply::pbapply(1, function(y){
       y <- lapply(y, function(x){
-        if(nrow(x@chromPeaks) == 0){
-          data.frame(rt.med = NA,
-                     rt.min = NA,
-                     rt.max = NA,
-                     rt = NA, 
-                     min.intensity = 0,
-                     max.intensity = NA,
-                     intensity = NA,
-                     stringsAsFactors = FALSE) 
+        if(class(x) == "XChromatogram"){
+          if(nrow(x@chromPeaks) == 0){
+            data.frame(rt.med = NA,
+                       rt.min = NA,
+                       rt.max = NA,
+                       rt = NA, 
+                       min.intensity = 0,
+                       max.intensity = NA,
+                       intensity = NA,
+                       stringsAsFactors = FALSE) 
+          }else{
+            if(nrow(x@chromPeaks) > 1){
+              x@chromPeaks <- 
+                tibble::as_tibble(x@chromPeaks) %>%
+                dplyr::filter(maxo == max(maxo)) %>% 
+                as.matrix()
+            }
+            data.frame(rt.med = x@chromPeaks[,4],
+                       rt.min = x@chromPeaks[,5],
+                       rt.max = x@chromPeaks[,6],
+                       rt = x@rtime, 
+                       min.intensity = 0,
+                       max.intensity = x@chromPeaks[,"maxo"],
+                       intensity = x@intensity,
+                       stringsAsFactors = FALSE)  
+          } 
         }else{
-          if(nrow(x@chromPeaks) > 1){
-            x@chromPeaks <- 
-              tibble::as_tibble(x@chromPeaks) %>%
-              dplyr::filter(maxo == max(maxo)) %>% 
-              as.matrix()
-          }
-          data.frame(rt.med = x@chromPeaks[,4],
-                     rt.min = x@chromPeaks[,5],
-                     rt.max = x@chromPeaks[,6],
-                     rt = x@rtime, 
-                     min.intensity = 0,
-                     max.intensity = x@chromPeaks[,"maxo"],
-                     intensity = x@intensity,
-                     stringsAsFactors = FALSE)  
+          
+          
         }
       }
       )
@@ -590,7 +595,7 @@ processData <- function(path = ".",
       lapply(function(x){
         x <- 
         x %>% 
-          filter(sample_group %in% group.for.figure)
+          dplyr::filter(sample_group %in% group.for.figure)
         
         if(unique(x$sample_name) > 10){
           idx <- which(x$sample_name %in% sort(sample(unique(x$sample_name), 10))) %>% 
