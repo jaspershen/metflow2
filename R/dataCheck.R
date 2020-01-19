@@ -67,7 +67,7 @@ setGeneric(
     ##check sample.info
     if (sum(is.na(sample.info)) > 0) {
       cat(crayon::red(clisymbols::symbol$cross,
-                      "Error: There are", sum(is.na(sample.info)), "NAs in you sample.info.\n"))
+                      "Error: There are", sum(is.na(sample.info)), "NAs in your sample.info.\n"))
       sample.info.record <- c(sample.info.record, "Error")
     } else{
       # cat("OK: There are no NAs in you sample.info.\n")
