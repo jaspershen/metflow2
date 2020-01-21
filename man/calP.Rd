@@ -4,9 +4,16 @@
 \alias{calP}
 \title{calP}
 \usage{
-calP(object, control.group, case.group, test.method = c("t", "wilcox"),
-  adjust.method = c("holm", "hochberg", "hommel", "bonferroni", "BH",
-  "BY", "fdr", "none"), log.scale = FALSE, ...)
+calP(
+  object,
+  control.group,
+  case.group,
+  test.method = c("t", "wilcox"),
+  adjust.method = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr",
+    "none"),
+  log.scale = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{object}
@@ -43,6 +50,7 @@ Calculate p value and AUC for each feature.
 #' y <- rep(0:1,5)
 #' res <- plsr(y~x, method = "oscorespls")
 #' SXTvip(res)
+
 
 SXTvip <- function(object) {
   if (object$method != "oscorespls")

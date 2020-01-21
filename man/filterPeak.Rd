@@ -4,8 +4,13 @@
 \alias{filterPeak}
 \title{filterPeak}
 \usage{
-filterPeak(object, min.fraction.qc = 0.8, min.fraction = 0.8,
-  min.subject.qc.ratio = 2, dl.qc.r2.cutoff = 0.7)
+filterPeak(
+  object,
+  min.fraction.qc = 0.8,
+  min.fraction = 0.8,
+  min.subject.qc.ratio = 2,
+  dl.qc.r2.cutoff = 0.7
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}

@@ -4,8 +4,14 @@
 \alias{dotsne}
 \title{dotsne}
 \usage{
-dotsne(object, slot = c("QC", "Subject"), dims = 2, perplexity = 30,
-  colour.index = c("class", "group", "batch"), verbose = TRUE)
+dotsne(
+  object,
+  slot = c("QC", "Subject"),
+  dims = 2,
+  perplexity = 30,
+  colour.index = c("class", "group", "batch"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}

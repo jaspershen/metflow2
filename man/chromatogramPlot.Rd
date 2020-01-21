@@ -4,9 +4,16 @@
 \alias{chromatogramPlot}
 \title{chromatogramPlot}
 \usage{
-chromatogramPlot(object, title.size = 15, lab.size = 15,
-  axis.text.size = 15, alpha = 0.5, title = "",
-  interactive = FALSE, group.for.figure = "QC")
+chromatogramPlot(
+  object,
+  title.size = 15,
+  lab.size = 15,
+  axis.text.size = 15,
+  alpha = 0.5,
+  title = "",
+  interactive = FALSE,
+  group.for.figure = "QC"
+)
 }
 \arguments{
 \item{object}{Object for tic.plot or bpc.plot.}

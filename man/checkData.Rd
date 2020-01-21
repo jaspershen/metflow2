@@ -4,8 +4,11 @@
 \alias{checkData}
 \title{checkData}
 \usage{
-checkData(data = c("batch1.csv", "batch2.csv"),
-  sample.info = "sample.information.csv", path = ".")
+checkData(
+  data = c("batch1.csv", "batch2.csv"),
+  sample.info = "sample.information.csv",
+  path = "."
+)
 }
 \arguments{
 \item{data}{MS1 data tables.}

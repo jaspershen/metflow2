@@ -4,14 +4,29 @@
 \alias{processData}
 \title{processData}
 \usage{
-processData(path = ".", polarity = c("positive", "negative"),
-  ppm = 15, peakwidth = c(5, 30), snthresh = 10, prefilter = c(3,
-  500), fitgauss = FALSE, integrate = 2, mzdiff = 0.01,
-  noise = 500, threads = 6, binSize = 0.025, bw = 5,
-  output.tic = TRUE, output.bpc = TRUE,
-  output.rt.correction.plot = TRUE, min.fraction = 0.5,
-  fill.peaks = FALSE, output.peak.eic = TRUE,
-  is.table = "is.table.xlsx", group.for.figure = "QC")
+processData(
+  path = ".",
+  polarity = c("positive", "negative"),
+  ppm = 15,
+  peakwidth = c(5, 30),
+  snthresh = 10,
+  prefilter = c(3, 500),
+  fitgauss = FALSE,
+  integrate = 2,
+  mzdiff = 0.01,
+  noise = 500,
+  threads = 6,
+  binSize = 0.025,
+  bw = 5,
+  output.tic = TRUE,
+  output.bpc = TRUE,
+  output.rt.correction.plot = TRUE,
+  min.fraction = 0.5,
+  fill.peaks = FALSE,
+  output.peak.eic = TRUE,
+  is.table = "is.table.xlsx",
+  group.for.figure = "QC"
+)
 }
 \arguments{
 \item{path}{Work directory.}

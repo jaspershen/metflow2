@@ -4,8 +4,7 @@
 \alias{metflow2_logo}
 \title{metflow2_logo}
 \usage{
-metflow2_logo(logo.index = 1, colour = c("yellow", "white", "green",
-  "red"))
+metflow2_logo(logo.index = 1, colour = c("yellow", "white", "green", "red"))
 }
 \arguments{
 \item{logo.index}{Which logo you want to use.}

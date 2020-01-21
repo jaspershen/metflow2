@@ -51,12 +51,12 @@ HeatMap <- function(MetFlowData,
     dir.create(path)
   }
 
-subject <- MetFlowData@subject
+  subject <- MetFlowData@subject
   tags <- MetFlowData@tags
   subject.info <- MetFlowData@subject.info
   group <- subject.info[, "group"]
 
-idx <- which(group %in% Group)
+  idx <- which(group %in% Group)
   subject.info <- subject.info[idx, ]
   subject <- subject[, idx]
   group <- subject.info[, "group"]
@@ -72,20 +72,20 @@ idx <- which(group %in% Group)
     data <- t(subject[var.index, ])
   }
 
-##log transformation
+  ##log transformation
   if (log.scale == FALSE) {
     data <- data
   }
 
-if (log.scale == "e") {
+  if (log.scale == "e") {
     data <- log(data + 1)
   }
 
-if (log.scale != FALSE & log.scale != "e") {
+  if (log.scale != FALSE & log.scale != "e") {
     data <- log(data + 1, as.numeric(log.scale))
   }
 
-data1 <- SXTscale(data, method = scale.method)
+  data1 <- SXTscale(data, method = scale.method)
   data1.range <- abs(range(data1))
   dif <- data1.range[1] - data1.range[2]
   if (dif < 0) {
@@ -95,20 +95,20 @@ data1 <- SXTscale(data, method = scale.method)
     data1[data1 < -1 * data1.range[2]] <- -1 * data1.range[2]
   }
 
-annotation_col <- data.frame(Group = factor(c(group)))
+  annotation_col <- data.frame(Group = factor(c(group)))
 
-rownames(annotation_col) <- rownames(data)
+  rownames(annotation_col) <- rownames(data)
 
-# Specify colors
+  # Specify colors
   ann_col <- NULL
   for (i in seq_along(Group)) {
     ann_col[i] <- color[i]
   }
 
-ann_colors = list(Group = ann_col)
+  ann_colors = list(Group = ann_col)
   names(ann_colors[[1]]) <- Group
 
-pdf(file.path(path, "heatmap.pdf"),
+  pdf(file.path(path, "heatmap.pdf"),
       width = width,
       height = height)
   par(mar = c(5,5,4,2))

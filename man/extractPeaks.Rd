@@ -4,8 +4,7 @@
 \alias{extractPeaks}
 \title{extractPeaks}
 \usage{
-extractPeaks(path = ".", ppm = 15, threads = 4,
-  is.table = "is.xlsx")
+extractPeaks(path = ".", ppm = 15, threads = 4, is.table = "is.xlsx")
 }
 \arguments{
 \item{path}{Work directory.}

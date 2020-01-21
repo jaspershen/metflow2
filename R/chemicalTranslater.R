@@ -14,12 +14,13 @@
 #'@import stringr
 #'@export
 
-transID <-
-  function(query = "C00001",
-           from = "KEGG",
-           to = "PubChem SID",
-           top = 1,
-           server = "http://cts.fiehnlab.ucdavis.edu/service/convert") {
+setGeneric(
+  name = "transID",
+  def = function(query = "C00001",
+                 from = "KEGG",
+                 to = "PubChem SID",
+                 top = 1,
+                 server = "http://cts.fiehnlab.ucdavis.edu/service/convert") {
     top <- as.numeric(top)
     if (is.na(top)) {
       top <- 1
@@ -75,8 +76,9 @@ You can use databaseName() function to check the databases this package support.
       data.frame(query, result, stringsAsFactors = FALSE)
     colnames(result) <- c(from, to)
     result
+    
   }
-
+)
 
 
 #'@title databaseName
@@ -91,34 +93,40 @@ You can use databaseName() function to check the databases this package support.
 #'@import stringr
 #'@export
 
-databaseName <- function(from.to = c("from", "to")) {
-  from.to <- match.arg(from.to)
-  if (from.to == "from") {
-    chemical_database = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/fromValues")
-  } else{
-    chemical_database = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/toValues")
+
+setGeneric(
+  name = "databaseName",
+  def = function(from.to = c("from", "to")) {
+    from.to <- match.arg(from.to)
+    if (from.to == "from") {
+      chemical_database = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/fromValues")
+    } else{
+      chemical_database = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/toValues")
+    }
+    
+    chemical_database <-
+      chemical_database %>%
+      rvest::html_nodes("p") %>%
+      rvest::html_text(TRUE) %>%
+      stringr::str_split(pattern = "\n") %>%
+      `[[`(1) %>%
+      sapply(function(x) {
+        x <- stringr::str_trim(x, "both")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = '\"',
+                                   replacement = "")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = ',',
+                                   replacement = "")
+      }) %>%
+      unname() %>%
+      data.frame(name = ., stringsAsFactors = FALSE) %>%
+      dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
+      dplyr::pull(name)
+    chemical_database
+    
+    
   }
-  
-  chemical_database <-
-    chemical_database %>%
-    rvest::html_nodes("p") %>%
-    rvest::html_text(TRUE) %>%
-    stringr::str_split(pattern = "\n") %>%
-    `[[`(1) %>%
-    sapply(function(x) {
-      x <- stringr::str_trim(x, "both")
-      x <-
-        stringr::str_replace_all(string = x,
-                                 pattern = '\"',
-                                 replacement = "")
-      x <-
-        stringr::str_replace_all(string = x,
-                                 pattern = ',',
-                                 replacement = "")
-    }) %>%
-    unname() %>%
-    data.frame(name = ., stringsAsFactors = FALSE) %>%
-    dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
-    dplyr::pull(name)
-  chemical_database
-}
+)

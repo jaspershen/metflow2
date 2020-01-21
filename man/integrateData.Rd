@@ -4,8 +4,10 @@
 \alias{integrateData}
 \title{integrateData}
 \usage{
-integrateData(object, method = c("qc.mean", "qc.median", "subject.mean",
-  "subject.median"))
+integrateData(
+  object,
+  method = c("qc.mean", "qc.median", "subject.mean", "subject.median")
+)
 }
 \arguments{
 \item{object}{object.}

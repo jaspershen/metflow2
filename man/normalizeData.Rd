@@ -4,9 +4,15 @@
 \alias{normalizeData}
 \title{normalizeData}
 \usage{
-normalizeData(object, method = c("svr", "total", "median", "mean", "pqn",
-  "loess"), keep.scale = TRUE, begin = 0.5, end = 1, step = 0.2,
-  threads = 4)
+normalizeData(
+  object,
+  method = c("svr", "total", "median", "mean", "pqn", "loess"),
+  keep.scale = TRUE,
+  begin = 0.5,
+  end = 1,
+  step = 0.2,
+  threads = 4
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}

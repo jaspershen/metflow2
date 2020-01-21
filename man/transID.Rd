@@ -4,8 +4,13 @@
 \alias{transID}
 \title{transID}
 \usage{
-transID(query = "C00001", from = "KEGG", to = "PubChem SID",
-  top = 1, server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+transID(
+  query = "C00001",
+  from = "KEGG",
+  to = "PubChem SID",
+  top = 1,
+  server = "http://cts.fiehnlab.ucdavis.edu/service/convert"
+)
 }
 \arguments{
 \item{query}{The ID of metabolite you want to translate.}

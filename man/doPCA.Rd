@@ -4,8 +4,11 @@
 \alias{doPCA}
 \title{doPCA}
 \usage{
-doPCA(object, scale.method = c("no", "auto", "pareto", "center"),
-  slot = c("QC", "Subject"))
+doPCA(
+  object,
+  scale.method = c("no", "auto", "pareto", "center"),
+  slot = c("QC", "Subject")
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}

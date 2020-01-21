@@ -14,10 +14,11 @@
 #'@import cli
 #'@export
 
-get_metclass <-
-  function(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
-           server = "http://classyfire.wishartlab.com/entities/",
-           sleep = 5) {
+setGeneric(
+  name = "get_metclass",
+  def = function(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
+                 server = "http://classyfire.wishartlab.com/entities/",
+                 sleep = 5) {
     url <- paste(server, inchikey, sep = "")
     Sys.sleep(time = sleep)
     result <- try(expr = xml2::read_html(url), silent = TRUE)
@@ -114,12 +115,12 @@ get_metclass <-
         "is not available in website.\n"
       ))
     }else{
-        message(crayon::green(
-          clisymbols::symbol$tick,
-          inchikey,
-          "is available in website.\n"
-        ))
-      }
+      message(crayon::green(
+        clisymbols::symbol$tick,
+        inchikey,
+        "is available in website.\n"
+      ))
+    }
     
     
     classification_info <-
@@ -233,7 +234,9 @@ get_metclass <-
     result@external_descriptors <- external_descriptors
     
     return(result)
+    
   }
+)
 
 setClass(
   Class = 'classyfire',

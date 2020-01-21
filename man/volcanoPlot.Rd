@@ -4,8 +4,14 @@
 \alias{volcanoPlot}
 \title{VolcanoPlot}
 \usage{
-volcanoPlot(p.value, fc, p.cutoff = 0.05, fc.cutoff = 1.3,
-  xlab = "Log2 (Fold change)", ylab = "-Log10 (P-value)")
+volcanoPlot(
+  p.value,
+  fc,
+  p.cutoff = 0.05,
+  fc.cutoff = 1.3,
+  xlab = "Log2 (Fold change)",
+  ylab = "-Log10 (P-value)"
+)
 }
 \arguments{
 \item{p.value}{p.value.}

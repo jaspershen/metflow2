@@ -1,3 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE.md
+README.Rmd
+NEWS.md
+docs
+vignettes
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

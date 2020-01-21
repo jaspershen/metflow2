@@ -467,136 +467,160 @@ setGeneric(
 #' @import plotly
 
 
-outputFeatureEIC <- function(object, 
-                             feature.index = 1,
-                             polygon = TRUE,
-                             save.plot = TRUE,
-                             path = ".",
-                             file.type = c("pdf", "png"),
-                             plot.name = "peak_plot",
-                             width = 7,
-                             height = 7,
-                             interactive.plot = FALSE,
-                             return.plot = TRUE,
-                             message = TRUE){
-  file.type <- match.arg(file.type)
-  if(message){
-    cat(crayon::green("Extracting EICs..."))  
-  }
-  
-  feature_eic <- xcms::featureChromatograms(x = object, 
-                                            features = feature.index)
-  if(message){
-    cat(crayon::red("OK\n"))  
-  }
-  
-  feature_eic_data <- 
-    object@.Data[1,] %>% 
-    lapply(function(x){
-      if(nrow(x@chromPeaks) == 0){
-        data.frame(rt.med = NA,
-                   rt.min = NA,
-                   rt.max = NA,
-                   rt = NA, 
-                   min.intensity = 0,
-                   max.intensity = NA,
-                   intensity = NA,
-                   stringsAsFactors = FALSE) 
-      }else{
-        if(nrow(x@chromPeaks) > 1){
-          x@chromPeaks <- 
-            as_tibble(x@chromPeaks) %>% 
-            filter(maxo == max(maxo)) %>% 
-            as.matrix()
+setGeneric(
+  name = "outputFeatureEIC",
+  def = function(object,
+                 feature.index = 1,
+                 polygon = TRUE,
+                 save.plot = TRUE,
+                 path = ".",
+                 file.type = c("pdf", "png"),
+                 plot.name = "peak_plot",
+                 width = 7,
+                 height = 7,
+                 interactive.plot = FALSE,
+                 return.plot = TRUE,
+                 message = TRUE) {
+    file.type <- match.arg(file.type)
+    if (message) {
+      cat(crayon::green("Extracting EICs..."))
+    }
+    
+    feature_eic <- xcms::featureChromatograms(x = object,
+                                              features = feature.index)
+    if (message) {
+      cat(crayon::red("OK\n"))
+    }
+    
+    feature_eic_data <-
+      object@.Data[1, ] %>%
+      lapply(function(x) {
+        if (nrow(x@chromPeaks) == 0) {
+          data.frame(
+            rt.med = NA,
+            rt.min = NA,
+            rt.max = NA,
+            rt = NA,
+            min.intensity = 0,
+            max.intensity = NA,
+            intensity = NA,
+            stringsAsFactors = FALSE
+          )
+        } else{
+          if (nrow(x@chromPeaks) > 1) {
+            x@chromPeaks <-
+              as_tibble(x@chromPeaks) %>%
+              filter(maxo == max(maxo)) %>%
+              as.matrix()
+          }
+          data.frame(
+            rt.med = x@chromPeaks[, 4],
+            rt.min = x@chromPeaks[, 5],
+            rt.max = x@chromPeaks[, 6],
+            rt = x@rtime,
+            min.intensity = 0,
+            max.intensity = x@chromPeaks[, "maxo"],
+            intensity = x@intensity,
+            stringsAsFactors = FALSE
+          )
         }
-        data.frame(rt.med = x@chromPeaks[,4],
-                   rt.min = x@chromPeaks[,5],
-                   rt.max = x@chromPeaks[,6],
-                   rt = x@rtime, 
-                   min.intensity = 0,
-                   max.intensity = x@chromPeaks[,"maxo"],
-                   intensity = x@intensity,
-                   stringsAsFactors = FALSE)  
-      }
-    })
-  
-  feature_eic_data <- 
-    mapply(function(x, y, z){
-      data.frame(x, 
-                 sample_group = y,
-                 sample_name = z,
-                 stringsAsFactors = FALSE) %>% 
-        list()
-    },
-    x = feature_eic_data,
-    y = object@phenoData@data$sample_group,
-    z = object@phenoData@data$sample_name
-    )
-  
-  
-  feature_eic_data <- 
-    do.call(rbind, feature_eic_data)
-  
-  plot <- 
-    feature_eic_data %>% 
-    ggplot(aes(rt, intensity, group = sample_name)) +
-    geom_line(aes(color = sample_group)) +
-    ggsci::scale_color_lancet() +
-    labs(x = "Retention time") +
-    theme_bw()
-  
-  if(polygon){
-    plot2 <- 
-      plot +
-      new_scale_color() +
-      geom_rect(aes(xmin = rt.min, 
-                    xmax = rt.max, 
-                    ymin = min.intensity, 
-                    ymax = max.intensity,
-                    color = sample_group),
-                fill = NA, 
-                linetype = 2) +
-      ggsci::scale_color_lancet(alpha = 0.3)
-  }
-  
-  if(save.plot){
-    if(polygon){
-      if(file.type == "pdf"){
-        ggplot2::ggsave(plot2, 
-                        file = file.path(path, paste(plot.name, "pdf", sep = ".")),
-                        width = width, 
-                        height = height)   
-      }else{
-        ggplot2::ggsave(plot2, 
-                        file = file.path(path, paste(plot.name, "png", sep = ".")),
-                        width = width, 
-                        height = height)
-      }
-      
-    }else{
-      if(file.type == "pdf"){
-        ggplot2::ggsave(plot, 
-                        file = file.path(path, paste(plot.name, "pdf", sep = ".")),
-                        width = width, 
-                        height = height)   
-      }else{
-        ggplot2::ggsave(plot, 
-                        file = file.path(path, paste(plot.name, "png", sep = ".")),
-                        width = width, 
-                        height = height)
+      })
+    
+    feature_eic_data <-
+      mapply(
+        function(x, y, z) {
+          data.frame(
+            x,
+            sample_group = y,
+            sample_name = z,
+            stringsAsFactors = FALSE
+          ) %>%
+            list()
+        },
+        x = feature_eic_data,
+        y = object@phenoData@data$sample_group,
+        z = object@phenoData@data$sample_name
+      )
+    
+    
+    feature_eic_data <-
+      do.call(rbind, feature_eic_data)
+    
+    plot <-
+      feature_eic_data %>%
+      ggplot(aes(rt, intensity, group = sample_name)) +
+      geom_line(aes(color = sample_group)) +
+      ggsci::scale_color_lancet() +
+      labs(x = "Retention time") +
+      theme_bw()
+    
+    if (polygon) {
+      plot2 <-
+        plot +
+        new_scale_color() +
+        geom_rect(
+          aes(
+            xmin = rt.min,
+            xmax = rt.max,
+            ymin = min.intensity,
+            ymax = max.intensity,
+            color = sample_group
+          ),
+          fill = NA,
+          linetype = 2
+        ) +
+        ggsci::scale_color_lancet(alpha = 0.3)
+    }
+    
+    if (save.plot) {
+      if (polygon) {
+        if (file.type == "pdf") {
+          ggplot2::ggsave(
+            plot2,
+            file = file.path(path, paste(plot.name, "pdf", sep = ".")),
+            width = width,
+            height = height
+          )
+        } else{
+          ggplot2::ggsave(
+            plot2,
+            file = file.path(path, paste(plot.name, "png", sep = ".")),
+            width = width,
+            height = height
+          )
+        }
+        
+      } else{
+        if (file.type == "pdf") {
+          ggplot2::ggsave(
+            plot,
+            file = file.path(path, paste(plot.name, "pdf", sep = ".")),
+            width = width,
+            height = height
+          )
+        } else{
+          ggplot2::ggsave(
+            plot,
+            file = file.path(path, paste(plot.name, "png", sep = ".")),
+            width = width,
+            height = height
+          )
+        }
       }
     }
+    
+    if (interactive.plot) {
+      plot <-
+        plotly::ggplotly(plot)
+    }
+    
+    if (return.plot) {
+      return(plot)
+    }
+    
   }
-  
-  if(interactive.plot){
-    plot <- 
-      plotly::ggplotly(plot)
-  }
-  
-  if(return.plot){
-    return(plot)
-  }
-}
+)
+
 
 
 new_scale <- function(new_aes) {

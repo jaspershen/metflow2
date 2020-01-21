@@ -1,5 +1,5 @@
 ---
-title: "metflow2 version 0.0.8"
+title: "metflow2"
 author:
 - name: Xiaotao Shen (https://www.shenxt.info/)
 - affiliation: School of Medicine, Stanford University
@@ -15,10 +15,14 @@ vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%
   \n"
 ---
 
-```{r, include=FALSE}
+```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  # fig.width = 7, 
+  # fig.height = 5,
+  warning = FALSE,
+  message = TRUE
 )
 ```
 
@@ -30,11 +34,17 @@ knitr::opts_chunk$set(
 
 Please install it via [github](https://github.com/jaspershen/metflow2).
 
-```{r,eval=FALSE,warning=FALSE, R.options=""}
+```{r,eval=FALSE,warning=FALSE, R.options="", cache=TRUE}
 if(!require(devtools)){
   install.packages("devtools")
 }
 devtools::install_github("jaspershen/metflow2")
+```
+
+We use the demo data in `demoData` package to show how to use `metflow2`. Please install it first.
+
+```{r,eval=FALSE,warning=FALSE, R.options=""}
+devtools::install_github("jaspershen/demoData")
 ```
 
 ## **Raw MS data processing**
@@ -62,7 +72,7 @@ Secondly, please organize your mzXML data into different folders.
 ### **Run `processData` function**
 
 
-```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=FALSE}
+```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=TRUE}
 metflow2::processData(path = ".", 
                       polarity = "positive", 
                       peakwidth = c(5,30), 
@@ -73,7 +83,5 @@ metflow2::processData(path = ".",
                       output.rt.correction.plot = TRUE,
                       fill.peaks = FALSE)
 ```
-
-
 
 This is just want to test the pull request function of github.

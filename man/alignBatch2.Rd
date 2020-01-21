@@ -4,8 +4,12 @@
 \alias{alignBatch2}
 \title{alignBatch}
 \usage{
-alignBatch2(object, combine.mz.tol = 25, combine.rt.tol = 30,
-  use.int.tol = FALSE)
+alignBatch2(
+  object,
+  combine.mz.tol = 25,
+  combine.rt.tol = 30,
+  use.int.tol = FALSE
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}

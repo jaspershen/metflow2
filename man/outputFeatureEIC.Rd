@@ -4,10 +4,20 @@
 \alias{outputFeatureEIC}
 \title{outputFeatureEIC}
 \usage{
-outputFeatureEIC(object, feature.index = 1, polygon = TRUE,
-  save.plot = TRUE, path = ".", file.type = c("pdf", "png"),
-  plot.name = "peak_plot", width = 7, height = 7,
-  interactive.plot = FALSE, return.plot = TRUE, message = TRUE)
+outputFeatureEIC(
+  object,
+  feature.index = 1,
+  polygon = TRUE,
+  save.plot = TRUE,
+  path = ".",
+  file.type = c("pdf", "png"),
+  plot.name = "peak_plot",
+  width = 7,
+  height = 7,
+  interactive.plot = FALSE,
+  return.plot = TRUE,
+  message = TRUE
+)
 }
 \arguments{
 \item{object}{xdata class object from dataProcessing.}

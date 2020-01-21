@@ -9,66 +9,71 @@
 #' @return Fold change.
 #' @export
 
-calFC <- function(object,
-                  control.group,
-                  case.group,
-                  type = c("median", "mean")) {
-  # requireNamespace("tidyverse")
-  type <- match.arg(type)
-  if(missing(control.group) | missing(case.group)){
-    stop("Please set control.group or case.group.\n")
-  }
-  
-  if(!all(c(control.group, case.group) %in% object@sample.info$group)){
-    stop("Please make sure that the control and case group are in your sample information.\n")
-  }
-  
-  ms1_data <- object@ms1.data
-  if(length(ms1_data) > 1){
-  stop("Please align batches first.\n")  
-  }
-  
-  ms1_data <- ms1_data[[1]]
-  sample_info <- object@sample.info
-  
-  control_data <- 
-  sample_info %>% 
-    filter(., group == control.group) %>% 
-    dplyr::pull(., sample.name) %>% 
-    match(., colnames(ms1_data)) %>% 
-    ms1_data[,.]
-  
-  case_data <- 
-    sample_info %>% 
-    filter(., group == case.group) %>% 
-    dplyr::pull(., sample.name) %>% 
-    match(., colnames(ms1_data)) %>% 
-    ms1_data[,.]
-  
-  if(sum(is.na(control_data)) != 0 | sum(is.na(case_data)) != 0){
-    stop("Please impute MV first.\n")
-  }
-  
-  fc <- apply(case_data, 1, function(x){
-    switch(type, 
-           mean = mean(x),
-           median = median(x))
-  })/apply(control_data, 1, function(x){
-    switch(type, 
-           mean = mean(x),
-           median = median(x))
-  })
-  
-  name <- object %>% 
-    getData(., slot = "Tags") %>% 
-    dplyr::pull(., name)
+setGeneric(
+  name = "calFC",
+  def = function(object,
+                 control.group,
+                 case.group,
+                 type = c("median", "mean")) {
+    # requireNamespace("tidyverse")
+    type <- match.arg(type)
+    if (missing(control.group) | missing(case.group)) {
+      stop("Please set control.group or case.group.\n")
+    }
+    
+    if (!all(c(control.group, case.group) %in% object@sample.info$group)) {
+      stop("Please make sure that the control and case group are in your sample information.\n")
+    }
+    
+    ms1_data <- object@ms1.data
+    if (length(ms1_data) > 1) {
+      stop("Please align batches first.\n")
+    }
+    
+    ms1_data <- ms1_data[[1]]
+    sample_info <- object@sample.info
+    
+    control_data <-
+      sample_info %>%
+      filter(., group == control.group) %>%
+      dplyr::pull(., sample.name) %>%
+      match(., colnames(ms1_data)) %>%
+      ms1_data[, .]
+    
+    case_data <-
+      sample_info %>%
+      filter(., group == case.group) %>%
+      dplyr::pull(., sample.name) %>%
+      match(., colnames(ms1_data)) %>%
+      ms1_data[, .]
+    
+    if (sum(is.na(control_data)) != 0 |
+        sum(is.na(case_data)) != 0) {
+      stop("Please impute MV first.\n")
+    }
+    
+    fc <- apply(case_data, 1, function(x) {
+      switch(type,
+             mean = mean(x),
+             median = median(x))
+    }) / apply(control_data, 1, function(x) {
+      switch(type,
+             mean = mean(x),
+             median = median(x))
+    })
+    
+    name <- object %>%
+      getData(., slot = "Tags") %>%
+      dplyr::pull(., name)
     getData(object = object, slot = "Tags")
-  fc <- data.frame(index = 1:length(fc), name, fc,
-                   stringsAsFactors = FALSE)
-  rownames(fc) <- NULL
-  invisible(fc)
-}
-
+    fc <- data.frame(index = 1:length(fc),
+                     name,
+                     fc,
+                     stringsAsFactors = FALSE)
+    rownames(fc) <- NULL
+    invisible(fc)
+  }
+)
 
 # #' @title HeatMap
 # #' @description Heat map
@@ -225,73 +230,77 @@ calFC <- function(object,
 #' @param rt.tolerance RT tolerance for ms1 and ms2 data matching.
 #' @return Return a result which give the matching result of data1 and database.
 
-SXTMTmatch <- function(data1,
-                       data2,
-                       mz.tolerance = 25,
-                       rt.tolerance = 180) {
-  if (nrow(data1) == 0 | nrow(data2) == 0) {
+
+setGeneric(
+  name = "SXTMTmatch",
+  def = function(
+    data1,
+    data2,
+    mz.tolerance = 25,
+    rt.tolerance = 180
+  ) {
+    if (nrow(data1) == 0 | nrow(data2) == 0) {
+      result <- NULL
+      return(result)
+    }
+    mz1 <- as.numeric(data1[, 1])
+    rt1 <- as.numeric(data1[, 2])
+    
+    mz2 <- as.numeric(data2[, 1])
+    rt2 <- as.numeric(data2[, 2])
+    
     result <- NULL
-    return(result)
-  }
-  mz1 <- as.numeric(data1[, 1])
-  rt1 <- as.numeric(data1[, 2])
-
-  mz2 <- as.numeric(data2[, 1])
-  rt2 <- as.numeric(data2[, 2])
-
-  result <- NULL
-  cat("finished: %")
-  cat("\n")
-  for (i in seq_along(mz1)) {
-    mz.error <- abs(mz1[i] - mz2) * 10 ^ 6 / mz1[i]
-    rt.error <- abs(rt1[i] - rt2)
-    j <- which(mz.error <= mz.tolerance & rt.error <= rt.tolerance)
-    if (length(j) != 0) {
-      result1 <-
-        cbind(i, j, mz1[i], mz2[j], mz.error[j], rt1[i], rt2[j], rt.error[j])
-      result <- rbind(result, result1)
+    cat("finished: %")
+    cat("\n")
+    for (i in seq_along(mz1)) {
+      mz.error <- abs(mz1[i] - mz2) * 10 ^ 6 / mz1[i]
+      rt.error <- abs(rt1[i] - rt2)
+      j <- which(mz.error <= mz.tolerance & rt.error <= rt.tolerance)
+      if (length(j) != 0) {
+        result1 <-
+          cbind(i, j, mz1[i], mz2[j], mz.error[j], rt1[i], rt2[j], rt.error[j])
+        result <- rbind(result, result1)
+      }
+      
+      count <- floor((length(mz1)) * c(seq(0, 1, 0.01)))
+      if (any(i == count)) {
+        cat(ceiling (i * 100 / length(mz1)))
+        cat(" ")
+      }
+      
     }
-
-    count <- floor((length(mz1)) * c(seq(0, 1, 0.01)))
-    if (any(i == count)) {
-      cat(ceiling (i * 100 / length(mz1)))
-      cat(" ")
-    }
-
-  }
-  cat("\n")
-  if (is.null(result)) {
-    cat("There are not any peak be matched\n,
+    cat("\n")
+    if (is.null(result)) {
+      cat("There are not any peak be matched\n,
         please change the mz or rt tolerance and try again")
-    cat("\n")
-  }
-  else {
-    number1 <- length(unique(result[, 1]))
-    number2 <- length(unique(result[, 2]))
-    cat(
-      paste(
-        "There are",
-        number1,
-        "peaks in data1, and",
-        number2,
-        "peaks in data2 are matched"
+      cat("\n")
+    }
+    else {
+      number1 <- length(unique(result[, 1]))
+      number2 <- length(unique(result[, 2]))
+      cat(
+        paste(
+          "There are",
+          number1,
+          "peaks in data1, and",
+          number2,
+          "peaks in data2 are matched"
+        )
       )
-    )
-    cat("\n")
-    colnames(result) <-
-      c("Index1",
-        "Index2",
-        "mz1",
-        "mz2",
-        "mz error",
-        "rt1",
-        "rt2",
-        "rt error")
-    return(result)
+      cat("\n")
+      colnames(result) <-
+        c("Index1",
+          "Index2",
+          "mz1",
+          "mz2",
+          "mz error",
+          "rt1",
+          "rt2",
+          "rt error")
+      return(result)
+    }
   }
-}
-
-
+)
 
 
 
@@ -900,9 +909,6 @@ setGeneric(
 # }
 
 
-
-
-
 setGeneric(name = "SXTMTmatch2",
            def = function(data1,
                           data2,
@@ -1098,12 +1104,12 @@ setGeneric(
 
 
 
-metflow_logo <- 
-  c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ", 
-    "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ", 
-    " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|", 
-    "                                             ", "                                             "
-  )
+# metflow_logo <- 
+#   c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ", 
+#     "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ", 
+#     " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|", 
+#     "                                             ", "                                             "
+#   )
 
 
 

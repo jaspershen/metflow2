@@ -4,8 +4,11 @@
 \alias{get_metclass}
 \title{get_metclass}
 \usage{
-get_metclass(inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
-  server = "http://classyfire.wishartlab.com/entities/", sleep = 5)
+get_metclass(
+  inchikey = "QZDWODWEESGPLC-UHFFFAOYSA-N",
+  server = "http://classyfire.wishartlab.com/entities/",
+  sleep = 5
+)
 }
 \arguments{
 \item{inchikey}{The inchikey ID of a metabolite.}

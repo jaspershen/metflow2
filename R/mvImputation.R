@@ -125,91 +125,94 @@ setGeneric(
 )
 
 
-sxtMVimputation <- function(data,
-                            method = c("knn",
-                                       "rf",
-                                       "mean",
-                                       "median",
-                                       "zero",
-                                       "minimum",
-                                       "bpca",
-                                       "svdImpute",
-                                       "ppca"),
-                            ## knn parameters
-                            k = 10,
-                            rowmax = 0.5,
-                            colmax = 0.8,
-                            maxp = 1500,
-                            rng.seed = 362436069,
-                            ## missForest parameters
-                            maxiter = 10,
-                            ntree = 100,
-                            decreasing = FALSE,
-                            nPcs = 2,
-                            maxSteps = 100,
-                            threshold = 1e-04,
-                            ...) {
-  method = match.arg(method)
-  ## KNN method
-  if (method == "knn") {
-    # library(impute)
-    if (exists(".Random.seed"))
-      rm(.Random.seed)
-    data.knn <- impute::impute.knn(
-      as.matrix(t(data)),
-      k = k,
-      rowmax = rowmax,
-      colmax = colmax,
-      maxp = maxp,
-      rng.seed = rng.seed
-    )
-    data.knn <- tibble::as_tibble(t(data.knn[["data"]]))
-    return(data.knn)
+setGeneric(
+  name = "sxtMVimputation",
+  def = function(data,
+                 method = c("knn",
+                            "rf",
+                            "mean",
+                            "median",
+                            "zero",
+                            "minimum",
+                            "bpca",
+                            "svdImpute",
+                            "ppca"),
+                 ## knn parameters
+                 k = 10,
+                 rowmax = 0.5,
+                 colmax = 0.8,
+                 maxp = 1500,
+                 rng.seed = 362436069,
+                 ## missForest parameters
+                 maxiter = 10,
+                 ntree = 100,
+                 decreasing = FALSE,
+                 nPcs = 2,
+                 maxSteps = 100,
+                 threshold = 1e-04,
+                 ...) {
+    method = match.arg(method)
+    ## KNN method
+    if (method == "knn") {
+      # library(impute)
+      if (exists(".Random.seed"))
+        rm(.Random.seed)
+      data.knn <- impute::impute.knn(
+        as.matrix(t(data)),
+        k = k,
+        rowmax = rowmax,
+        colmax = colmax,
+        maxp = maxp,
+        rng.seed = rng.seed
+      )
+      data.knn <- tibble::as_tibble(t(data.knn[["data"]]))
+      return(data.knn)
+    }
+    
+    if (method == "rf") {
+      data.rf <- missForest::missForest(
+        t(data),
+        maxiter = maxiter,
+        ntree = ntree,
+        decreasing = decreasing,
+        ...
+      )
+      data.rf <- tibble::as_tibble(t(data.rf$ximp))
+      return(data.rf)
+    }
+    
+    ## mean imputation
+    if (method %in% c("mean", "median", "zero", "minimum")) {
+      data.result <- apply(data, 1, function(x) {
+        x <- as.numeric(x)
+        if (all(!is.na(x))) {
+          return(x)
+        } else{
+          x[is.na(x)] <-
+            switch(
+              EXPR = method,
+              mean = mean(x, na.rm = TRUE),
+              median = median(x, na.rm = TRUE),
+              zero = 0,
+              minimum = min(x, na.rm = TRUE)
+            )
+          x
+        }
+      })
+      return(tibble::as_tibble(t(data.result)))
+    }
+    
+    ##BPCA, SVD and ppca
+    if (method %in% c("bpca", "svdImpute", "ppca")) {
+      data.result <- pcaMethods::pca(
+        t(data),
+        method = method,
+        nPcs = nPcs,
+        maxSteps = maxSteps,
+        threshold = threshold
+      )
+      data.result <- t(pcaMethods::completeObs(data.bpca))
+      return(data.result)
+    }
   }
-  
-  if (method == "rf") {
-    data.rf <- missForest::missForest(
-      t(data),
-      maxiter = maxiter,
-      ntree = ntree,
-      decreasing = decreasing,
-      ...
-    )
-    data.rf <- tibble::as_tibble(t(data.rf$ximp))
-    return(data.rf)
-  }
-  
-  ## mean imputation
-  if (method %in% c("mean", "median", "zero", "minimum")) {
-    data.result <- apply(data, 1, function(x) {
-      x <- as.numeric(x)
-      if (all(!is.na(x))) {
-        return(x)
-      } else{
-        x[is.na(x)] <-
-          switch(
-            EXPR = method,
-            mean = mean(x, na.rm = TRUE),
-            median = median(x, na.rm = TRUE),
-            zero = 0,
-            minimum = min(x, na.rm = TRUE)
-          )
-        x
-      }
-    })
-    return(tibble::as_tibble(t(data.result)))
-  }
-  
-  ##BPCA, SVD and ppca
-  if (method %in% c("bpca", "svdImpute", "ppca")) {
-    data.result <- pcaMethods::pca(
-      t(data),
-      method = method,
-      nPcs = nPcs,
-      maxSteps = maxSteps,
-      threshold = threshold
-    )
-    data.result <- t(pcaMethods::completeObs(data.bpca))
-    return(data.result)
-  }
-}
+)

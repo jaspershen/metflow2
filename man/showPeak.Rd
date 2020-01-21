@@ -4,8 +4,16 @@
 \alias{showPeak}
 \title{showPeak}
 \usage{
-showPeak(object, peak.index = 1, title.size = 15, lab.size = 15,
-  axis.text.size = 15, alpha = 0.5, title = "", interactive = TRUE)
+showPeak(
+  object,
+  peak.index = 1,
+  title.size = 15,
+  lab.size = 15,
+  axis.text.size = 15,
+  alpha = 0.5,
+  title = "",
+  interactive = TRUE
+)
 }
 \arguments{
 \item{object}{Object from extractPeaks.}

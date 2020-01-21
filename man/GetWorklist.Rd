@@ -4,20 +4,24 @@
 \alias{getWorklist}
 \title{getWorklist}
 \usage{
-getWorklist(table.name = "batch3.xlsx", instrument = c("Thermo",
-  "Agilent", "AB"), each.mode.number = 32, randommethod = c("no",
-  "position", "injection"), samplenumber = NULL, QCstep = 8,
-  conditionQCnumber = 8, qc.index.from = 1,
+getWorklist(
+  table.name = "batch3.xlsx",
+  instrument = c("Thermo", "Agilent", "AB"),
+  each.mode.number = 32,
+  randommethod = c("no", "position", "injection"),
+  samplenumber = NULL,
+  QCstep = 8,
+  conditionQCnumber = 8,
+  qc.index.from = 1,
   dir = "D:\\\\Liang\\\\data\\\\PS4U\\\\HILIC\\\\batch3\\\\",
   method.path = "D:\\\\Liang\\\\Method\\\\urine\\\\HILIC\\\\",
   ms1.method.pos = "ZIC-HILIC_MS_pos",
   ms1.method.neg = "ZIC-HILIC_MS_neg",
-  ms2.method.pos = c("ZIC-HILIC_MSMS_pos_NCE25",
-  "ZIC-HILIC_MSMS_pos_NCE25", "ZIC-HILIC_MSMS_pos_NCE25",
-  "ZIC-HILIC_MSMS_pos_NCE25"),
-  ms2.method.neg = c("ZIC-HILIC_MSMS_neg_NCE25",
-  "ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25",
-  "ZIC-HILIC_MSMS_neg_NCE25"))
+  ms2.method.pos = c("ZIC-HILIC_MSMS_pos_NCE25", "ZIC-HILIC_MSMS_pos_NCE25",
+    "ZIC-HILIC_MSMS_pos_NCE25", "ZIC-HILIC_MSMS_pos_NCE25"),
+  ms2.method.neg = c("ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25",
+    "ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25")
+)
 }
 \arguments{
 \item{table.name}{Sample name.}
