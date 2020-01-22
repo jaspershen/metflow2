@@ -3,7 +3,7 @@ pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   contact_us: contact_us.html
-  metflow2: metflow2.html
+  metflow2_instruction: metflow2_instruction.html
 urls:
   reference: https://jaspershen.github.io/metflow2//reference
   article: https://jaspershen.github.io/metflow2//articles
