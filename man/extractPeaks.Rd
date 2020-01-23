@@ -4,7 +4,15 @@
 \alias{extractPeaks}
 \title{extractPeaks}
 \usage{
-extractPeaks(path = ".", ppm = 15, threads = 4, is.table = "is.xlsx")
+extractPeaks(
+  path = ".",
+  ppm = 15,
+  threads = 4,
+  is.table = "is.xlsx",
+  mz = NULL,
+  rt = NULL,
+  rt.tolerance = 40
+)
 }
 \arguments{
 \item{path}{Work directory.}
@@ -14,6 +22,12 @@ extractPeaks(path = ".", ppm = 15, threads = 4, is.table = "is.xlsx")
 \item{threads}{Number of threads.}
 
 \item{is.table}{Peak table. Two columns, column 1 is name of peak, column 2 is m/z of peaks.}
+
+\item{mz}{mz}
+
+\item{rt}{rt}
+
+\item{rt.tolerance}{Rt tolerance.}
 }
 \value{
 Result contains EIC of peaks.

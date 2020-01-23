@@ -2,12 +2,11 @@
 #' @description metflow2
 #' @author Xiaotao Shen
 #' \email{shenxt@@stanford.edu}
-#' @importFrom magrittr %>%
 #' @export
 
 metflow2 <- function(){
   cat(crayon::green("Thank you for using metflow2!\n"))
-  cat(crayon::green("Version 0.0.8 (20200113)\n"))
+  cat(crayon::green("Version 0.0.9 (20200122)\n"))
   cat(crayon::green("More information can be found at https://jaspershen.github.io/metflow2/\n"))
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
@@ -25,7 +24,7 @@ metflow2 <- function(){
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.0.8 (20200113)"
+Version 0.0.9 (20200122)"
   ),
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",

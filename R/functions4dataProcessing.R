@@ -235,6 +235,9 @@ setGeneric(
 #' @param ppm see xcms.
 #' @param threads Number of threads.
 #' @param is.table Peak table. Two columns, column 1 is name of peak, column 2 is m/z of peaks.
+#' @param mz mz
+#' @param rt rt
+#' @param rt.tolerance Rt tolerance.
 #' @return Result contains EIC of peaks.
 #' @export
 #' @import xcms 
@@ -243,85 +246,118 @@ setGeneric(
 #' @import mzR
 #' @import stringr
 #' @import tidyverse
+#' @importFrom magrittr %>%
 
-
-
-extractPeaks <- function(path = ".",
-                         ppm = 15,
-                         threads = 4,
-                         is.table = "is.xlsx"
-                         # rt.expand = 1
-) {
-  output_path <- path
-  # dir.create(output_path)
-  ##peak detection
-  
-  f.in <- list.files(path = path,
-                     pattern = '\\.(mz[X]{0,1}ML|cdf)',
-                     recursive = TRUE, 
-                     full.names = TRUE)
-  
-  sample_group <-
-    BiocGenerics::basename(f.in) %>% 
-    stringr::str_replace("\\.(mz[X]{0,1}ML|cdf)", "")
-  
-  pd <-
-    data.frame(
-      # sample_name = sub(
-      basename(f.in),
-      #   pattern = ".mzXML",
-      #   replacement = "",
-      #   fixed = TRUE
-      # ),
-      sample_group = sample_group,
-      stringsAsFactors = FALSE
-    )
-  
-  # requireNamespace("xcms")
-  cat(crayon::green("Reading raw data, it will take a while...\n"))
-  
-  if (any(dir(path) == "raw_data")) {
-    load(file.path(path, "raw_data"))
-  } else{
-    raw_data <- MSnbase::readMSData(
-      files = f.in,
-      pdata = new("NAnnotatedDataFrame", pd),
-      mode = "onDisk",
-      verbose = TRUE
+setGeneric(
+  name = "extractPeaks",
+  def = function(path = ".",
+                 ppm = 15,
+                 threads = 4,
+                 is.table = "is.xlsx",
+                 mz = NULL,
+                 rt = NULL,
+                 rt.tolerance = 40) {
+    output_path <- path
+    # dir.create(output_path)
+    ##peak detection
+    
+    f.in <- list.files(
+      path = path,
+      pattern = '\\.(mz[X]{0,1}ML|cdf)',
+      recursive = TRUE,
+      full.names = TRUE
     )
     
-    save(raw_data,
-         file = file.path(output_path, "raw_data"),
-         compress = "xz")
+    sample_group <-
+      BiocGenerics::basename(f.in) %>%
+      stringr::str_replace("\\.(mz[X]{0,1}ML|cdf)", "")
+    
+    pd <-
+      data.frame(# sample_name = sub(
+        basename(f.in),
+        #   pattern = ".mzXML",
+        #   replacement = "",
+        #   fixed = TRUE
+        # ),
+        sample_group = sample_group,
+        stringsAsFactors = FALSE)
+    
+    # requireNamespace("xcms")
+    cat(crayon::green("Reading raw data, it will take a while...\n"))
+    
+    if (any(dir(path) == "raw_data")) {
+      cat(crayon::yellow("Use old data.\n"))  
+      load(file.path(path, "raw_data"))
+    } else{
+      raw_data <- MSnbase::readMSData(
+        files = f.in,
+        pdata = new("NAnnotatedDataFrame", pd),
+        mode = "onDisk",
+        verbose = TRUE
+      )
+      
+      save(raw_data,
+           file = file.path(output_path, "raw_data"),
+           compress = "xz")
+    }
+    
+    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+    
+    is.table <-
+      try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
+      
+    if (!is.null(mz) & !is.null(rt)) {
+      if(length(mz) != length(rt)){
+        cat(crayon::yellow("Lenght of mz and rt you provied are different.\n"))
+      }
+      is.table <- data.frame(mz = as.numeric(mz),
+                             rt = as.numeric(rt), 
+                             stringsAsFactors = FALSE)
+      is.table$name <- paste("feature", 1:nrow(is.table), sep = "_")
+        
+        is.table <- 
+        is.table %>% 
+        dplyr::select(name, mz, rt)
+    }
+    
+    if(class(is.table)[1] == "try-error"){
+      stop(crayon::red('Please provide right is table or mz and rt.\n'))
+    }
+    
+    mz <-
+      is.table %>%
+      dplyr::pull(2)
+    
+    mz <- as.numeric(mz)
+    
+    mz_range <-
+      lapply(mz, function(x) {
+        c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
+      })
+    
+    mz_range <- do.call(rbind, mz_range)
+    
+    rt <-
+      is.table %>%
+      dplyr::pull(3) %>% 
+      as.numeric()
+    
+    rt_range <- 
+      lapply(rt, function(x){
+        c(x - rt.tolerance, x + rt.tolerance)
+      }) %>% 
+      do.call(rbind, .)
+    
+    cat(crayon::green("Extracting peaks, it will take a while..."))
+    peak_data <- xcms::chromatogram(object = raw_data,
+                                    mz = mz_range, 
+                                    rt = rt_range)
+    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+    
+    save(peak_data, file = file.path(output_path, "peak_data"))
+    return(peak_data)
   }
-  
-  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-  
-  is.table <- readxl::read_xlsx(file.path(path, is.table))
-  
-  mz <-
-    is.table %>%
-    dplyr::pull(2)
-  
-  mz <- as.numeric(mz)
-  
-  mz_range <-
-    lapply(mz, function(x) {
-      c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
-    })
-  
-  mz_range <- do.call(rbind, mz_range)
-  
-  cat(crayon::green("Extracting peaks, it will take a while..."))
-  peak_data <- xcms::chromatogram(object = raw_data,
-                                  mz = mz_range)
-  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-  
-  
-  save(peak_data, file = file.path(output_path, "peak_data"))
-  return(peak_data)
-}
-
+)
 
 #' @title showPeak
 #' @description Show the peaks from result from extractPeaks function.

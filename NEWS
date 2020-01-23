@@ -30,3 +30,7 @@ Version 0.0.8 (20200108)
 --------------
 o Add a lot of new parameters to dataProcessing.
 
+Version 0.0.9 (20200122)
+--------------
+o New functions for extractPeaks.
+
