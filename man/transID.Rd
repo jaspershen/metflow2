@@ -9,7 +9,8 @@ transID(
   from = "KEGG",
   to = "PubChem SID",
   top = 1,
-  server = "http://cts.fiehnlab.ucdavis.edu/service/convert"
+  server = c("http://cts.fiehnlab.ucdavis.edu/service/convert",
+    "https://www.chemspider.com/InChI.asmx")
 )
 }
 \arguments{

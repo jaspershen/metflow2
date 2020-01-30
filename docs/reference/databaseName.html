@@ -191,14 +191,17 @@
     <p>Whate databases are supported.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>databaseName</span>(<span class='kw'>from.to</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"from"</span>, <span class='st'>"to"</span>))</pre>
+    <pre class="usage"><span class='fu'>databaseName</span>(
+  <span class='kw'>server</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>,
+    <span class='st'>"https://www.chemspider.com/InChI.asmx"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>from.to</th>
-      <td><p>From or to.</p></td>
+      <th>server</th>
+      <td><p>server.</p></td>
     </tr>
     </table>
 

@@ -4,10 +4,13 @@
 \alias{databaseName}
 \title{databaseName}
 \usage{
-databaseName(from.to = c("from", "to"))
+databaseName(
+  server = c("http://cts.fiehnlab.ucdavis.edu/service/convert",
+    "https://www.chemspider.com/InChI.asmx")
+)
 }
 \arguments{
-\item{from.to}{From or to.}
+\item{server}{server.}
 }
 \value{
 A vector..
