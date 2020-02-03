@@ -337,21 +337,30 @@ setGeneric(
     
     mz_range <- do.call(rbind, mz_range)
     
-    rt <-
-      is.table %>%
-      dplyr::pull(3) %>% 
-      as.numeric()
-    
-    rt_range <- 
-      lapply(rt, function(x){
-        c(x - rt.tolerance, x + rt.tolerance)
-      }) %>% 
-      do.call(rbind, .)
-    
+    if(any(colnames(is.table) == "rt")){
+      rt <-
+        is.table %>%
+        dplyr::pull(3) %>% 
+        as.numeric()
+      
+      rt_range <- 
+        lapply(rt, function(x){
+          c(x - rt.tolerance, x + rt.tolerance)
+        }) %>% 
+        do.call(rbind, .)      
+    }else{
+      rt_range <- NA
+    }
+
     cat(crayon::green("Extracting peaks, it will take a while..."))
-    peak_data <- xcms::chromatogram(object = raw_data,
-                                    mz = mz_range, 
-                                    rt = rt_range)
+    if(!is.na(rt_range)){
+      peak_data <- xcms::chromatogram(object = raw_data,
+                                      mz = mz_range, 
+                                      rt = rt_range) 
+    }else{
+      peak_data <- xcms::chromatogram(object = raw_data,
+                                      mz = mz_range) 
+    }
     cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
     
     save(peak_data, file = file.path(output_path, "peak_data"))
