@@ -1,11 +1,11 @@
 #' @title alignBatch
-#' @description Align different batch datasets.
+#' @description Align different batch peaks tables.
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param object A metflowClass object.
-#' @param combine.mz.tol m/z tolerance.
-#' @param combine.rt.tol RT tolerance.
-#' @param use.int.tol TRUE or FALSE.
+#' @param combine.mz.tol m/z tolerance for batch alignment, default is 25 ppm.
+#' @param combine.rt.tol RT tolerance for batch alignment, default is 30 seconds.
+#' @param use.int.tol Whether use intensity match for batch aglignment.
 #' @return A new metflowClass object.
 #' @export
 
@@ -32,9 +32,11 @@ setGeneric(name = "alignBatch2",
              
              cat("Accurate aligning...\n")
              accurateMatchResult <-
-               accurateAlign(peak.table = ms1_data,
-                             simple.data = roughMatchResult,
-                             use.int.tol = use.int.tol)
+               accurateAlign(
+                 peak.table = ms1_data,
+                 simple.data = roughMatchResult,
+                 use.int.tol = use.int.tol
+               )
              object@ms1.data <- list(accurateMatchResult)
              
              object@process.info$alignBatch <- list()
@@ -87,8 +89,8 @@ roughAlign <- function(peak.table,
   
   rm(list = c("data1", "data2"))
   
-  simple.batch1 <- simple.batch1[match.result[, 1], ]
-  simple.batch2 <- simple.batch2[match.result[, 2], ]
+  simple.batch1 <- simple.batch1[match.result[, 1],]
+  simple.batch2 <- simple.batch2[match.result[, 2],]
   
   rm("match.result")
   
@@ -101,7 +103,7 @@ roughAlign <- function(peak.table,
 simplyData <- function(data,
                        combine.mz.tol = 5,
                        combine.rt.tol = 30) {
-  data <- data[order(data$mz), ]
+  data <- data[order(data$mz),]
   name <- data$name
   mz <- data$mz
   rt <- data$rt
@@ -138,7 +140,7 @@ simplyData <- function(data,
   
   remain.idx <- unique(unlist(remain.idx))
   
-  simple.data <- data[remain.idx, ]
+  simple.data <- data[remain.idx,]
   rm(list = c("data", "mz", "rt", "name", "int"))
   return(simple.data)
 }
@@ -292,8 +294,8 @@ accurateAlign <- function(peak.table,
   
   int.error.sd <- sd(abs(int.error))
   
-  if(!use.int.tol){
-    int.error.sd <- int.error.sd * 1000000 
+  if (!use.int.tol) {
+    int.error.sd <- int.error.sd * 1000000
   }
   
   
@@ -363,7 +365,7 @@ align2Batch <- function(batch1,
     temp.idx <- which(x == match.result1[, 1])
     if (length(temp.idx) == 1)
       return(temp.idx)
-    temp.result <- match.result1[temp.idx, ]
+    temp.result <- match.result1[temp.idx,]
     ##score
     temp.mz.error <- temp.result[, "mz.error"]
     temp.rt.error <- temp.result[, "rt.error"]
@@ -386,7 +388,7 @@ align2Batch <- function(batch1,
   }))
   
   
-  match.result1 <- match.result1[remain.idx, ]
+  match.result1 <- match.result1[remain.idx,]
   
   
   ##batch2 match batch1
@@ -404,7 +406,7 @@ align2Batch <- function(batch1,
     temp.idx <- which(x == match.result2[, 1])
     if (length(temp.idx) == 1)
       return(temp.idx)
-    temp.result <- match.result2[temp.idx, ]
+    temp.result <- match.result2[temp.idx,]
     ##score
     temp.mz.error <- temp.result[, "mz.error"]
     temp.rt.error <- temp.result[, "rt.error"]
@@ -427,7 +429,7 @@ align2Batch <- function(batch1,
   }))
   
   
-  match.result2 <- match.result2[remain.idx, ]
+  match.result2 <- match.result2[remain.idx,]
   
   name1 <- paste(match.result1[, 1], match.result1[, 2], sep = "_")
   name2 <- paste(match.result2[, 2], match.result2[, 1], sep = "_")
@@ -436,11 +438,11 @@ align2Batch <- function(batch1,
   
   temp.index <- which(name1 %in% intersect.name)
   
-  match.result <- match.result1[temp.index, ]
+  match.result <- match.result1[temp.index,]
   
   ##combine two batch data
-  batch1 <- batch1[match.result[, 1], ]
-  batch2 <- batch2[match.result[, 2], ]
+  batch1 <- batch1[match.result[, 1],]
+  batch2 <- batch2[match.result[, 2],]
   
   ##new name, mz and RT
   new.mz <-
@@ -637,7 +639,7 @@ setGeneric(
     
     result <-
       matrix(result[which(!apply(result, 1, function(x)
-        any(is.na(x)))), ], ncol = 11)
+        any(is.na(x)))),], ncol = 11)
     if (nrow(result) == 0)
       return(NULL)
     colnames(result) <-
@@ -661,64 +663,71 @@ setGeneric(
 
 
 
-setGeneric(name = "SXTMTmatch2",
-           def = function(data1,
-                          data2,
-                          mz.tol,
-                          #rt.tol is relative
-                          rt.tol = 30,
-                          rt.error.type = c("relative", "abs")){
-             rt.error.type <- match.arg(rt.error.type)
-             #
-             if (nrow(data1) == 0 | nrow(data2) == 0) {
-               result <- NULL
-               return(result)
-             }
-             # mz1 <- as.numeric(data1[, 1])
-             # rt1 <- as.numeric(data1[, 2])
-             info1 <- data1[,c(1,2)]
-             info1 <- apply(info1, 1, list)
-             
-             mz2 <- as.numeric(data2[, 1])
-             rt2 <- as.numeric(data2[, 2])
-             
-             result <- pbapply::pblapply(info1, function(x) {
-               temp.mz1 <- x[[1]][[1]]
-               temp.rt1 <- x[[1]][[2]]
-               mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
-               if(rt.error.type == "relative"){
-                 rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
-               }else{
-                 rt.error <- abs(temp.rt1 - rt2)
-               }
-               
-               j <- which(mz.error <= mz.tol & rt.error <= rt.tol)
-               if(length(j) == 0){
-                 matrix(NA, ncol = 7)
-               }else{
-                 cbind(j, temp.mz1, mz2[j], mz.error[j], temp.rt1, rt2[j], rt.error[j])
-               }
-             })
-             
-             if(length(result) == 1){
-               result <- cbind(1,result[[1]])
-             }else{
-               result <- mapply(function(x,y){list(cbind(x,y))},
-                                x <- 1:length(info1),
-                                y = result)
-               result <- do.call(rbind, result)
-             }
-             
-             result <- matrix(result[which(!apply(result,1,function(x) any(is.na(x)))),], ncol = 8)
-             if(nrow(result) == 0) return(NULL)
-             colnames(result) <-
-               c("Index1",
-                 "Index2",
-                 "mz1",
-                 "mz2",
-                 "mz error",
-                 "rt1",
-                 "rt2",
-                 "rt error")
-             result <- result
-           })
+setGeneric(
+  name = "SXTMTmatch2",
+  def = function(data1,
+                 data2,
+                 mz.tol,
+                 #rt.tol is relative
+                 rt.tol = 30,
+                 rt.error.type = c("relative", "abs")) {
+    rt.error.type <- match.arg(rt.error.type)
+    #
+    if (nrow(data1) == 0 | nrow(data2) == 0) {
+      result <- NULL
+      return(result)
+    }
+    # mz1 <- as.numeric(data1[, 1])
+    # rt1 <- as.numeric(data1[, 2])
+    info1 <- data1[, c(1, 2)]
+    info1 <- apply(info1, 1, list)
+    
+    mz2 <- as.numeric(data2[, 1])
+    rt2 <- as.numeric(data2[, 2])
+    
+    result <- pbapply::pblapply(info1, function(x) {
+      temp.mz1 <- x[[1]][[1]]
+      temp.rt1 <- x[[1]][[2]]
+      mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
+      if (rt.error.type == "relative") {
+        rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
+      } else{
+        rt.error <- abs(temp.rt1 - rt2)
+      }
+      
+      j <- which(mz.error <= mz.tol & rt.error <= rt.tol)
+      if (length(j) == 0) {
+        matrix(NA, ncol = 7)
+      } else{
+        cbind(j, temp.mz1, mz2[j], mz.error[j], temp.rt1, rt2[j], rt.error[j])
+      }
+    })
+    
+    if (length(result) == 1) {
+      result <- cbind(1, result[[1]])
+    } else{
+      result <- mapply(function(x, y) {
+        list(cbind(x, y))
+      },
+      x <- 1:length(info1),
+      y = result)
+      result <- do.call(rbind, result)
+    }
+    
+    result <-
+      matrix(result[which(!apply(result, 1, function(x)
+        any(is.na(x)))), ], ncol = 8)
+    if (nrow(result) == 0)
+      return(NULL)
+    colnames(result) <-
+      c("Index1",
+        "Index2",
+        "mz1",
+        "mz2",
+        "mz error",
+        "rt1",
+        "rt2",
+        "rt error")
+    result <- result
+  }
+)
