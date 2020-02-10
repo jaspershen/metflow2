@@ -436,6 +436,13 @@ setGeneric(name = "processData",
              peak_name <- xcms::groupnames(xdata3)
              peak_name <- paste(peak_name, ifelse(polarity == "positive", "POS", "NEG"), sep = "_")
              
+             colnames(values) <-
+               stringr::str_replace(
+                 string = colnames(values),
+                 pattern = "\\.mz[X]{0,1}ML",
+                 replacement = ""
+               )
+             
              peak_table <- data.frame(peak.name = peak_name,
                                       definition,
                                       values,
@@ -448,13 +455,16 @@ setGeneric(name = "processData",
                  pattern = "\\.mz[X]{0,1}ML",
                  replacement = ""
                )
-             
-             peak_table_for_cleaning <-
-               peak_table %>%
-               dplyr::select(-c("mzmin", 'mzmax', 'rtmin', 'rtmax', 'npeaks', unique(sample_group))) %>% 
-               dplyr::rename(name = peak.name, mz = mzmed, rt = rtmed)
-             
+            
              readr::write_csv(peak_table, path = file.path(output_path, "Peak_table.csv"))
+              
+             peak_table_for_cleaning <-
+               definition %>%
+               dplyr::select(-c("mzmin", 'mzmax', 'rtmin', 'rtmax', 'npeaks', unique(sample_group))) %>% 
+               dplyr::rename(mz = mzmed, rt = rtmed) %>% 
+               data.frame(name = peak_name, ., values, stringsAsFactors = FALSE)
+             
+            
              readr::write_csv(peak_table_for_cleaning, path = file.path(output_path, "Peak_table_for_cleaning.csv"))
              cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
              
