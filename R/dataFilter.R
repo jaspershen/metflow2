@@ -49,18 +49,18 @@ setGeneric(
         sum(!is.na(x)) / ncol(qc_sample)
       })
       
-      remain.idx <- which(na.fraction > min.fraction.qc)
-      if (length(remain.idx) == 0) {
+      remain_idx <- which(na.fraction > min.fraction.qc)
+      if (length(remain_idx) == 0) {
         stop(paste("No peaks meet min.fraction.qc:", min.fraction.qc))
       }
-      cat(length(remain.idx),
+      cat(length(remain_idx),
           "out of",
           nrow(ms1_data),
           "peaks are remained.\n")
-      ms1_data <- ms1_data[remain.idx, , drop = FALSE]
+      ms1_data <- ms1_data[remain_idx, , drop = FALSE]
       object@process.info$filterPeaks$min.fraction.qc <-
         min.fraction.qc
-      rm(list = c("remain.idx"))
+      rm(list = c("remain_idx"))
     }
     
     
@@ -89,25 +89,25 @@ setGeneric(
       })
     
     na.fraction <- do.call(cbind, na.fraction)
-    remain.idx <- apply(na.fraction, 1, function(x) {
+    remain_idx <- apply(na.fraction, 1, function(x) {
       any(x >  min.fraction)
     }) %>%
       which(.)
     
-    if (length(remain.idx) == 0) {
+    if (length(remain_idx) == 0) {
       stop(paste("No peaks meet min.fraction:", min.fraction))
     }
-    cat(length(remain.idx),
+    cat(length(remain_idx),
         "out of",
         nrow(ms1_data),
         "peaks are remained.\n")
-    ms1_data <- ms1_data[remain.idx, , drop = FALSE]
+    ms1_data <- ms1_data[remain_idx, , drop = FALSE]
     subject_data <-
-      subject_data[remain.idx, , drop = FALSE]
+      subject_data[remain_idx, , drop = FALSE]
     object@process.info$filterPeaks$min.fraction <-
       min.fraction
     rm(list = c(
-      "remain.idx",
+      "remain_idx",
       "na.fraction",
       "subject_group",
       "subject_name"
@@ -135,20 +135,20 @@ setGeneric(
       
       ratio <- peak_mean_int_subject / peak_mean_int_blank
       ratio[is.na(ratio)] <- 0
-      remain.idx <- which(ratio > min.subject.qc.ratio)
-      if (length(remain.idx) == 0) {
+      remain_idx <- which(ratio > min.subject.qc.ratio)
+      if (length(remain_idx) == 0) {
         stop(paste(
           "No peaks meet min.subject.qc.ratio:",
           min.subject.qc.ratio
         ))
       }
-      cat(length(remain.idx),
+      cat(length(remain_idx),
           "out of",
           nrow(ms1_data),
           "peaks are remained.\n")
       object@process.info$filterPeaks$min.subject.qc.ratio <-
         min.subject.qc.ratio
-      ms1_data <- ms1_data[remain.idx, , drop = FALSE]
+      ms1_data <- ms1_data[remain_idx, , drop = FALSE]
       rm(
         list = c(
           "blank_data",
@@ -156,7 +156,7 @@ setGeneric(
           "peak_mean_int_subject",
           "peak_mean_int_blank",
           "ratio",
-          "remain.idx"
+          "remain_idx"
         )
       )
     }
@@ -204,7 +204,7 @@ setGeneric(
                              pattern = "[0-9]{1,2}") %>%
         as.numeric(.)
       ####construct linear regression
-      remain.idx <- apply(qc_dl_sample, 1, function(y) {
+      remain_idx <- apply(qc_dl_sample, 1, function(y) {
         y <- as.numeric(y)
         temp.lm <- lm(y ~ dl_grade)
         (coefficients(temp.lm)[2] < 0 &
@@ -212,23 +212,264 @@ setGeneric(
       }) %>%
         which(.)
       
-      if (length(remain.idx) == 0) {
+      if (length(remain_idx) == 0) {
         stop(paste("No peaks meet dl.qc.r2.cutoff:", dl.qc.r2.cutoff))
       }
       
-      cat(length(remain.idx),
+      cat(length(remain_idx),
           "out of",
           nrow(ms1_data),
           "peaks are remained.\n")
       
       object@process.info$filterPeaks$dl.qc.r2.cutoff <-
         dl.qc.r2.cutoff
-      ms1_data <- ms1_data[remain.idx, , drop = FALSE]
+      ms1_data <- ms1_data[remain_idx, , drop = FALSE]
     }
     
     ms1_data <- list(ms1_data)
     object@ms1.data <- ms1_data
     cat("All is done.\n")
+    invisible(object)
+  }
+)
+
+
+#' @title filterPeak
+#' @description Filter peaks.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object A metflowClass object.
+#' @param min.fraction Peaks minimum fraction in samples.
+#' @param type Any ("any") or all ("all") groups should be meet this min.fraction.
+#' @param min.subject.qc.ratio Peak intensity ratio in subject and blank samples.
+#' @param dl.qc.r2.cutoff R2 cutoff for dilution QC.
+#' @param according.to Which information you want to use in sample information.
+#' @param which.group What groups you want to use.
+#' @import tidyverse
+#' @import tibble
+#' @return A new metflowClass object.
+#' @export
+
+setGeneric(
+  name = "filterPeak2",
+  def = function(object,
+                 min.fraction = 0.5,
+                 type = c("any", "all"),
+                 min.subject.qc.ratio = 2,
+                 dl.qc.r2.cutoff = 0.7,
+                 according.to = c("class", "group"),
+                 which.group) {
+    if (class(object) != "metflowClass") {
+      stop("Only the metflowClass is supported!\n")
+    }
+    type <- match.arg(type)
+    according.to <- match.arg(according.to)
+    if(missing(which.group)){
+      stop("Please provide the which.group\n")
+    }
+    sample_info <- 
+      object@sample.info %>% 
+      tibble::as_tibble()
+    
+    which.group <- 
+      which.group[which.group %in% unique(dplyr::pull(sample_info, according.to))]
+    
+    if(length(which.group) == 0){
+      stop("No group in the sample inforamtion.\n")
+    }
+    
+    cat(crayon::yellow(paste(which.group, collapse = ";"), "are in the", according.to, ".\n"))
+    
+    ms1_data <- object@ms1.data
+    
+    if (length(ms1_data) > 1) {
+      stop("Please algin your peak tables first!\n")
+    }
+    ms1_data <-
+      ms1_data[[1]] %>%
+      tibble::as_tibble()
+    # sample <- ms1_data[,match(sample_info$sample.name, colnames(ms1_data))]
+    # tags <- ms1_data[,-match(sample_info$sample.name, colnames(ms1_data))]
+    
+    object@process.info$filterPeaks <- list()
+    
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
+    cat(crayon::green("Removing peaks according to NA in different samples...\n"))
+    #remove peaks according to NA in QC samples
+    
+    non_na_fraction <- 
+    lapply(which.group, function(x){
+      temp_name <- 
+        which(dplyr::pull(sample_info, according.to) == x) %>% 
+        `[`(sample_info,.,) %>% 
+        dplyr::pull(sample.name)
+    
+      temp_non_na_fraction <-
+        ms1_data %>%
+        dplyr::select(temp_name) %>%
+        apply(1, function(x)
+          sum(!is.na(x)) / length(temp_name))
+      temp_non_na_fraction
+    })
+    
+    non_na_fraction <- 
+      non_na_fraction %>% 
+      dplyr::bind_cols()
+    
+    colnames(non_na_fraction) <- which.group
+    
+    remain_idx <- 
+      apply(non_na_fraction, 1, function(x){
+        if(type == "all"){
+          all(x >= min.fraction)
+        }else{
+          any(x >= min.fraction)
+        }
+      }) %>% 
+      which()
+    
+    if (length(remain_idx) == 0) {
+      stop(paste("No peaks meet min.fraction:", min.fraction.qc))
+    }
+    
+    cat(crayon::yellow(
+      length(remain_idx),
+      "out of",
+      nrow(ms1_data),
+      "peaks are remained.\n"
+    ))
+    
+    ms1_data <- ms1_data[remain_idx, , drop = FALSE]
+    object@process.info$filterPeaks$min.fraction <-
+      min.fraction
+    rm(list = c("remain_idx"))
+     
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
+    cat(crayon::yellow("Removing peaks according to blank samples...\n"))
+    ##remove peaks according to blank
+    if ("Blank" %in% sample_info$class) {
+      blank_data <-
+        `==`(sample_info$class, "Blank") %>%
+        which(.) %>%
+        `[`(sample_info$sample.name, .) %>%
+        dplyr::select(.data = ms1_data, .)
+      peak_mean_int_blank <-
+        apply(blank_data, 1, function(x)
+          mean(x, na.rm = TRUE))
+      peak_mean_int_blank[is.na(peak_mean_int_blank)] <- 0
+      
+      subject_data <- 
+        ms1_data %>% 
+        dplyr::select(
+          sample_info$sample.name[sample_info$class == "Subject"]
+        )
+      
+      peak_mean_int_subject <-
+        apply(subject_data, 1, function(x)
+          mean(x, na.rm = TRUE))
+      peak_mean_int_subject[is.na(peak_mean_int_subject)] <-
+        0
+      
+      ratio <- peak_mean_int_subject / peak_mean_int_blank
+      ratio[is.na(ratio)] <- 0
+      remain_idx <- which(ratio > min.subject.qc.ratio)
+      if (length(remain_idx) == 0) {
+        stop(paste(
+          "No peaks meet min.subject.qc.ratio:",
+          min.subject.qc.ratio
+        ))
+      }
+      cat(length(remain_idx),
+          "out of",
+          nrow(ms1_data),
+          "peaks are remained.\n")
+      object@process.info$filterPeaks$min.subject.qc.ratio <-
+        min.subject.qc.ratio
+      ms1_data <- ms1_data[remain_idx, , drop = FALSE]
+      rm(
+        list = c(
+          "blank_data",
+          "subject_data",
+          "peak_mean_int_subject",
+          "peak_mean_int_blank",
+          "ratio",
+          "remain_idx"
+        )
+      )
+    }
+    
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
+    cat(crayon::green("Removing peaks according to QC dilution samples...\n"))
+    ###remove peaks according to dilution
+    if ("QC.DL" %in% sample_info$class) {
+      qc_dl_sample <-
+        `==`(sample_info$class, "QC.DL") %>%
+        which(.) %>%
+        `[`(sample_info$sample.name, .) %>%
+        match(., colnames(ms1_data)) %>%
+        `[`(ms1_data, , .)
+      qc_dl_sample <-
+        qc_dl_sample[, order(colnames(qc_dl_sample))]
+      cat(crayon::yellow(
+        "The QC_DL sample names are:",
+        paste(colnames(qc_dl_sample), collapse = "; "),
+        "\n" 
+      ))
+      
+      dl_name <-
+        stringr::str_extract_all(string = colnames(qc_dl_sample),
+                                 pattern = "DL[0-9]{1,2}") %>%
+        unlist()
+      
+      qc_dl_sample <-
+        lapply(sort(unique(dl_name)), function(x) {
+          which(x == dl_name) %>%
+            `[`(qc_dl_sample, , .)
+        })
+      
+      qc_dl_sample <- lapply(qc_dl_sample, function(x) {
+        temp <- apply(x, 1, function(x)
+          mean(x, na.rm = TRUE))
+        temp[is.na(temp)] <- 0
+        temp
+      })
+      
+      qc_dl_sample <- do.call(cbind, qc_dl_sample)
+      colnames(qc_dl_sample) <- sort(unique(dl_name))
+      qc_dl_sample <-
+        as.data.frame(qc_dl_sample, stringsAsFactors = FALSE)
+      dl_grade <-
+        stringr::str_extract(string = sort(unique(dl_name)),
+                             pattern = "[0-9]{1,2}") %>%
+        as.numeric(.)
+      ####construct linear regression
+      remain_idx <- apply(qc_dl_sample, 1, function(y) {
+        y <- as.numeric(y)
+        temp.lm <- lm(y ~ dl_grade)
+        (coefficients(temp.lm)[2] < 0 &
+            summary(temp.lm)$r.squared > dl.qc.r2.cutoff)
+      }) %>%
+        which(.)
+      
+      if (length(remain_idx) == 0) {
+        stop(paste("No peaks meet dl.qc.r2.cutoff:", dl.qc.r2.cutoff))
+      }
+      
+      cat(crayon::yellow(
+        length(remain_idx),
+        "out of",
+        nrow(ms1_data),
+        "peaks are remained.\n" 
+      ))
+      
+      object@process.info$filterPeaks$dl.qc.r2.cutoff <-
+        dl.qc.r2.cutoff
+      ms1_data <- ms1_data[remain_idx, , drop = FALSE]
+    }
+    
+    ms1_data <- list(ms1_data)
+    object@ms1.data <- ms1_data
+    cat(crayon::bgYellow("All done.\n"))
     invisible(object)
   }
 )
@@ -295,14 +536,17 @@ setGeneric(
       )
     
     na.fraction <-
-      left_join(na.fraction, object@sample.info[,c(1,2)], by = c("peak.name" = "sample.name"))
+      left_join(na.fraction,
+                object@sample.info[, c(1, 2)],
+                by = c("peak.name" = "sample.name"))
     
     plot <- ggplot(data = na.fraction) +
       geom_point(aes(
         x = injection.order,
         y = na.fraction * 100,
         colour = class
-      ), size = 2) +
+      ),
+      size = 2) +
       scale_colour_discrete(
         breaks = c("QC", "Subject"),
         labels = c("QC", "Subject"),
@@ -372,14 +616,15 @@ setGeneric(
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
-    if(length(object@ms1.data) > 1){
+    if (length(object@ms1.data) > 1) {
       stop("Please align batch first.\n")
     }
     
     rsd <- calRSD(object = object, slot = slot)
     
-    remain.idx <- which(rsd < rsd.cutoff)
-    object@ms1.data <- list(object@ms1.data[[1]][remain.idx, ,drop = FALSE])
+    remain_idx <- which(rsd < rsd.cutoff)
+    object@ms1.data <-
+      list(object@ms1.data[[1]][remain_idx, , drop = FALSE])
     
     object@process.info$filterRSD <- list()
     object@process.info$filterRSD$slot <- slot

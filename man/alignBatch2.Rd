@@ -14,17 +14,17 @@ alignBatch2(
 \arguments{
 \item{object}{A metflowClass object.}
 
-\item{combine.mz.tol}{m/z tolerance.}
+\item{combine.mz.tol}{m/z tolerance for batch alignment, default is 25 ppm.}
 
-\item{combine.rt.tol}{RT tolerance.}
+\item{combine.rt.tol}{RT tolerance for batch alignment, default is 30 seconds.}
 
-\item{use.int.tol}{TRUE or FALSE.}
+\item{use.int.tol}{Whether use intensity match for batch aglignment.}
 }
 \value{
 A new metflowClass object.
 }
 \description{
-Align different batch datasets.
+Align different batch peaks tables.
 }
 \author{
 Xiaotao Shen
