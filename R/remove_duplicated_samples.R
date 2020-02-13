@@ -23,10 +23,14 @@ setGeneric(
     
     result <-
       lapply(duplicated_name, function(x) {
+        temp_idx1 <- match(x, colnames(peak_table))
+        temp_idx2 <- stringr::str_detect(colnames(peak_table), 
+                                         paste(x, "_", sep = "")) %>% 
+          which()
+        temp_idx <- c(temp_idx1, temp_idx2)
+        temp_idx <- temp_idx[!is.na(temp_idx)]
         x <-
-          stringr::str_detect(colnames(peak_table), paste(x, "_", sep = "")) %>%
-          which() %>%
-          `[`(colnames(peak_table), .)
+          colnames(peak_table)[temp_idx]
         x
       })
     names(result) <-
@@ -58,9 +62,13 @@ setGeneric(
       unique()
     remove_name <- NULL
     for(x in duplicated_name){
-      temp_idx <-
-        stringr::str_detect(colnames(peak_table), paste(x, "_", sep = "")) %>%
+      temp_idx1 <- match(x, colnames(peak_table))
+      temp_idx2 <- stringr::str_detect(colnames(peak_table), 
+                                       paste(x, "_", sep = "")) %>% 
         which()
+      temp_idx <- c(temp_idx1, temp_idx2)
+      temp_idx <- temp_idx[!is.na(temp_idx)]
+      
       cat(crayon::yellow(rep("-", 13)), "\n")
       cat(crayon::yellow("--->"), crayon::green(x), "\n")
       if (length(temp_idx) == 1) {
