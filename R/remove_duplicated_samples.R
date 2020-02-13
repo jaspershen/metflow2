@@ -56,9 +56,8 @@ setGeneric(
       duplicated_name %>%
       stringr::str_replace("_[0-9]{10,16}", "") %>%
       unique()
-    
-    
-    lapply(duplicated_name, function(x) {
+    remove_name <- NULL
+    for(x in duplicated_name){
       temp_idx <-
         stringr::str_detect(colnames(peak_table), paste(x, "_", sep = "")) %>%
         which()
@@ -66,9 +65,9 @@ setGeneric(
       cat(crayon::yellow("--->"), crayon::green(x), "\n")
       if (length(temp_idx) == 1) {
         cat(crayon::red("Only one sample"), "\n")
-        colnames(peak_table)[temp_idx] <-
-          colnames(peak_table)[temp_idx] %>%
-          stringr::str_replace("_[0-9]{10,16}", "")
+        # colnames(peak_table)[temp_idx] <-
+        #   colnames(peak_table)[temp_idx] %>%
+        #   stringr::str_replace("_[0-9]{10,16}", "")
       } else{
         na_number <-
           apply(peak_table[, temp_idx], 2, function(x)
@@ -81,14 +80,16 @@ setGeneric(
         print(info)
         cat("\n")
         remove_idx <- temp_idx[-which.min(na_number)]
+        remove_name <- c(remove_name, colnames(peak_table)[remove_idx])
         # remain_idx <- temp_idx[which.min(na_number)]
-        cat(crayon::green(colnames(peak_table)[remove_idx], " are removed.\n"))
-        peak_table <-
-          peak_table %>%
-          select(-colnames(peak_table)[remove_idx])
+        cat(crayon::green(paste(colnames(peak_table)[remove_idx], collapse = ";"),
+                          "are removed.\n"))
       }
-      
-    })
+    }
+    
+    peak_table <-
+      peak_table %>%
+      dplyr::select(-c(remove_name))
     
     colnames(peak_table) <-
       colnames(peak_table) %>%
