@@ -37,7 +37,7 @@ setGeneric(
       Class = "metflowClass",
       ms1.data = ms1.data,
       sample.info = sample.info,
-      version = "0.0.9"
+      version = "0.1.0"
     )
     invisible(object)
   }
