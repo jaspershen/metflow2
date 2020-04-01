@@ -1,7 +1,7 @@
 ---
-title: "metflow2"
+title: "Brief instruoduction of metID"
 author:
-- name: Xiaotao Shen (https://www.shenxt.info/)
+- name: Xiaotao Shen PhD (https://www.shenxt.info/)
 - affiliation: School of Medicine, Stanford University
   url: http://shenxt.info/
 date: "`r Sys.Date()`"
@@ -26,9 +26,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+***
 
-## **Introduction & Installation**
-******************************************
+## **Introduction**
+
 
 *metflow2* is a R package which is used to process and analyze metabolomics data.
 
@@ -48,41 +49,23 @@ We use the demo data in `demoData` package to show how to use `metflow2`. Please
 devtools::install_github("jaspershen/demoData")
 ```
 
-## **Raw MS data processing**
-******************************************
+***
 
-### **Data preparation**
+## **Usage**
 
-Firstly, please transform your raw standard MS data (positive and negative modes) to mzXML format using [ProteoWizard](http://proteowizard.sourceforge.net/). The parameter setting is shown like figure below:
+Please see the [Get started](https://jaspershen.github.io/metflow2/articles/metflow2_instruction.html) page to get the instrduction of `metflow2`.
 
-![](../man/figures/parameter_setting_MS_conventer.png)
+***
 
-### **Data organization**
-
-Secondly, please organize your mzXML data into different folders. 
-
-1. Blank
-
-2. QC
-
-3. QC_DL
-
-4. Subject
+## **Need help?**
 
 
-### **Run `processData` function**
+If you have any quesitions about `metflow2`, please don’t hesitate to email me (shenxt@stanford.edu).
 
+<i class="fa fa-weixin"></i> [shenzutao1990](https://www.shenxt.info/files/wechat_QR.jpg)
 
-```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=TRUE}
-metflow2::processData(path = ".", 
-                      polarity = "positive", 
-                      peakwidth = c(5,30), 
-                      threads = 5, 
-                      output.tic = TRUE,
-                      output.bpc = TRUE, 
-                      min.fraction = 0.8, 
-                      output.rt.correction.plot = TRUE,
-                      fill.peaks = FALSE)
-```
+<i class="fa fa-envelope"></i> shenxt@stanford.edu
 
-This is just want to test the pull request function of github.
+<i class="fa fa-twitter"></i> [Twitter](https://twitter.com/JasperShen1990)
+
+<i class="fa fa-map-marker-alt"></i> [M339, Alway building, Cooper Lane, Palo Alto, CA 94304](https://www.google.com/maps/place/Alway+Building/@37.4322345,-122.1770883,17z/data=!3m1!4b1!4m5!3m4!1s0x808fa4d335c3be37:0x9057931f3b312c29!8m2!3d37.4322345!4d-122.1748996)

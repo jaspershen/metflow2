@@ -1,10 +1,10 @@
 ---
-title: "metflow2"
+title: "Raw MS data processing using metflow2"
 author:
 - name: Xiaotao Shen (https://www.shenxt.info/)
 - affiliation: School of Medicine, Stanford University
   url: http://shenxt.info/
-date: "`r Sys.Date()`"
+date: "Created on 2020-04-01 and updated on `r Sys.Date()`"
 output:
   html_document:
     df_print: paged
@@ -22,31 +22,16 @@ knitr::opts_chunk$set(
   # fig.width = 7, 
   # fig.height = 5,
   warning = FALSE,
-  message = TRUE
+  message = TRUE,
+  out.width = "100%"
 )
 ```
 
 
-## **Raw data processing**
+## **Introduction & Installation**
 ******************************************
 
-### Demo data
-
-The demo data for peak picking are from MetDNA. You can download it from here: http://metdna.zhulab.cn/metdna/DemoDataset. The demo data is embed in my `demoData` package. So you can get them from the `demoData` package.
-
-### Code
-
-The code for data processing are in the `dataProcessing.R` file. 
-
-
-
-
-
-
-
-
-
-*metflow2* is a R package which is used to process and analyze metabolomics data.
+*metflow2* is a R package which is used to process and analyze untargeted metabolomics data.
 
 
 Please install it via [github](https://github.com/jaspershen/metflow2).
