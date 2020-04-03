@@ -1,4 +1,4 @@
-#' @title MVimputation
+#' @title Impute MV in data.
 #' @description Impute MV in data.
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}

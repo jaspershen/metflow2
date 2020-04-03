@@ -49,7 +49,7 @@
 
 
 <meta property="og:title" content="alignBatch — alignBatch2" />
-<meta property="og:description" content="Align different batch datasets." />
+<meta property="og:description" content="Align different batch peaks tables." />
 <meta property="og:image" content="https://jaspershen.github.io/metflow2/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -93,7 +93,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.0.9</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.0</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Help documenta
      
     <span class="caret"></span>
   </a>
@@ -118,6 +118,17 @@
     <li class="dropdown-header">Category A</li>
     <li>
       <a href="../articles/metflow2_instruction.html">Instruction of metflow2</a>
+    </li>
+    <li>
+      <a href="../articles/raw_data_processing.html">Raw MS data processing</a>
+    </li>
+    <li>
+      <a href="../articles/other_tools_for_raw_data_processing.html">Other tools for raw MS data processing</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Other tools</li>
+    <li>
+      <a href="../articles/other_tools.html">Other tools in metflow2</a>
     </li>
     <li class="divider"></li>
     <li class="dropdown-header">Category B</li>
@@ -188,7 +199,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Align different batch datasets.</p>
+    <p>Align different batch peaks tables.</p>
     </div>
 
     <pre class="usage"><span class='fu'>alignBatch2</span>(
@@ -207,15 +218,15 @@
     </tr>
     <tr>
       <th>combine.mz.tol</th>
-      <td><p>m/z tolerance.</p></td>
+      <td><p>m/z tolerance for batch alignment, default is 25 ppm.</p></td>
     </tr>
     <tr>
       <th>combine.rt.tol</th>
-      <td><p>RT tolerance.</p></td>
+      <td><p>RT tolerance for batch alignment, default is 30 seconds.</p></td>
     </tr>
     <tr>
       <th>use.int.tol</th>
-      <td><p>TRUE or FALSE.</p></td>
+      <td><p>Whether use intensity match for batch aglignment.</p></td>
     </tr>
     </table>
 

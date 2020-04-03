@@ -2,7 +2,7 @@
 % Please edit documentation in R/mvImputation.R
 \name{imputeMV}
 \alias{imputeMV}
-\title{MVimputation}
+\title{Impute MV in data.}
 \usage{
 imputeMV(
   object,

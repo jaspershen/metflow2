@@ -34,11 +34,27 @@ navbar:
       text: Get started
       href: articles/metflow2_instruction.html
     articles:
-      text: Articles
+      text: Help documenta
       menu:
-      - text: Category A
+      - text: Raw MS data processing
       - text: Instruction of metflow2
         href: articles/metflow2_instruction.html
+      - text: Peak detection and alignment
+        href: articles/raw_data_processing.html
+      - text: Other tools for raw MS data processing
+        href: articles/other_tools_for_raw_data_processing.html
+      - text: -------
+      - text: "Data cleaning"
+      - text: Align different batch peak tables
+        href: articles/align_batch.html
+      - text: Impute missing values
+        href: articles/missing_value_imputation.html
+      - text: Data normalization and integration
+        href: articles/data_normalization_integration.html
+      - text: -------
+      - text: "Other tools"
+      - text: Other tools in metflow2
+        href: articles/other_tools.html
       - text: -------
       - text: "Category B"
       - text: Test

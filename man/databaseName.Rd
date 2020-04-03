@@ -18,6 +18,12 @@ A vector..
 \description{
 Whate databases are supported.
 }
+\examples{
+\dontrun{
+databaseNames(server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+databaseNames(server = "https://www.chemspider.com/InChI.asmx")
+}
+}
 \author{
 Xiaotao Shen
 \email{shenxt1990@163.com}

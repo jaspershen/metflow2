@@ -9,7 +9,64 @@
 #' @return A new metflowClass object.
 #' @export
 
-setGeneric(name = "alignBatch2",
+setGeneric(name = "alignBatch",
+           function(object,
+                    combine.mz.tol = 25,
+                    combine.rt.tol = 30,
+                    use.int.tol = FALSE) {
+             
+             if(!silence.deprecated){
+               cat(crayon::yellow("`alignBatch()` is deprecated, please use `align_batch()`"))
+             }
+             
+             if (class(object) != "metflowClass") {
+               stop("Only for metflowClass object\n")
+             }
+             
+             ms1_data <- object@ms1.data
+             
+             if (length(ms1_data) == 1) {
+               return(object)
+             }
+             
+             cat("Rough aligning...\n")
+             roughMatchResult <- roughAlign(
+               peak.table = ms1_data,
+               combine.mz.tol = combine.mz.tol,
+               combine.rt.tol = combine.rt.tol
+             )
+             
+             cat("Accurate aligning...\n")
+             accurateMatchResult <-
+               accurateAlign(
+                 peak.table = ms1_data,
+                 simple.data = roughMatchResult,
+                 use.int.tol = use.int.tol
+               )
+             object@ms1.data <- list(accurateMatchResult)
+             
+             object@process.info$alignBatch <- list()
+             object@process.info$alignBatch$combine.mz.tol <-
+               combine.mz.tol
+             object@process.info$alignBatch$combine.rt.tol <-
+               combine.rt.tol
+             
+             invisible(object)
+           })
+
+
+#' @title align_batch
+#' @description Align different batch peaks tables.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object A metflowClass object.
+#' @param combine.mz.tol m/z tolerance for batch alignment, default is 25 ppm.
+#' @param combine.rt.tol RT tolerance for batch alignment, default is 30 seconds.
+#' @param use.int.tol Whether use intensity match for batch aglignment.
+#' @return A new metflowClass object.
+#' @export
+
+setGeneric(name = "align_batch",
            function(object,
                     combine.mz.tol = 25,
                     combine.rt.tol = 30,

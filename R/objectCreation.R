@@ -60,9 +60,9 @@ setMethod(
   signature = "metflowClass",
   definition = function(object) {
     # requireNamespace("magrittr")
-    cat(paste(rep("-", 20), collapse = ""), "\n")
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::green("metflow2 version:", object@version, "\n"))
-    cat(paste(rep("-", 20), collapse = ""), "\n")
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::green("MS1 data\n"))
     cat("There are",
         length(object@ms1.data),
@@ -73,7 +73,7 @@ setMethod(
     colnames(info) <- c("Peak.number", "Column.number")
     rownames(info) <- paste("Batch", 1:nrow(info), sep = "")
     print(info)
-    cat(paste(rep("-", 20), collapse = ""), "\n")
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat("There are",
         nrow(object@sample.info),
         "samples in your MS1 data.\n")
@@ -81,14 +81,14 @@ setMethod(
       as.data.frame(table(object@sample.info$class), stringsAsFactors = FALSE)
     colnames(class_info) <- c("Class", "Number")
     print(class_info)
-    cat(paste(rep("-", 20), collapse = ""), "\n")
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     group_info <-
       as.data.frame(table(object@sample.info$group), stringsAsFactors = FALSE)
     colnames(group_info) <- c("Group", "Number")
     print(group_info)
-    cat(paste(rep("-", 20), collapse = ""), "\n")
+    cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::green("Processing\n"))
-    if (.hasSlot(object = object, name = "process.info")) {
+    if (.hasSlot(object = object, name = "process.info") & length(object@process.info) != 0) {
       process.info <- object@process.info
       mapply(function(x, y) {
         cat(crayon::green(x, paste(rep("-", 10), collapse = ""), "\n"))
@@ -113,12 +113,19 @@ setMethod(
 #' \email{shenxt@@sioc.ac.cn}
 #' @param object A metflowClass object.
 #' @param slot Class of data.
+#' @param silence.deprecated Silence deprecated information or not.
 #' @return A data frame.
 #' @export
+
 setGeneric(
   name = "getData",
   def = function(object,
-                 slot = c("Subject", "QC", "QC.DL", "Blank", "Tags")) {
+                 slot = c("Subject", "QC", "QC.DL", "Blank", "Tags"),
+                 silence.deprecated = TRUE) {
+    if(!silence.deprecated){
+      cat(crayon::yellow("`getData()` is deprecated, please use `get_data()`"))
+    }
+    
     # requireNamespace("magrittr")
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
@@ -149,6 +156,65 @@ setGeneric(
 )
 
 
+
+#' @title Get data from metflowClass object.
+#' @description Get data from metflowClass object.
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param object A metflowClass object.
+#' @param slot Class of data.
+#' @return A data frame.
+#' @export
+setGeneric(
+  name = "get_data",
+  def = function(object,
+                 slot = c("Subject",
+                          "QC",
+                          "QC.DL",
+                          "Blank",
+                          "Tags",
+                          "peak.table",
+                          "sample.info")) {
+    # requireNamespace("magrittr")
+    if (class(object) != "metflowClass") {
+      stop("Only the metflowClass is supported!\n")
+    }
+    
+    if (length(object@ms1.data) > 1) {
+      stop("Plase align batch first.\n")
+    }
+    
+    # slot <- stringr::str_to_title(slot)
+    slot <- match.arg(slot)
+    
+    if (slot == "Tags") {
+      result <- object@ms1.data[[1]] %>%
+        dplyr::select(., -one_of(object@sample.info$sample.name))
+      return(result)
+    }
+    
+    if (slot == "peak.table") {
+      result <- object@ms1.data[[1]]
+      return(result)
+    }
+    
+    if (slot == "sample.info") {
+      result <- object@sample.info
+      return(result)
+    }
+    
+    result <-
+      try(dplyr::filter(.data = object@sample.info, class == slot)$sample.name %>%
+            dplyr::select(.data = object@ms1.data[[1]], .))
+    
+    if (ncol(result) == 0) {
+      return(NULL)
+    }
+    return(result)
+  }
+)
+
+
 #' @title getMVplot4sample
 #' @description get MV plot of subject samples.
 #' @author Xiaotao Shen
@@ -159,6 +225,12 @@ setGeneric(
 setGeneric(
   name = "getMVplot4sample",
   def = function(object) {
+    
+    if(!silence.deprecated){
+      cat(crayon::yellow("`getMVplot4sample()` is deprecated, please use `get_mv_plot_samples()`"))
+    }
+    
+    
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
@@ -171,6 +243,36 @@ setGeneric(
     
   }
 )
+
+#' @title get_mv_plot_samples
+#' @description get MV plot of subject samples.
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param object A metflowClass object.
+#' @param interactive interactive or not.
+#' @return A ggplot2 object.
+#' @export
+setGeneric(
+  name = "get_mv_plot_samples",
+  def = function(object,
+                 interactive = FALSE) {
+    if (class(object) != "metflowClass") {
+      stop("Only the metflowClass is supported!\n")
+    }
+    plot <- try(object@process.info$filterSample$plot)
+    if (class(plot)[1] == "try-error") {
+      return(NULL)
+    } else{
+      if(interactive){
+        plotly::ggplotly(plot)
+      }else{
+        plot 
+      }
+    }
+    
+  }
+)
+
 
 #' @title calRSD
 #' @description Calculate RSD of peaks.

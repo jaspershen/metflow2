@@ -6,7 +6,7 @@
 
 metflow2 <- function(){
   cat(crayon::green("Thank you for using metflow2!\n"))
-  cat(crayon::green("Version 0.0.9 (20200122)\n"))
+  cat(crayon::green("Version 0.1.0 (20200321)\n"))
   cat(crayon::green("More information can be found at https://jaspershen.github.io/metflow2/\n"))
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",

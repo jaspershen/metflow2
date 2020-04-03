@@ -1,0 +1,159 @@
+---
+title: "Other tools in metflow2"
+author:
+- name: Xiaotao Shen PhD (https://www.shenxt.info/)
+- affiliation: School of Medicine, Stanford University
+  url: http://shenxt.info/
+date: "Created on 2020-04-01 and updated on `r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: no
+  pdf_document:
+    toc: no
+vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
+  \n"
+---
+
+```{r, include = FALSE, echo=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  # fig.width = 7, 
+  # fig.height = 5,
+  warning = FALSE,
+  message = TRUE,
+  out.width = "100%"
+)
+```
+
+`metflow2` also provide some other useful tools.
+
+***
+
+## **Metabolite ID convert**
+
+`transID()` function can be used to convert metabolites in more than 225 databases. It is based on the http://cts.fiehnlab.ucdavis.edu/ and https://www.chemspider.com/InChI.asmx.
+
+### Convert chemical ID based on http://cts.fiehnlab.ucdavis.edu/
+
+You can use the `databaseName()` function to get the databases supported in `transID()`.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=TRUE, cache=FALSE}
+library(metflow2)
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=TRUE, cache=FALSE}
+database <- metflow2::databaseName(server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+database$From
+database$To
+```
+
+Then you can convert ID using `transID()` function.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+transID(query = "C00001", from = "KEGG", 
+        to = "PubChem SID", top = 2,
+        server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+```
+
+The `from` and `to` argument must be from `databaseName()` function.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+transID(query = "C00001", from = "KEGG", 
+        to = "Human Metabolome Database", top = 2,
+        server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+```
+
+### Convert chemical ID based on https://www.chemspider.com/InChI.asmx
+
+Another databsae https://www.chemspider.com/InChI.asmx also support ID conveter. First please use `databaseName()` to know which databases are supported in this website.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+database <- databaseName(server = "https://www.chemspider.com/InChI.asmx")
+database
+```
+
+Here we first use the http://cts.fiehnlab.ucdavis.edu/service/convert convert C00001 to get it's InChIKey ID.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+transID(query = "C00010", 
+        from = "KEGG", 
+        to = "InChIKey", 
+        top = 1,
+        server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+```
+
+Then we use InChIKey ID to get its smiles.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+inchi <- 
+transID(query = "RGJOEKWQDUBAIZ-IBOSZNHHSA-N", 
+        from = "inchikey", 
+        to = "inchi",
+        top = 2,
+        server = "https://www.chemspider.com/InChI.asmx")
+inchi
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+smiles <- 
+transID(query = inchi,
+        from = "inchi", 
+        to = "smiles",
+        top = 2,
+        server = "https://www.chemspider.com/InChI.asmx")
+smiles
+```
+
+## **Get metabolite class**
+
+We can use `get_metclass()` function to get the metabolite class based on `classyfire`.
+
+We need the `inchikey` for `get_metclass()` function, so if we don't have the `inchikey`, we can use the `transID()` function to get their `inchikey`.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+library(metflow2)
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+inchikey <- 
+transID(query = "C00001", 
+        from = "KEGG", 
+        to = "InChIKey", 
+        top = 1,
+        server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+inchikey <- inchikey$InChIKey
+inchikey
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class <- get_metclass(inchikey = inchikey)
+```
+
+`class` is a `classfire` class. 
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class@compound_info
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class@taxonomy_tree
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class@classification_info
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class@description
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
+class@external_descriptors
+```
+

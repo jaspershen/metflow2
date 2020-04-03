@@ -33,38 +33,18 @@
 #' @import grDevices
 
 
-#debug
+# #debug
 # sxtTools::setwd_project()
-# setwd("demo_data/NEG/extrackPeak/")
+# setwd("test_data/mzxml/")
 # # rm(list = ls())
 # library(xcms)
 # library(MSnbase)
 # library(mzR)
 # library(tidyverse)
 # 
-# path = "."
-# polarity = "positive"
-# ppm = 15
-# peakwidth = c(5, 30)
-# snthresh = 20
-# prefilter = c(3, 500)
-# fitgauss = FALSE
-# integrate = 2
-# mzdiff = 0.01
-# noise = 5000
-# threads = 20
-# binSize = 0.025
-# bw = 5
-# output.tic = TRUE
-# output.bpc = TRUE
-# output.rt.correction.plot = TRUE
-# min.fraction = 0.5
-# fill.peaks = FALSE
-# output.peak.eic = TRUE
-# is.table = "is.table.xlsx"
-# group.for.figure = "batch1"
-
-
+# 
+# 
+# 
 # processData(path = ".",
 #             polarity = "positive",
 #             ppm = 15,
@@ -196,6 +176,18 @@ setGeneric(name = "processData",
              
              sample_group[grep("\\.(mz[X]{0,1}ML|cdf)", sample_group)] <- "Group0"
              
+             if(!group.for.figure %in% sample_group){
+               group.for.figure2 <- 
+                 plyr::count(sample_group) %>% 
+                 dplyr::filter(freq == min(freq) & stringr::str_to_lower(x) != "blank") %>% 
+                 pull(x) %>% 
+                 `[`(1) %>% 
+                 as.character()
+               cat(crayon::yellow(group.for.figure, "is not in you directory, so set is as ", 
+                                  group.for.figure2), "\n")
+               group.for.figure <- group.for.figure2 
+             }
+             
              pd <-
                data.frame(
                  sample_name = sub(
@@ -239,7 +231,8 @@ setGeneric(name = "processData",
              #----------------------------------------------------------------------------
              cat(crayon::green("Peak detecting...\n"))
              ###peak detection
-             cwp <- xcms::CentWaveParam(
+             cwp <- suppressMessages(
+               xcms::CentWaveParam(
                ppm = ppm,
                prefilter = prefilter,
                integrate = integrate,
@@ -249,19 +242,23 @@ setGeneric(name = "processData",
                noise = noise, 
                fitgauss = fitgauss,
              )
+             )
              
              if (any(dir(intermediate_data_path) == "xdata")) {
                cat(crayon::yellow("Use old saved data in Result.\n"))
                load(file.path(intermediate_data_path, "xdata"))
              } else{
                xdata <- 
-                 try(xcms::findChromPeaks(
-                   raw_data,
-                   param = cwp,
-                   BPPARAM = BiocParallel::SnowParam(workers = threads,
-                                                     progressbar = TRUE)
-                 ), silent = FALSE
+                 suppressMessages(
+                   try(xcms::findChromPeaks(
+                     raw_data,
+                     param = cwp,
+                     BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                                       progressbar = TRUE)
+                   ), silent = FALSE
+                   )
                  )
+
                
                if(class(xdata) == "try-error"){
                  stop("Error in xcms::findChromPeaks.\n")
@@ -607,8 +604,8 @@ setGeneric(name = "processData",
                      x %>% 
                      dplyr::filter(sample_group %in% group.for.figure)
                    
-                   if(unique(x$sample_name) > 10){
-                     idx <- which(x$sample_name %in% sort(sample(unique(x$sample_name), 10))) %>% 
+                   if(length(unique(x$sample_name)) > 8){
+                     idx <- which(x$sample_name %in% sort(sample(unique(x$sample_name), 18))) %>% 
                        sort()
                      x <- x[idx, , drop = FALSE]
                    }
@@ -631,7 +628,7 @@ setGeneric(name = "processData",
              rm(list = "xdata3")
              
              cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-             cat(crayon::bgGreen(clisymbols::symbol$tick ,"All is done!\n"))
+             cat(crayon::bgRed(clisymbols::symbol$tick ,"All done!\n"))
   
 })
 

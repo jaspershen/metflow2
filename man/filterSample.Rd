@@ -4,12 +4,14 @@
 \alias{filterSample}
 \title{filterSample}
 \usage{
-filterSample(object, min.fraction.peak = 0.8)
+filterSample(object, min.fraction.peak = 0.8, silence.deprecated = FALSE)
 }
 \arguments{
 \item{object}{A metflowClass object.}
 
 \item{min.fraction.peak}{Peaks minimun fraction in subject samples.}
+
+\item{silence.deprecated}{Silence deprecated information or not.}
 }
 \value{
 A new metflowClass object.

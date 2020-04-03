@@ -4,7 +4,13 @@
     <loc>https://jaspershen.github.io/metflow2//index.html</loc>
   </url>
   <url>
-    <loc>https://jaspershen.github.io/metflow2//reference/alignBatch2.html</loc>
+    <loc>https://jaspershen.github.io/metflow2//reference/SXTMTmatch.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/alignBatch.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/align_batch.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/calFC.html</loc>
@@ -49,6 +55,12 @@
     <loc>https://jaspershen.github.io/metflow2//reference/filterSample.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/filter_peaks.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/filter_samples.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//reference/getData.html</loc>
   </url>
   <url>
@@ -61,7 +73,13 @@
     <loc>https://jaspershen.github.io/metflow2//reference/getWorklist.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/get_data.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//reference/get_metclass.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/get_mv_plot_samples.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/imputeMV.html</loc>
@@ -85,13 +103,16 @@
     <loc>https://jaspershen.github.io/metflow2//reference/processData.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/remove_duplicated_name.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//reference/showPeak.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/showPeakPlot.html</loc>
   </url>
   <url>
-    <loc>https://jaspershen.github.io/metflow2//reference/SXTMTmatch.html</loc>
+    <loc>https://jaspershen.github.io/metflow2//reference/show_duplicated_samples.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/transID.html</loc>
@@ -100,9 +121,30 @@
     <loc>https://jaspershen.github.io/metflow2//reference/volcanoPlot.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/align_batch.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//articles/contact_us.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/data_normalization_integration.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//articles/metflow2_instruction.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/metflow2_mindmaster.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/missing_value_imputation.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/other_tools.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/other_tools_for_raw_data_processing.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//articles/raw_data_processing.html</loc>
   </url>
 </urlset>

@@ -120,23 +120,42 @@ You can use databaseName() function to check the databases this package support.
         )
         return(NA)
       }
-      baseurl <-
-        "https://www.chemspider.com/InChI.asmx/InChIToSMILES"
+      baseurl <- 
+        result %>%  
+        dplyr::filter(name == from_to) %>% 
+        dplyr::pull(server)
+      # baseurl <-
+      #   "https://www.chemspider.com/InChI.asmx/InChIToSMILES"
       Sys.sleep(rgamma(1, shape = 15, scale = 1 / 45))
+      
+      body <- 
+      switch(EXPR = from,
+             csid = list(csid = query),
+             inchikey = list(inchi_key = query),
+             inchi = list(inchi = query),
+             smiles = list(smiles = query),
+             mol = list(mol = query)
+             )
+      
       res <-
-        try(POST(baseurl, body = list(inchi = query), encode = "form"),
+        try(httr::POST(url = baseurl, 
+                       body = body,
+                       encode = "form"),
             silent = TRUE)
+      
       if (inherits(res, "try-error")) {
         warning("Problem with service... Returning NA.")
         return(NA)
       }
-      out <- try(read_xml(content(res, "raw")), silent = TRUE)
+      
+      out <- try(xml2::read_xml(httr::content(res, "raw")), silent = TRUE)
       if (inherits(out, "try-error")) {
         warning("inchi not found... Returning NA.")
         return(NA)
       }
       
-      out <- xml_text(out)
+      out <- xml2::xml_text(out)
+      out
       
     }
     
@@ -144,17 +163,22 @@ You can use databaseName() function to check the databases this package support.
 )
 
 
-#'@title databaseName
-#'@description Whate databases are supported.
-#'@author Xiaotao Shen
-#'\email{shenxt1990@@163.com}
-#'@param server server.
-#'@return A vector..
-#'@import xml2
-#'@import rvest
-#'@import tidyverse
-#'@import stringr
-#'@export
+#' @title databaseName
+#' @description Whate databases are supported.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param server server.
+#' @return A vector..
+#' @import xml2
+#' @import rvest
+#' @import tidyverse
+#' @import stringr
+#' @export
+#' @examples 
+#' \dontrun{
+#' databaseNames(server = "http://cts.fiehnlab.ucdavis.edu/service/convert")
+#' databaseNames(server = "https://www.chemspider.com/InChI.asmx")
+#' }
 
 
 

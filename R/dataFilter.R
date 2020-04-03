@@ -7,6 +7,7 @@
 #' @param min.fraction Peaks minimun fraction in subject samples.
 #' @param min.subject.qc.ratio Peak intensity ratio in subject and blank samples.
 #' @param dl.qc.r2.cutoff R2 cutoff for dilution QC.
+#' @silence.deprecated Silence deprecated information or not.
 #' @import tidyverse
 #' @import tibble
 #' @return A new metflowClass object.
@@ -19,6 +20,9 @@ setGeneric(
                  min.fraction = 0.8,
                  min.subject.qc.ratio = 2,
                  dl.qc.r2.cutoff = 0.7) {
+    if(!silence.deprecated){
+      cat(crayon::yellow("`filterPeak()` is deprecated, please use `filter_peaks()`"))
+    }
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
@@ -234,15 +238,15 @@ setGeneric(
 )
 
 
-#' @title filterPeak
+#' @title Filter peaks according to missing values.
 #' @description Filter peaks.
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param object A metflowClass object.
-#' @param min.fraction Peaks minimum fraction in samples.
+#' @param min.fraction Peaks minimum fraction in samples (which.group).
 #' @param type Any ("any") or all ("all") groups should be meet this min.fraction.
-#' @param min.subject.qc.ratio Peak intensity ratio in subject and blank samples.
-#' @param dl.qc.r2.cutoff R2 cutoff for dilution QC.
+#' @param min.subject.blank.ratio Peak intensity ratio in subject and blank samples. If you set it < 1, no peaks will be removed.
+#' @param dl.qc.r2.cutoff R2 cutoff for dilution QC. If you set it < 0, no peaks will be removed.
 #' @param according.to Which information you want to use in sample information.
 #' @param which.group What groups you want to use.
 #' @import tidyverse
@@ -251,11 +255,11 @@ setGeneric(
 #' @export
 
 setGeneric(
-  name = "filterPeak2",
+  name = "filter_peaks",
   def = function(object,
                  min.fraction = 0.5,
                  type = c("any", "all"),
-                 min.subject.qc.ratio = 2,
+                 min.subject.blank.ratio = 2,
                  dl.qc.r2.cutoff = 0.7,
                  according.to = c("class", "group"),
                  which.group) {
@@ -267,6 +271,7 @@ setGeneric(
     if(missing(which.group)){
       stop("Please provide the which.group\n")
     }
+    
     sample_info <- 
       object@sample.info %>% 
       tibble::as_tibble()
@@ -288,14 +293,16 @@ setGeneric(
     ms1_data <-
       ms1_data[[1]] %>%
       tibble::as_tibble()
+    
     # sample <- ms1_data[,match(sample_info$sample.name, colnames(ms1_data))]
     # tags <- ms1_data[,-match(sample_info$sample.name, colnames(ms1_data))]
     
     object@process.info$filterPeaks <- list()
     
     cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
-    cat(crayon::green("Removing peaks according to NA in different samples...\n"))
-    #remove peaks according to NA in QC samples
+    cat(crayon::green("Removing peaks according to NA in samples...\n"))
+    
+    #remove peaks according to NA in samples
     
     non_na_fraction <- 
     lapply(which.group, function(x){
@@ -340,28 +347,37 @@ setGeneric(
     ))
     
     ms1_data <- ms1_data[remain_idx, , drop = FALSE]
+    
     object@process.info$filterPeaks$min.fraction <-
       min.fraction
+    
+    object@process.info$filterPeaks$which.group <-
+      paste(which.group, collapse = ";")
+    
     rm(list = c("remain_idx"))
      
     cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::yellow("Removing peaks according to blank samples...\n"))
+    
+    ##--------------------------------------------------------------------------
     ##remove peaks according to blank
-    if ("Blank" %in% sample_info$class) {
+    if ("Blank" %in% sample_info$class & min.subject.blank.ratio > 1) {
       blank_data <-
         `==`(sample_info$class, "Blank") %>%
         which(.) %>%
         `[`(sample_info$sample.name, .) %>%
         dplyr::select(.data = ms1_data, .)
+      
       peak_mean_int_blank <-
         apply(blank_data, 1, function(x)
           mean(x, na.rm = TRUE))
+      
       peak_mean_int_blank[is.na(peak_mean_int_blank)] <- 0
       
       subject_data <- 
         ms1_data %>% 
         dplyr::select(
-          sample_info$sample.name[sample_info$class == "Subject"]
+          sample_info$sample.name[sample_info$class %in% which.group]
         )
       
       peak_mean_int_subject <-
@@ -371,20 +387,24 @@ setGeneric(
         0
       
       ratio <- peak_mean_int_subject / peak_mean_int_blank
+      
       ratio[is.na(ratio)] <- 0
-      remain_idx <- which(ratio > min.subject.qc.ratio)
+      
+      ratio[is.infinite(ratio)] <- min.subject.blank.ratio + 1
+      
+      remain_idx <- which(ratio > min.subject.blank.ratio)
       if (length(remain_idx) == 0) {
         stop(paste(
-          "No peaks meet min.subject.qc.ratio:",
-          min.subject.qc.ratio
+          "No peaks meet min.subject.blank.ratio:",
+          min.subject.blank.ratio
         ))
       }
       cat(length(remain_idx),
           "out of",
           nrow(ms1_data),
           "peaks are remained.\n")
-      object@process.info$filterPeaks$min.subject.qc.ratio <-
-        min.subject.qc.ratio
+      object@process.info$filterPeaks$min.subject.blank.ratio <-
+        min.subject.blank.ratio
       ms1_data <- ms1_data[remain_idx, , drop = FALSE]
       rm(
         list = c(
@@ -396,12 +416,14 @@ setGeneric(
           "remain_idx"
         )
       )
+    }else{
+      cat(crayon::yellow("No Blanks in your data.\n"))
     }
     
     cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::green("Removing peaks according to QC dilution samples...\n"))
     ###remove peaks according to dilution
-    if ("QC.DL" %in% sample_info$class) {
+    if ("QC.DL" %in% sample_info$class & dl.qc.r2.cutoff > 0) {
       qc_dl_sample <-
         `==`(sample_info$class, "QC.DL") %>%
         which(.) %>%
@@ -465,11 +487,13 @@ setGeneric(
       object@process.info$filterPeaks$dl.qc.r2.cutoff <-
         dl.qc.r2.cutoff
       ms1_data <- ms1_data[remain_idx, , drop = FALSE]
+    }else{
+      # cat(crayon::yellow("No DL.QC samples in your data.\n"))
     }
     
     ms1_data <- list(ms1_data)
     object@ms1.data <- ms1_data
-    cat(crayon::bgYellow("All done.\n"))
+    cat(crayon::bgRed("All done.\n"))
     invisible(object)
   }
 )
@@ -481,13 +505,19 @@ setGeneric(
 #' \email{shenxt1990@@163.com}
 #' @param object A metflowClass object.
 #' @param min.fraction.peak Peaks minimun fraction in subject samples.
+#' @param silence.deprecated Silence deprecated information or not.
 #' @return A new metflowClass object.
 #' @export
 
 setGeneric(
   name = "filterSample",
   def = function(object,
-                 min.fraction.peak = 0.8) {
+                 min.fraction.peak = 0.8,
+                 silence.deprecated = FALSE) {
+    if(!silence.deprecated){
+      cat(crayon::yellow("`filterPeak()` is deprecated, please use `filter_peaks()`"))
+    }
+    
     # requireNamespace("ggplot2")
     # requireNamespace("tidyverse")
     # requireNamespace("magrittr")
@@ -501,9 +531,9 @@ setGeneric(
       stop("Please algin your peak tables first!\n")
     }
     ms1_data <- ms1_data[[1]]
-    qc_data <- getData(object = object, slot = "QC")
+    qc_data <- get_data(object = object, slot = "QC")
     subject_data <-
-      getData(object = object, slot = "Subject")
+      get_data(object = object, slot = "Subject")
     subject_qc_data <- cbind(qc_data, subject_data)
     subject_qc_data <- tibble::as_tibble(subject_qc_data)
     class <-
@@ -595,6 +625,137 @@ setGeneric(
     invisible(object)
   }
 )
+
+
+#' @title Filter samples
+#' @description Filter samples.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object A metflowClass object.
+#' @param min.fraction.peak Peaks minimun fraction in subject samples.
+#' @return A new metflowClass object.
+#' @export
+
+setGeneric(
+  name = "filter_samples",
+  def = function(object,
+                 min.fraction.peak = 0.8) {
+    
+    if (class(object) != "metflowClass") {
+      stop("Only the metflowClass is supported!\n")
+    }
+    
+    ms1_data <- object@ms1.data
+    
+    if (length(ms1_data) > 1) {
+      stop("Please algin your peak tables first!\n")
+    }
+    
+    ms1_data <- ms1_data[[1]]
+    
+    sample_info <- object@sample.info
+    
+    sample_name <- 
+      sample_info %>% 
+      dplyr::filter(class %in% c("Subject", "QC")) %>% 
+      dplyr::pull(sample.name)
+    
+    sample_class <- 
+      sample_info %>% 
+      dplyr::filter(class %in% c("Subject", "QC")) %>% 
+      dplyr::pull(class)
+    
+    subject_qc_data <-
+      ms1_data %>% 
+      dplyr::select(dplyr::one_of(sample_name)) %>% 
+      tibble::as_tibble()
+    
+    rm(list = "ms1_data")
+    
+    na.fraction <- apply(subject_qc_data, 2, function(x) {
+      sum(is.na(x) / nrow(subject_qc_data))
+    })
+    
+    remove.idx.na.fraction <-
+      which(na.fraction > 1 - min.fraction.peak)
+    
+    cat(
+      "Samples with MV ratio larger than",
+      1 - min.fraction.peak,
+      ":\n",
+      paste(names(remove.idx.na.fraction), collapse = "; ")
+    )
+    cat("\n")
+    
+    # na.fraction <- sort(na.fraction)
+    na.fraction <-
+      data.frame(
+        peak.name = names(na.fraction),
+        index = 1:length(na.fraction),
+        class = sample_class,
+        na.fraction,
+        stringsAsFactors = FALSE
+      )
+    
+    na.fraction <-
+      left_join(na.fraction,
+                object@sample.info[, c(1, 2)],
+                by = c("peak.name" = "sample.name"))
+    
+    plot <- ggplot(data = na.fraction) +
+      geom_point(aes(
+        x = injection.order,
+        y = na.fraction * 100,
+        colour = class
+      ),
+      size = 2) +
+      # scale_x_discrete(
+      #   breaks = c("QC", "Subject"),
+      #   labels = c("QC", "Subject"),
+      #   # name = "Class"
+      # ) +
+      scale_colour_manual(values = c("#E64B35FF", "#4DBBD5FF")) +
+      labs(x = "Injection order", y = "Missing value ratio (%)") +
+      geom_hline(
+        yintercept = 100 - min.fraction.peak * 100,
+        color = "red",
+        linetype = 2
+      ) +
+      ggrepel::geom_text_repel(
+        data = dplyr::filter(na.fraction,
+                             na.fraction > 1 - min.fraction.peak),
+        mapping = aes(x = injection.order, y = na.fraction * 100,
+                      label = peak.name)
+      ) +
+      theme_bw() +
+      theme(
+        axis.title = element_text(size = 15),
+        axis.text = element_text(size = 12),
+        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 12)
+      )
+    
+    if (length(remove.idx.na.fraction) > 0) {
+      remove.name <- colnames(subject_qc_data)[remove.idx.na.fraction]
+      
+      object@sample.info <-
+        object@sample.info %>%
+        dplyr::filter(., !(sample.name %in% remove.name))
+      
+      object@ms1.data[[1]] <-
+        object@ms1.data[[1]] %>%
+        dplyr::select(., -one_of(remove.name))
+    }
+    
+    object@process.info$filterSample <- list()
+    object@process.info$filterSample$min.fraction.peak <-
+      min.fraction.peak
+    object@process.info$filterSample$plot <- plot
+    cat(crayon::bgRed("All done!\n"))
+    invisible(object)
+  }
+)
+
 
 
 

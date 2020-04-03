@@ -4,12 +4,18 @@
 \alias{getData}
 \title{getData}
 \usage{
-getData(object, slot = c("Subject", "QC", "QC.DL", "Blank", "Tags"))
+getData(
+  object,
+  slot = c("Subject", "QC", "QC.DL", "Blank", "Tags"),
+  silence.deprecated = TRUE
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}
 
 \item{slot}{Class of data.}
+
+\item{silence.deprecated}{Silence deprecated information or not.}
 }
 \value{
 A data frame.

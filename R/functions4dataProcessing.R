@@ -257,6 +257,7 @@ setGeneric(
                  mz = NULL,
                  rt = NULL,
                  rt.tolerance = 40) {
+    options(warn = -1)
     output_path <- path
     # dir.create(output_path)
     ##peak detection
