@@ -781,7 +781,7 @@ setGeneric(
       stop("Please align batch first.\n")
     }
     
-    rsd <- calRSD(object = object, slot = slot)
+    rsd <- calculate_rsd(object = object, slot = slot)
     
     remain_idx <- which(rsd < rsd.cutoff)
     object@ms1.data <-

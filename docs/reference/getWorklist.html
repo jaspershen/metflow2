@@ -217,7 +217,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>getWorklist</span>(
-  <span class='kw'>table.name</span> <span class='kw'>=</span> <span class='st'>"batch3.xlsx"</span>,
+  <span class='kw'>table.name</span> <span class='kw'>=</span> <span class='st'>"batch.xlsx"</span>,
   <span class='kw'>instrument</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Thermo"</span>, <span class='st'>"Agilent"</span>, <span class='st'>"AB"</span>),
   <span class='kw'>each.mode.number</span> <span class='kw'>=</span> <span class='fl'>32</span>,
   <span class='kw'>randommethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>, <span class='st'>"position"</span>, <span class='st'>"injection"</span>),
@@ -232,7 +232,8 @@
   <span class='kw'>ms2.method.pos</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ZIC-HILIC_MSMS_pos_NCE25"</span>, <span class='st'>"ZIC-HILIC_MSMS_pos_NCE25"</span>,
     <span class='st'>"ZIC-HILIC_MSMS_pos_NCE25"</span>, <span class='st'>"ZIC-HILIC_MSMS_pos_NCE25"</span>),
   <span class='kw'>ms2.method.neg</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>, <span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>,
-    <span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>, <span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>)
+    <span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>, <span class='st'>"ZIC-HILIC_MSMS_neg_NCE25"</span>),
+  <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -293,6 +294,10 @@
     <tr>
       <th>ms2.method.neg</th>
       <td><p>ms2.method.neg.</p></td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td><p>The working directory.</p></td>
     </tr>
     </table>
 

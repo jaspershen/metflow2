@@ -1,3 +1,12 @@
 base
 metflow2
 demoData
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats

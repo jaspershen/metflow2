@@ -24,33 +24,47 @@ setGeneric(
                  end = 1, 
                  step = 0.2, 
                  threads = 4) {
+    # browser()
     method <- match.arg(method)
+    
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
     
     ms1_data <- object@ms1.data
+    
     if(length(ms1_data) > 1){
       stop("Please align batch first.\n")
     }
     
     ms1_data <- ms1_data[[1]]
     
-    qc_data <- getData(object = object, slot = "QC")
-    subject_data <- getData(object = object, slot = "Subject")
+    if(method == "svr" | method == "loess"){
+      if(all(unique(object@sample.info$class) != "QC")){
+        stop("No qc samples in your data, svr and loess is not available.\n")
+      }
+    }
     
-    if(sum(is.na(qc_data)) +  sum(is.na(subject_data)) > 0){
+    qc_data <- get_data(object = object, slot = "QC")
+    subject_data <- get_data(object = object, slot = "Subject")
+    
+    if(sum(is.na(qc_data)) + sum(is.na(subject_data)) > 0){
       stop("Please impute MV first.\n")
     }
     
     if(is.null(qc_data)){
       if(method %in% c("svr", "loess")){
-        stop("No QC samples in your data, please change other method.\n")
+        stop("No qc samples in your data, please change other method.\n")
       }
     }
     
     ##sample-wise methods
     if(method %in% c("total", "median", "mean")){
+      
+      object@process.info$normalizeData <- list()
+      object@process.info$normalizeData$method <- method
+      object@process.info$normalizeData$keep.scale <- keep.scale
+      
       subject_data <- apply(subject_data, 2, function(x){
         x <- as.numeric(x)
         switch(method,
@@ -76,6 +90,11 @@ setGeneric(
     
     ##pqn (Probabilistic Quotient Normalization) method
     if(method == "pqn"){
+      
+      object@process.info$normalizeData <- list()
+      object@process.info$normalizeData$method <- method
+      object@process.info$normalizeData$keep.scale <- keep.scale
+      
       subject_data <- KODAMA::normalization(Xtrain = subject_data, 
                                             method = "pqn")$newXtrain
       if(!is.null(qc_data)){
@@ -85,13 +104,22 @@ setGeneric(
     }
     
     
-    if(method == "loess"){
+    if(method == "loess") {
+      
+      object@process.info$normalizeData <- list()
+      object@process.info$normalizeData$method <- method
+      object@process.info$normalizeData$keep.scale <- keep.scale
+      object@process.info$normalizeData$begin <- begin
+      object@process.info$normalizeData$end <- end
+      object@process.info$normalizeData$step <- step
+      
       sample_info <- object@sample.info
       sample_info <- 
         sample_info %>% 
-        filter(class %in% c('QC', 'Subject'))
+        dplyr::filter(class %in% c('QC', 'Subject'))
       
       ms1_data <- object@ms1.data[[1]]
+      
       ms1_data <- 
         ms1_data %>% 
         select(one_of(sample_info$sample.name))
@@ -99,20 +127,20 @@ setGeneric(
       ###split data according to batch
       ##sample_info is a list
       sample_info <- 
-        plyr::dlply(sample_info, .variables = .(batch))
+        plyr::dlply(sample_info, .variables = plyr::.(batch))
       
       subject_data <- 
         lapply(sample_info, function(x){
           temp_subject_data <- 
             ms1_data %>% 
-            select(one_of(x$sample.name[x$class == "Subject"]))
+            dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
         })
       
       qc_data <- 
         lapply(sample_info, function(x){
           temp_subject_data <- 
             ms1_data %>% 
-            select(one_of(x$sample.name[x$class == "QC"]))
+            dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
         })
       
       subject_order <- 
@@ -131,7 +159,7 @@ setGeneric(
         vector(mode = "list", length = length(subject_data))
       
       for(batch_idx in 1:length(subject_data)){
-        cat("Batch", batch_idx, "...", "\n")
+        cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
         qc_subject_data[[batch_idx]] <-
           loessNor(
             subject_data = subject_data[[batch_idx]],
@@ -162,13 +190,89 @@ setGeneric(
       
     }
     
-    object@process.info$normalizeData <- list()
-    object@process.info$normalizeData$method <- method
-    object@process.info$normalizeData$keep.scale <- keep.scale
-    object@process.info$normalizeData$begin <- begin
-    object@process.info$normalizeData$end <- end
-    object@process.info$normalizeData$step <- step
     
+    if(method == "svr"){
+      
+      object@process.info$normalizeData <- list()
+      object@process.info$normalizeData$method <- method
+      
+      sample_info <- object@sample.info
+      sample_info <- 
+        sample_info %>% 
+        dplyr::filter(class %in% c('QC', 'Subject'))
+      
+      ms1_data <- object@ms1.data[[1]]
+      
+      ms1_data <- 
+        ms1_data %>% 
+        select(one_of(sample_info$sample.name))
+      
+      ###split data according to batch
+      ##sample_info is a list
+      sample_info <- 
+        plyr::dlply(sample_info, .variables = plyr::.(batch))
+      
+      subject_data <- 
+        lapply(sample_info, function(x){
+          temp_subject_data <- 
+            ms1_data %>% 
+            dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
+        })
+      
+      qc_data <- 
+        lapply(sample_info, function(x){
+          temp_subject_data <- 
+            ms1_data %>% 
+            dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
+        })
+      
+      subject_order <- 
+        lapply(subject_data, function(x){
+          object@sample.info$injection.order[match(colnames(x), object@sample.info$sample.name)]
+        })
+      
+      qc_order <- 
+        lapply(qc_data, function(x){
+          object@sample.info$injection.order[match(colnames(x), 
+                                                   object@sample.info$sample.name)]
+        })
+      
+      ####begin data normalization
+      qc_subject_data <- 
+        vector(mode = "list", length = length(subject_data))
+      
+      for(batch_idx in 1:length(subject_data)){
+        cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
+        
+        qc_subject_data[[batch_idx]] <-
+          svrNor(
+            sample = subject_data[[batch_idx]],
+            qc = qc_data[[batch_idx]],
+            sample.order = subject_order[[batch_idx]],
+            qc.order = qc_order[[batch_idx]],
+            path = ".", 
+            threads = threads
+          )
+        cat("\n")
+      }
+      
+      qc_data <- 
+        lapply(qc_subject_data, function(x){
+          x[[1]]
+        }) %>% 
+        do.call(cbind, .)
+      
+      subject_data <- 
+        lapply(qc_subject_data, function(x){
+          x[[2]]
+        }) %>% 
+        do.call(cbind, .)
+    }
+    
+    rownames(subject_data) <-
+      rownames(qc_data) <-
+      object@ms1.data[[1]]$name
+  
     sample_info <- object@sample.info
     subject_qc_data <- cbind(qc_data, subject_data)
     
@@ -187,186 +291,85 @@ setGeneric(
 
 
 # ##############svr normalization function
-# SXTsvrNor <- function(sample,
-#                       QC,
-#                       tags,
-#                       sample.order,
-#                       QC.order,
-#                       #used data
-#                       multiple = 5,
-#                       rerun = TRUE,
-#                       peakplot = TRUE,
-#                       path = NULL,
-#                       datastyle = "tof",
-#                       dimension1 = TRUE,
-#                       threads = 1
-#                       #parameters setting
-# ) {
-# 
-#   options(warn = -1)
-#   ######is there the e1071?
-#   if (is.null(path)) {
-#     path <- getwd()
-#   } else{
-#     dir.create(path)
-#   }
-# 
-#   path1 <- file.path(path, "svr normalization result")
-# 
-#   dir.create(path1)
-# 
-#   if (!rerun) {
-#     cat("Use previous normalization data\n")
-#     # Sys.sleep(1)
-#     load(file.path(path1, "normalization file"))
-#   } else {
-#     # library(snow)
-#     # library(wordcloud)
-# 
-#     ichunks <- split((1:ncol(sample)), 1:threads)
-#     svr.data <- BiocParallel::bplapply(ichunks,
-#                                        FUN = svr.function,
-#                                        BPPARAM = BiocParallel::SnowParam(workers = threads,
-#                                                                          progressbar = TRUE),
-#                                        sample = sample,
-#                                        QC = QC,
-#                                        sample.order = sample.order,
-#                                        QC.order = QC.order,
-#                                        multiple = multiple)
-# 
-#     sample.nor <- lapply(svr.data, function(x) {
-#       x[[1]]
-#     })
-# 
-#     QC.nor <- lapply(svr.data, function(x) {
-#       x[[2]]
-#     })
-# 
-#     index <- lapply(svr.data, function(x) {
-#       x[[3]]
-#     })
-# 
-# 
-#     sample.nor <- do.call(cbind, sample.nor)
-#     QC.nor <- do.call(cbind, QC.nor)
-# 
-#     index <- unlist(index)
-# 
-#     sample.nor <- sample.nor[,order(index)]
-#     QC.nor <- QC.nor[,order(index)]
-# 
-#     QC.median <- apply(QC, 2, median)
-#     if (dimension1) {
-#       QC.nor <- t(t(QC.nor) * QC.median)
-#       sample.nor <- t(t(sample.nor) * QC.median)
-#     }
-# 
-#     # if (datastyle == "tof") {
-#     #   colnames(QC.nor) <- colnames(sample.nor) <- tags["name", ]
-#     # }
-#     # if (datastyle == "mrm") {
-#     #   colnames(QC.nor) <- colnames(sample.nor) <- tags["name", ]
-#     # }
-# 
-#     save(QC.nor, sample.nor, file = file.path(path1, "normalization file"))
-#   }
-# 
-#   rsd <- function(x) {
-#     x <- sd(x) * 100 / mean(x)
-#   }
-# 
-#   #following objects are the rsd of sample
-#   #and QC before and after normalization
-#   sample.rsd <- apply(sample, 2, rsd)
-#   sample.nor.rsd <- apply(sample.nor, 2, rsd)
-#   QC.rsd <- apply(QC, 2, rsd)
-#   QC.nor.rsd <- apply(QC.nor, 2, rsd)
-# 
-# 
-#   #sample.no.nor is the no normalization data added rsd information
-#   #sample.svr is the normalization data added rsd information
-# 
-# 
-#   sample.no.nor <- rbind(tags, sample.rsd, QC.rsd, sample, QC)
-#   sample.svr <-
-#     rbind(tags, sample.nor.rsd, QC.nor.rsd, sample.nor, QC.nor)
-# 
-#   save(sample.nor,
-#        QC.nor,
-#        tags,
-#        sample.order,
-#        QC.order,
-#        file = file.path(path1, "data svr nor"))
-#   write.csv(t(sample.svr), file.path(path1, "data svr nor.csv"))
-# 
-#   #generate all peaks plot
-# 
-#   if (peakplot) {
-#     path2 <- file.path(path1, "peak plot")
-#     dir.create(path2)
-# 
-#     cl <- snow::makeCluster(threads, type = "SOCK")
-#     nc <- length(cl)
-#     options(warn = -1)
-#     ichunks <- split((1:ncol(sample)), 1:threads)
-# 
-#     if (datastyle == "tof")
-#     {
-#       snow::clusterApply(
-#         cl,
-#         x = ichunks,
-#         fun = peakplot5,
-#         sample = sample,
-#         sample.nor = sample.nor,
-#         QC = QC,
-#         QC.nor = QC.nor,
-#         sample.order = sample.order,
-#         QC.order = QC.order,
-#         tags = tags,
-#         path = path2,
-#         sample.rsd = sample.rsd,
-#         QC.rsd = QC.rsd,
-#         sample.nor.rsd = sample.nor.rsd,
-#         QC.nor.rsd = QC.nor.rsd
-#       )
-#     }
-#     else {
-#       snow::clusterApply(
-#         cl,
-#         x = ichunks,
-#         fun = peakplot6,
-#         sample = sample,
-#         sample.nor = sample.nor,
-#         QC = QC,
-#         QC.nor = QC.nor,
-#         sample.order = sample.order,
-#         QC.order = QC.order,
-#         tags = tags,
-#         path = path2,
-#         sample.rsd = sample.rsd,
-#         QC.rsd = QC.rsd,
-#         sample.nor.rsd = sample.nor.rsd,
-#         QC.nor.rsd = QC.nor.rsd
-#       )
-#     }
-#   }
-# 
-# 
-#   ##generate some statistics information
-# 
-#   compare.rsd(
-#     sample.rsd = sample.rsd,
-#     sample.nor.rsd = sample.nor.rsd,
-#     QC.rsd = QC.rsd,
-#     QC.nor.rsd =
-#       QC.nor.rsd,
-#     path = path1
-#   )
-#   options(warn = 0)
-#   cat("SVR normalization is done\n")
-# }
+svrNor <- function(sample,
+                   qc,
+                   sample.order,
+                   qc.order,
+                   #used data
+                   multiple = 5,
+                   path = ".",
+                   dimension1 = TRUE,
+                   threads = 3){
+  options(warn = -1)
+    sample <- 
+      sample %>% 
+      as.data.frame() %>% 
+      t() %>% 
+      as.data.frame()
+    
+    qc <-
+      qc %>%
+      as.data.frame() %>%
+      t() %>%
+      as.data.frame()
+    
+    ichunks <- split((1:ncol(sample)), 1:threads)
+    
+    svr.data <- BiocParallel::bplapply(
+      ichunks,
+      FUN = svr_function,
+      BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                        progressbar = TRUE),
+      sample = sample,
+      qc = qc,
+      sample.order = sample.order,
+      qc.order = qc.order,
+      multiple = multiple
+    )
+    
+    sample.nor <- lapply(svr.data, function(x) {
+      x[[1]]
+    })
+
+    qc.nor <- lapply(svr.data, function(x) {
+      x[[2]]
+    })
+
+    index <- lapply(svr.data, function(x) {
+      x[[3]]
+    })
 
 
+    sample.nor <- do.call(cbind, sample.nor)
+    qc.nor <- do.call(cbind, qc.nor)
+
+    index <- unlist(index)
+
+    sample.nor <- sample.nor[,order(index)]
+    qc.nor <- qc.nor[,order(index)]
+
+    qc.median <- apply(qc, 2, median)
+    
+    if (dimension1) {
+      qc.nor <- t(t(qc.nor) * qc.median)
+      sample.nor <- t(t(sample.nor) * qc.median)
+    }
+
+  ##generate some statistics information
+  cat(crayon::yellow("SVR normalization is done\n"))
+  qc.nor <- 
+    qc.nor %>% 
+    t() %>% 
+    as.data.frame()
+  
+  sample.nor <- 
+    sample.nor %>% 
+    t() %>% 
+    as.data.frame()
+  
+  return_result <- list(qc.nor, sample.nor)
+  return(return_result)
+}
 
 ####LOESS normalization function
 loessNor <- function(subject_data,
@@ -380,7 +383,7 @@ loessNor <- function(subject_data,
                      path = ".",
                      threads = 4
 ) {
-  cat("LOESS normalization...\n")
+  cat(crayon::green("LOESS normalization...\n"))
   
   temp.fun <- 
     function(idx,
@@ -476,14 +479,14 @@ loessNor <- function(subject_data,
   subject_data_nor <- qc_median * subject_data_nor
   
   return_result <- list(qc_data_nor, subject_data_nor)
-  return(return_result)
   cat("\n")
-  cat("LOESS normalization is done\n")
+  cat(crayon::green("LOESS normalization is done\n"))
+  return(return_result)
 }
 
 
 #cvMSE is loess parameter optimization function
-cvMSE <- function(qc, QC.order, begin1, end1, step1) {
+cvMSE <- function(qc, qc.order, begin1, end1, step1) {
   mse <- NULL
   nmse <- NULL
   cvmse <- NULL
@@ -493,8 +496,8 @@ cvMSE <- function(qc, QC.order, begin1, end1, step1) {
   for (i in 1:2) {
     for (j in para) {
       for (k in 2:(length(qc) - 1)) {
-        loess.reg <- loess(qc[-k] ~ QC.order[-k], span = j, degree = i)
-        predict.qc <- predict(loess.reg, QC.order[k])
+        loess.reg <- loess(qc[-k] ~ qc.order[-k], span = j, degree = i)
+        predict.qc <- predict(loess.reg, qc.order[k])
         mse[k] <- (qc[k] - predict.qc) ^ 2
         nmse[k] <- (qc[k] - mean(qc)) ^ 2
       }
@@ -517,3 +520,94 @@ cvMSE <- function(qc, QC.order, begin1, end1, step1) {
 
 
 
+#' @title svr_function
+#' @description svr_function
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param index index
+#' @param sample sample
+#' @param qc qc
+#' @param sample.order sample.order
+#' @param qc.order qc.order
+#' @param multiple multiple
+#' @import crayon
+#' @import tidyverse
+#' @import BiocParallel
+#' @import e1071
+#' @importFrom magrittr %>%
+
+setGeneric(
+  name = "svr_function",
+  def = function(index,
+                 sample,
+                 qc,
+                 sample.order,
+                 qc.order,
+                 multiple) {
+    # library(e1071)
+    colnames(sample) <- colnames(qc)
+    sample <- sample[, index, drop = FALSE]
+    qc <- qc[, index, drop = FALSE]
+    # cat("SVR normalization is finished: %\n")
+    data.order <- c(sample.order, qc.order)
+    
+    data.nor <- lapply(c(1:ncol(sample)), function(i) {
+      if (multiple != 1) {
+        correlation <-
+          abs(cor(x = rbind(sample, qc)[, i], y = rbind(sample, qc))[1, ])
+        cor.peak <-
+          match(names(sort(correlation, decreasing = TRUE)[1:6][-1]),
+                names(correlation))
+        rm(list = "correlation")
+        svr.reg <- e1071::svm(qc[, cor.peak], qc[, i])
+      } else{
+        svr.reg <- e1071::svm(unlist(qc[, i]) ~ qc.order)
+      }
+      
+      predict.qc <- summary(svr.reg)$fitted
+      qc.nor1 <- qc[, i] / predict.qc
+      
+      #if the predict value is 0, then set the ratio to 0
+      qc.nor1[is.nan(unlist(qc.nor1))] <- 0
+      qc.nor1[is.infinite(unlist(qc.nor1))] <- 0
+      qc.nor1[is.na(unlist(qc.nor1))] <- 0
+      qc.nor1[which(unlist(qc.nor1) < 0)] <- 0
+      
+      if (multiple != 1) {
+        predict.sample <- predict(svr.reg, sample[, cor.peak])
+      } else{
+        predict.sample <-
+          predict(svr.reg, data.frame(qc.order = c(sample.order)))
+      }
+      
+      sample.nor1 <- sample[, i] / predict.sample
+      sample.nor1[is.nan(unlist(sample.nor1))] <- 0
+      sample.nor1[is.infinite(unlist(sample.nor1))] <- 0
+      sample.nor1[is.na(unlist(sample.nor1))] <- 0
+      sample.nor1[which(unlist(sample.nor1) < 0)] <- 0
+      
+      return(list(sample.nor1, qc.nor1))
+      
+    })
+    
+    sample.nor <- lapply(data.nor, function(x)
+      x[[1]])
+    qc.nor <- lapply(data.nor, function(x)
+      x[[2]])
+    rm(list = "data.nor")
+    sample.nor <- t(do.call(rbind, sample.nor))
+    qc.nor <- t(do.call(rbind, qc.nor))
+    
+    colnames(sample.nor) <-
+      colnames(qc.nor) <- colnames(sample)
+    rm(list = c("sample", "qc"))
+    
+    svr.data <-
+      list(sample.nor = sample.nor,
+           qc.nor = qc.nor,
+           index = index)
+    rm(list = c("sample.nor", "qc.nor"))
+    return(svr.data)
+    
+  }
+)

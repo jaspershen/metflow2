@@ -1,7 +1,7 @@
 ---
 title: "Data normalization and integration"
 author:
-- name: Xiaotao Shen (https://www.shenxt.info/)
+- name: Xiaotao Shen PhD (https://www.shenxt.info/)
 - affiliation: School of Medicine, Stanford University
   url: http://shenxt.info/
 date: "Created on 2020-04-01 and updated on `r Sys.Date()`"
@@ -56,6 +56,7 @@ Then place the peak table and sample information in a folder. We use the demo da
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
 library(metflow2)
 library(demoData)
+library(tidyverse)
 ```
 
 ### **Load demo data**
@@ -149,6 +150,45 @@ object3 <- normalizeData(object = object2, method = "svr")
 ```
 
 
+After data normaliztion, you can use the `get_peak_int_distribution()` function to see each peak intensity distributation plot.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+get_peak_int_distribution(object = object3, peak_name = "M114T670", interactive = TRUE)
+```
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+get_peak_int_distribution(object = object2, peak_name = "M114T670", interactive = TRUE)
+```
 
 
+## **Data integration**
 
+Then we can use the `integrateData()` function to do data integration.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+object4 <- integrateData(object = object3, method = "qc.mean")
+```
+
+
+We can also get the RSDs of all the peaks before and after data normalization and data intergration.
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+rsd2 <- calculate_rsd(object = object2, slot = "QC")
+rsd4 <- calculate_rsd(object = object4, slot = "QC")
+```
+
+
+Then we can draw the comprison plot:
+
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+dplyr::left_join(rsd2, rsd4, by = c("index", "name")) %>% 
+  dplyr::mutate(class = dplyr::case_when(rsd.y < rsd.x ~ "Decrease",
+                                         rsd.y > rsd.x ~ "Increase",
+                                         rsd.y == rsd.y ~ "Equal")) %>% 
+  ggplot(aes(rsd.x, rsd.y, colour = class)) +
+  ggsci::scale_color_jama() +
+  geom_abline(slope = 1, intercept = 0) +
+  geom_point() +
+  labs(x = "RSD after normalization", y = "RSD before normalization") +
+  theme_bw()
+```

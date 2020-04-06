@@ -5,7 +5,7 @@
 \title{getWorklist}
 \usage{
 getWorklist(
-  table.name = "batch3.xlsx",
+  table.name = "batch.xlsx",
   instrument = c("Thermo", "Agilent", "AB"),
   each.mode.number = 32,
   randommethod = c("no", "position", "injection"),
@@ -20,7 +20,8 @@ getWorklist(
   ms2.method.pos = c("ZIC-HILIC_MSMS_pos_NCE25", "ZIC-HILIC_MSMS_pos_NCE25",
     "ZIC-HILIC_MSMS_pos_NCE25", "ZIC-HILIC_MSMS_pos_NCE25"),
   ms2.method.neg = c("ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25",
-    "ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25")
+    "ZIC-HILIC_MSMS_neg_NCE25", "ZIC-HILIC_MSMS_neg_NCE25"),
+  path = "."
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ getWorklist(
 \item{ms2.method.pos}{ms2.method.pos.}
 
 \item{ms2.method.neg}{ms2.method.neg.}
+
+\item{path}{The working directory.}
 }
 \value{
 Peak table.

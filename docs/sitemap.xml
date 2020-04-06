@@ -19,7 +19,7 @@
     <loc>https://jaspershen.github.io/metflow2//reference/calP.html</loc>
   </url>
   <url>
-    <loc>https://jaspershen.github.io/metflow2//reference/calRSD.html</loc>
+    <loc>https://jaspershen.github.io/metflow2//reference/calculate_rsd.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/checkData.html</loc>
@@ -67,9 +67,6 @@
     <loc>https://jaspershen.github.io/metflow2//reference/getMVplot4sample.html</loc>
   </url>
   <url>
-    <loc>https://jaspershen.github.io/metflow2//reference/getParams.html</loc>
-  </url>
-  <url>
     <loc>https://jaspershen.github.io/metflow2//reference/getWorklist.html</loc>
   </url>
   <url>
@@ -80,6 +77,12 @@
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/get_mv_plot_samples.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/get_parameters.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/get_peak_int_distribution.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/imputeMV.html</loc>
@@ -113,6 +116,9 @@
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/show_duplicated_samples.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/svr_function.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/transID.html</loc>

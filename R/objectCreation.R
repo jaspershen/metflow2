@@ -88,7 +88,8 @@ setMethod(
     print(group_info)
     cat(crayon::yellow(paste(rep("-", 20), collapse = ""), "\n"))
     cat(crayon::green("Processing\n"))
-    if (.hasSlot(object = object, name = "process.info") & length(object@process.info) != 0) {
+    if (.hasSlot(object = object, name = "process.info") &
+        length(object@process.info) != 0) {
       process.info <- object@process.info
       mapply(function(x, y) {
         cat(crayon::green(x, paste(rep("-", 10), collapse = ""), "\n"))
@@ -122,7 +123,7 @@ setGeneric(
   def = function(object,
                  slot = c("Subject", "QC", "QC.DL", "Blank", "Tags"),
                  silence.deprecated = TRUE) {
-    if(!silence.deprecated){
+    if (!silence.deprecated) {
       cat(crayon::yellow("`getData()` is deprecated, please use `get_data()`"))
     }
     
@@ -225,9 +226,12 @@ setGeneric(
 setGeneric(
   name = "getMVplot4sample",
   def = function(object) {
-    
-    if(!silence.deprecated){
-      cat(crayon::yellow("`getMVplot4sample()` is deprecated, please use `get_mv_plot_samples()`"))
+    if (!silence.deprecated) {
+      cat(
+        crayon::yellow(
+          "`getMVplot4sample()` is deprecated, please use `get_mv_plot_samples()`"
+        )
+      )
     }
     
     
@@ -263,10 +267,10 @@ setGeneric(
     if (class(plot)[1] == "try-error") {
       return(NULL)
     } else{
-      if(interactive){
+      if (interactive) {
         plotly::ggplotly(plot)
-      }else{
-        plot 
+      } else{
+        plot
       }
     }
     
@@ -274,7 +278,7 @@ setGeneric(
 )
 
 
-#' @title calRSD
+#' @title calculate_rsd
 #' @description Calculate RSD of peaks.
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
@@ -283,13 +287,26 @@ setGeneric(
 #' @return A data frame with RSD.
 #' @export
 setGeneric(
-  name = "calRSD",
-  def = function(object, slot = c("Subject", "QC")) {
+  name = "calculate_rsd",
+  def = function(object,
+                 slot = c("Subject",
+                          "QC",
+                          "QC.DL",
+                          "Blank",
+                          "Tags",
+                          "peak.table",
+                          "sample.info")) {
     slot <- match.arg(slot)
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
-    data <- getData(object = object, slot = slot)
+    
+    data <- get_data(object = object, slot = slot)
+    
+    if(is.null(data)){
+      stop("No ", slot, " in your data.\n")
+    }
+    
     if (sum(is.na(data)) != 0) {
       stop("Please impute MV first!\n")
     }
@@ -310,7 +327,7 @@ setGeneric(
 )
 
 
-#' @title getParams
+#' @title get_parameters
 #' @description Get parameters from a metflowClass object.
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
@@ -318,7 +335,7 @@ setGeneric(
 #' @return A data frame of parameters.
 #' @export
 setGeneric(
-  name = "getParams",
+  name = "get_parameters",
   def = function(object) {
     # requireNamespace("tidyverse")
     if (class(object) != "metflowClass") {
@@ -346,4 +363,3 @@ setGeneric(
     process_info
   }
 )
-

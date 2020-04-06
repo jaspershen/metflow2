@@ -65,6 +65,7 @@ First we load the demo data from `demoData` package and then place them in a `ex
 ```{r,eval=FALSE,warning=FALSE, R.options="", message=FALSE}
 library(demoData)
 library(metflow2)
+library(tidyverse)
 ```
 
 ```{r,eval=FALSE,warning=FALSE, R.options="", message=FALSE,cache = TRUE}

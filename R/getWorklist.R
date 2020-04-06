@@ -16,12 +16,13 @@
 #' @param ms1.method.neg ms1.method.neg.
 #' @param ms2.method.pos ms2.method.pos.
 #' @param ms2.method.neg ms2.method.neg.
+#' @param path The working directory.
 #' @return Peak table.
 #' @export
 
 setGeneric(
   name = "getWorklist",
-  def = function(table.name = "batch3.xlsx",
+  def = function(table.name = "batch.xlsx",
                  instrument = c("Thermo", "Agilent", "AB"),
                  each.mode.number = 32,
                  randommethod = c("no", "position", "injection"),
@@ -44,13 +45,18 @@ setGeneric(
                    "ZIC-HILIC_MSMS_neg_NCE25",
                    "ZIC-HILIC_MSMS_neg_NCE25",
                    "ZIC-HILIC_MSMS_neg_NCE25"
-                 )) {
+                 ),
+                 path = ".") {
+    dir.create(path = path, showWarnings = FALSE)
     instrument <- match.arg(instrument)
     randommethod <- match.arg(randommethod)
     options(warn = -1)
-    file <- dir()
+    file <- dir(path)
+    if(all(file != table.name)){
+      stop("No ", table.name, " in ", path)
+    }
     if (instrument == "Thermo") {
-      batch <- readxl::read_excel(table.name)
+      batch <- readxl::read_excel(file.path(path, table.name))
       batch <- batch[, 1]
       if (randommethod == "no") {
         ###add position
@@ -309,8 +315,8 @@ setGeneric(
         
         batch.neg[, 2] <- batch.neg[, 1]
         
-        write.csv(batch.pos, "worklist.pos.csv", row.names = FALSE)
-        write.csv(batch.neg, "worklist.neg.csv", row.names = FALSE)
+        write.csv(batch.pos, file.path(path, "worklist.pos.csv"), row.names = FALSE)
+        write.csv(batch.neg, file.path(path, "worklist.neg.csv"), row.names = FALSE)
         
         
         ###pos and neg
@@ -324,13 +330,13 @@ setGeneric(
         
         ##for positive mode
         batch.pos.head <-
-          batch.pos[1:(idx_blank[1] - 1), ]
+          batch.pos[1:(idx_blank[1] - 1),]
         
         batch.pos.tail <-
-          batch.pos[(tail(idx_qc, 1) + 1):nrow(batch.pos), ]
+          batch.pos[(tail(idx_qc, 1) + 1):nrow(batch.pos),]
         
         batch.pos.middle <-
-          batch.pos[idx_blank[1]:tail(idx_qc, 1), ]
+          batch.pos[idx_blank[1]:tail(idx_qc, 1),]
         
         temp_class <- rep(1:(QCstep + 2))
         
@@ -347,7 +353,7 @@ setGeneric(
         
         batch.pos.middle <-
           mapply(function(x, y) {
-            list(batch.pos.middle[x:y, ])
+            list(batch.pos.middle[x:y,])
           },
           x = idx1,
           y = idx2)
@@ -363,17 +369,15 @@ setGeneric(
             x
           })
         
-        batch.pos.middle <- 
-        lapply(batch.pos.middle, function(x){
-          if(length(grep("QC", tail(x$File.Name))) == 0){
-            x <- rbind(
-              x, x[grep("QC", x$File.Name)[1],]
-            )
-            x
-          }else{
-            x
-          }
-        })
+        batch.pos.middle <-
+          lapply(batch.pos.middle, function(x) {
+            if (length(grep("QC", tail(x$File.Name))) == 0) {
+              x <- rbind(x, x[grep("QC", x$File.Name)[1], ])
+              x
+            } else{
+              x
+            }
+          })
         
         
         #rename
@@ -381,13 +385,13 @@ setGeneric(
         
         
         batch.neg.head <-
-          batch.neg[1:(idx_blank[1] - 1), ]
+          batch.neg[1:(idx_blank[1] - 1),]
         
         batch.neg.tail <-
-          batch.neg[(tail(idx_qc, 1) + 1):nrow(batch.neg), ]
+          batch.neg[(tail(idx_qc, 1) + 1):nrow(batch.neg),]
         
         batch.neg.middle <-
-          batch.neg[idx_blank[1]:tail(idx_qc, 1), ]
+          batch.neg[idx_blank[1]:tail(idx_qc, 1),]
         
         temp_class <- rep(1:(QCstep + 2))
         
@@ -403,7 +407,7 @@ setGeneric(
         
         batch.neg.middle <-
           mapply(function(x, y) {
-            list(batch.neg.middle[x:y, ])
+            list(batch.neg.middle[x:y,])
           },
           x = idx1,
           y = idx2)
@@ -416,20 +420,18 @@ setGeneric(
             x
           })
         
-        batch.neg.middle <- 
-          lapply(batch.neg.middle, function(x){
-            if(length(grep("QC", tail(x$File.Name))) == 0){
-              x <- rbind(
-                x, x[grep("QC", x$File.Name)[1],]
-              )
+        batch.neg.middle <-
+          lapply(batch.neg.middle, function(x) {
+            if (length(grep("QC", tail(x$File.Name))) == 0) {
+              x <- rbind(x, x[grep("QC", x$File.Name)[1], ])
               x
-            }else{
+            } else{
               x
             }
           })
         
         batch.neg.head <-
-          batch.neg.head[-grep("Condition_QC", batch.neg.head$File.Name), ]
+          batch.neg.head[-grep("Condition_QC", batch.neg.head$File.Name),]
         
         
         batch.pos.middle[[1]] <-
@@ -457,42 +459,50 @@ setGeneric(
         mode[grep("POS", batch$Path)] <- "POS"
         mode[grep("NEG", batch$Path)] <- "NEG"
         
-        blank_pos <- 
-          which(mode == "POS" &
-                  stringr::str_detect(string = batch$File.Name, pattern = "^Blank_"))
+        blank_pos <-
+          which(
+            mode == "POS" &
+              stringr::str_detect(string = batch$File.Name, pattern = "^Blank_")
+          )
         
-        blank_neg <- 
-          which(mode == "NEG" &
-                  stringr::str_detect(string = batch$File.Name, pattern = "^Blank_"))
+        blank_neg <-
+          which(
+            mode == "NEG" &
+              stringr::str_detect(string = batch$File.Name, pattern = "^Blank_")
+          )
         
         
-        QC_pos <- 
-          which(mode == "POS" &
-                  stringr::str_detect(string = batch$File.Name, pattern = "^QC_[0-9]{1,3}"))
+        QC_pos <-
+          which(
+            mode == "POS" &
+              stringr::str_detect(string = batch$File.Name, pattern = "^QC_[0-9]{1,3}")
+          )
         
-        QC_neg <- 
-          which(mode == "NEG" &
-                  stringr::str_detect(string = batch$File.Name, pattern = "^QC_[0-9]{1,3}"))
-          
-        batch$File.Name[blank_pos] <- 
-          batch$Sample.ID[blank_pos] <- 
+        QC_neg <-
+          which(
+            mode == "NEG" &
+              stringr::str_detect(string = batch$File.Name, pattern = "^QC_[0-9]{1,3}")
+          )
+        
+        batch$File.Name[blank_pos] <-
+          batch$Sample.ID[blank_pos] <-
           paste("Blank", 1:length(blank_pos), sep = "_")
         
-        batch$File.Name[blank_neg] <- 
-          batch$Sample.ID[blank_neg] <- 
+        batch$File.Name[blank_neg] <-
+          batch$Sample.ID[blank_neg] <-
           paste("Blank", 1:length(blank_neg), sep = "_")
         
-        batch$File.Name[QC_pos] <- 
-          batch$Sample.ID[QC_pos] <- 
+        batch$File.Name[QC_pos] <-
+          batch$Sample.ID[QC_pos] <-
           paste("QC", qc.index.from:(length(QC_pos) + qc.index.from - 1), sep = "_")
         
-        batch$File.Name[QC_neg] <- 
-          batch$Sample.ID[QC_neg] <- 
+        batch$File.Name[QC_neg] <-
+          batch$Sample.ID[QC_neg] <-
           paste("QC", qc.index.from:(length(QC_pos) + qc.index.from - 1), sep = "_")
         
         
         
-        write.csv(batch, "worklist.csv", row.names = FALSE)
+        write.csv(batch, file.path(path, "worklist.csv"), row.names = FALSE)
         
       }
     }

@@ -53,6 +53,7 @@ Then place the peak table and sample information in a folder. We use the demo da
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=FALSE}
 library(metflow2)
 library(demoData)
+library(tidyverse)
 ```
 
 ### **Load demo data**

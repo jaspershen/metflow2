@@ -161,7 +161,7 @@
                         <h4 class="author">Xiaotao Shen PhD (<a href="https://www.shenxt.info/" class="uri">https://www.shenxt.info/</a>)</h4>
                                     <h4 class="author">true</h4>
             
-            <h4 class="date">Created on 2020-04-01 and updated on 2020-04-02</h4>
+            <h4 class="date">Created on 2020-04-01 and updated on 2020-04-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jaspershen/metflow2/blob/master/vignettes/other_tools.Rmd"><code>vignettes/other_tools.Rmd</code></a></small>
       <div class="hidden name"><code>other_tools.Rmd</code></div>
@@ -195,7 +195,16 @@
 <span class="co">#&gt; More information can be found at https://jaspershen.github.io/metflow2/</span>
 <span class="co">#&gt; Authors: Xiaotao Shen (shenxt@stanford.edu)</span>
 <span class="co">#&gt; Maintainer: Xiaotao Shen.</span>
-<span class="co">#&gt; Version 0.1.0 (20200321)</span></pre></body></html></div>
+<span class="co">#&gt; Version 0.1.0 (20200321)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)
+<span class="co">#&gt; ── Attaching packages ────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</span>
+<span class="co">#&gt; ✓ ggplot2 3.3.0     ✓ purrr   0.3.3</span>
+<span class="co">#&gt; ✓ tibble  3.0.0     ✓ dplyr   0.8.5</span>
+<span class="co">#&gt; ✓ tidyr   1.0.2     ✓ stringr 1.4.0</span>
+<span class="co">#&gt; ✓ readr   1.3.1     ✓ forcats 0.5.0</span>
+<span class="co">#&gt; ── Conflicts ───────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span>
+<span class="co">#&gt; x dplyr::filter() masks stats::filter()</span>
+<span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span></pre></body></html></div>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">database</span> <span class="kw">&lt;-</span> <span class="kw pkg">metflow2</span><span class="kw ns">::</span><span class="fu"><a href="../reference/databaseName.html">databaseName</a></span>(<span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
 <span class="co">#&gt; 225 databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'from'.</span>
 <span class="co">#&gt; 226 databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'to'.</span>
@@ -315,7 +324,7 @@
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">class</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_metclass.html">get_metclass</a></span>(<span class="kw">inchikey</span> <span class="kw">=</span> <span class="no">inchikey</span>)</pre></body></html></div>
 <p><code>class</code> is a <code>classfire</code> class.</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">class</span>
-<span class="co">#&gt; ── classyfire Object ─────────────────────────────────────────────────────────────────────────── metflow2 v0.1.0 ── </span>
+<span class="co">#&gt; ── classyfire Object ─────────────────────────────────────────────────────────────────── metflow2 v0.1.0 ── </span>
 <span class="co">#&gt; Object Size: 8.6 Kb </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Information: </span>
@@ -364,6 +373,56 @@
 <span class="co">#&gt;   name                 value        </span>
 <span class="co">#&gt;   &lt;chr&gt;                &lt;chr&gt;        </span>
 <span class="co">#&gt; 1 External Descriptors CHEBI:15377 :</span></pre></body></html></div>
+</div>
+<div id="generate-running-list" class="section level2">
+<h2 class="hasAnchor">
+<a href="#generate-running-list" class="anchor"></a><strong>Generate running list</strong>
+</h2>
+<p>We can use the <code><a href="../reference/getWorklist.html">getWorklist()</a></code> function in <code>metflow2</code> to generate a working list.</p>
+<p>First, we should creat a <code>batch.xlsx</code> and put it in a folder. We use the demo data in <code>demoData</code> package.</p>
+<p>The <code>batch.xlsx</code> is like this:</p>
+<p><img src="../man/figures/Screen%20Shot%202020-04-05%20at%202.37.02%20PM.png"></p>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">metflow2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">demoData</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co">##creat a folder nameed as example</span>
+<span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"."</span>, <span class="st">"example"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">showWarnings</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co">##get demo data</span>
+<span class="no">demo_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"metflow2"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"demoData"</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span>(<span class="kw">from</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">demo_data</span>, <span class="st">"batch.xlsx"</span>),
+          <span class="kw">to</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="co">#&gt; [1] TRUE</span></pre></body></html></div>
+<p>Next, run the <code><a href="../reference/getWorklist.html">getWorklist()</a></code> function.</p>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/getWorklist.html">getWorklist</a></span>(
+  <span class="kw">table.name</span> <span class="kw">=</span> <span class="st">"batch.xlsx"</span>,
+  <span class="kw">instrument</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Thermo"</span>, <span class="st">"Agilent"</span>, <span class="st">"AB"</span>),
+  <span class="kw">each.mode.number</span> <span class="kw">=</span> <span class="fl">32</span>,
+  <span class="kw">randommethod</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"no"</span>, <span class="st">"position"</span>, <span class="st">"injection"</span>),
+  <span class="kw">samplenumber</span> <span class="kw">=</span> <span class="kw">NULL</span>,
+  <span class="kw">QCstep</span> <span class="kw">=</span> <span class="fl">8</span>,
+  <span class="kw">conditionQCnumber</span> <span class="kw">=</span> <span class="fl">8</span>,
+  <span class="kw">qc.index.from</span> <span class="kw">=</span> <span class="fl">1</span>,
+  <span class="kw">dir</span> <span class="kw">=</span> <span class="st">"D:\\Liang\\data\\PS4U\\HILIC\\batch3\\"</span>,
+  <span class="kw">method.path</span> <span class="kw">=</span> <span class="st">"D:\\Liang\\Method\\urine\\HILIC\\"</span>,
+  <span class="kw">ms1.method.pos</span> <span class="kw">=</span> <span class="st">"ZIC-HILIC_MS_pos"</span>,
+  <span class="kw">ms1.method.neg</span> <span class="kw">=</span> <span class="st">"ZIC-HILIC_MS_neg"</span>,
+  <span class="kw">ms2.method.pos</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+    <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>
+  ),
+  <span class="kw">ms2.method.neg</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+    <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
+    <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>
+  ),
+  <span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>
+)</pre></body></html></div>
+<p>Then, the worklists will generated in this folder.</p>
+<p><img src="../man/figures/Screen%20Shot%202020-04-05%20at%204.53.37%20PM.png"></p>
 </div>
   </div>
 
