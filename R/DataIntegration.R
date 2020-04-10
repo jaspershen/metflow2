@@ -104,6 +104,12 @@ setGeneric(
         correct_factor[[1]] / x
       })
     
+    correct_factor <- 
+      correct_factor %>% 
+      lapply(function(x){
+        x[is.na(x)] <- 1
+        x[is.infinite(x)] <- 1
+      })
     
     subject_data[-1] <-
       purrr::map2(subject_data[-1], correct_factor, function(x , y){

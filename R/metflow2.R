@@ -7,6 +7,7 @@
 metflow2 <- function(){
   cat(crayon::green("Thank you for using metflow2!\n"))
   cat(crayon::green("Version 0.1.0 (20200321)\n"))
+  cat(crayon::green("Bug fixing (2020410)\n"))
   cat(crayon::green("More information can be found at https://jaspershen.github.io/metflow2/\n"))
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
@@ -24,7 +25,9 @@ metflow2 <- function(){
 More information can be found at https://jaspershen.github.io/metflow2/
 Authors: Xiaotao Shen (shenxt@stanford.edu)
 Maintainer: Xiaotao Shen.
-Version 0.1.0 (20200321)"
+Version 0.1.0 (20200321)
+Bug fixing (2020410)"
+
   ),
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
