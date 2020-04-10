@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • metflow2</title>
+<title>integrate_data — integrate_data • metflow2</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,7 +52,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="integrate_data — integrate_data" />
+<meta property="og:description" content="Integrate different batch datasets together." />
 <meta property="og:image" content="https://jaspershen.github.io/metflow2/logo.png" />
 
 
@@ -82,7 +83,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -204,300 +205,46 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>integrate_data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/DataIntegration.R'><code>R/DataIntegration.R</code></a></small>
+    <div class="hidden name"><code>integrate_data.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Integrate different batch datasets together.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>integrate_data</span>(
+  <span class='no'>object</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"qc.mean"</span>, <span class='st'>"qc.median"</span>, <span class='st'>"subject.mean"</span>, <span class='st'>"subject.median"</span>)
+)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="SXTMTmatch.html">SXTMTmatch()</a></code> </p>
-        </td>
-        <td><p>SXTMTmatch</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="alignBatch.html">alignBatch()</a></code> </p>
-        </td>
-        <td><p>alignBatch</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="align_batch.html">align_batch()</a></code> </p>
-        </td>
-        <td><p>align_batch</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calFC.html">calFC()</a></code> </p>
-        </td>
-        <td><p>calFC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calP.html">calP()</a></code> </p>
-        </td>
-        <td><p>calP</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_rsd.html">calculate_rsd()</a></code> </p>
-        </td>
-        <td><p>calculate_rsd</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="checkData.html">checkData()</a></code> </p>
-        </td>
-        <td><p>checkData</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="chromatogramPlot.html">chromatogramPlot()</a></code> </p>
-        </td>
-        <td><p>chromatogramPlot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="creatMetflowObject.html">creatMetflowObject()</a></code> </p>
-        </td>
-        <td><p>creatMetflowObject</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="databaseName.html">databaseName()</a></code> </p>
-        </td>
-        <td><p>databaseName</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="doPCA.html">doPCA()</a></code> </p>
-        </td>
-        <td><p>doPCA</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dotsne.html">dotsne()</a></code> </p>
-        </td>
-        <td><p>dotsne</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="enrichPathway.html">enrichPathway()</a></code> </p>
-        </td>
-        <td><p>enrichPathway</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="extractPeaks.html">extractPeaks()</a></code> </p>
-        </td>
-        <td><p>extractPeaks</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filterPeak.html">filterPeak()</a></code> </p>
-        </td>
-        <td><p>filterPeak</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filterRSD.html">filterRSD()</a></code> </p>
-        </td>
-        <td><p>filterRSD</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filterSample.html">filterSample()</a></code> </p>
-        </td>
-        <td><p>filterSample</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filter_peaks.html">filter_peaks()</a></code> </p>
-        </td>
-        <td><p>Filter peaks according to missing values.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filter_samples.html">filter_samples()</a></code> </p>
-        </td>
-        <td><p>Filter samples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getData.html">getData()</a></code> </p>
-        </td>
-        <td><p>getData</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getMVplot4sample.html">getMVplot4sample()</a></code> </p>
-        </td>
-        <td><p>getMVplot4sample</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getWorklist.html">getWorklist()</a></code> </p>
-        </td>
-        <td><p>getWorklist</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_data.html">get_data()</a></code> </p>
-        </td>
-        <td><p>Get data from metflowClass object.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_metclass.html">get_metclass()</a></code> </p>
-        </td>
-        <td><p>get_metclass</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_mv_plot_samples.html">get_mv_plot_samples()</a></code> </p>
-        </td>
-        <td><p>get_mv_plot_samples</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_parameters.html">get_parameters()</a></code> </p>
-        </td>
-        <td><p>get_parameters</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_peak_int_distribution.html">get_peak_int_distribution()</a></code> </p>
-        </td>
-        <td><p>Get peak intensity distributation plot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="imputeMV.html">imputeMV()</a></code> </p>
-        </td>
-        <td><p>Impute MV in data.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="impute_mv.html">impute_mv()</a></code> </p>
-        </td>
-        <td><p>Impute MV in data.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="integrateData.html">integrateData()</a></code> </p>
-        </td>
-        <td><p>integrateData</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="integrate_data.html">integrate_data()</a></code> </p>
-        </td>
-        <td><p>integrate_data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="metflow2.html">metflow2()</a></code> </p>
-        </td>
-        <td><p>metflow2</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="metflow2_logo.html">metflow2_logo()</a></code> </p>
-        </td>
-        <td><p>metflow2_logo</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="normalizeData.html">normalizeData()</a></code> </p>
-        </td>
-        <td><p>normalizeData</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="normalize_data.html">normalize_data()</a></code> </p>
-        </td>
-        <td><p>normalize_data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="outputFeatureEIC.html">outputFeatureEIC()</a></code> </p>
-        </td>
-        <td><p>outputFeatureEIC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="processData.html">processData()</a></code> </p>
-        </td>
-        <td><p>processData</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="remove_duplicated_name.html">remove_duplicated_name()</a></code> </p>
-        </td>
-        <td><p>Remove the duplicated samples of peak tables from Thermo QE instrument</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="showPeak.html">showPeak()</a></code> </p>
-        </td>
-        <td><p>showPeak</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="showPeakPlot.html">showPeakPlot()</a></code> </p>
-        </td>
-        <td><p>showPeakPlot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="show_duplicated_samples.html">show_duplicated_samples()</a></code> </p>
-        </td>
-        <td><p>Show the duplicated samples of peak tables from Thermo QE instrument</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="svr_function.html">svr_function()</a></code> </p>
-        </td>
-        <td><p>svr_function</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="transID.html">transID()</a></code> </p>
-        </td>
-        <td><p>transID</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="volcanoPlot.html">volcanoPlot()</a></code> </p>
-        </td>
-        <td><p>VolcanoPlot</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p>object.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>Which method do you want to use?
+subject.mean or qc.mean, default is qc.mean.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Return a MetFlowData which has been integrated.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Data integration is a necessary step for multiple batch dataset.
+<a href='https://www.readcube.com/library/fe13374b-5bc9-4c61-9b7f-6a354690947e:abe41368-d08d-4806-871f-3aa035d21743'>Dunn's</a>
+method has been used in this function.</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

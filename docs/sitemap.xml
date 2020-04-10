@@ -88,7 +88,13 @@
     <loc>https://jaspershen.github.io/metflow2//reference/imputeMV.html</loc>
   </url>
   <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/impute_mv.html</loc>
+  </url>
+  <url>
     <loc>https://jaspershen.github.io/metflow2//reference/integrateData.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/integrate_data.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/metflow2.html</loc>
@@ -98,6 +104,9 @@
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/normalizeData.html</loc>
+  </url>
+  <url>
+    <loc>https://jaspershen.github.io/metflow2//reference/normalize_data.html</loc>
   </url>
   <url>
     <loc>https://jaspershen.github.io/metflow2//reference/outputFeatureEIC.html</loc>

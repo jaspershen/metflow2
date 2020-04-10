@@ -51,6 +51,7 @@ setGeneric(
                  maxSteps = 100,
                  threshold = 1e-04,
                  ...) {
+    
     options(warn = -1)
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
@@ -69,6 +70,37 @@ setGeneric(
     
     subject_data <-
       get_data(object = object, slot = "Subject")
+    
+    ##remove the peaks are NAs in all qc or objects
+    if(!is.null(qc_data)){
+      idx1 <- apply(qc_data, 1, function(x){
+        sum(is.na(x))/ncol(qc_data)
+      }) %>% 
+        `==`(1) %>% 
+        which()
+    }else{
+      idx1 <- NULL
+    }
+    
+    if(!is.null(subject_data)){
+      idx2 <- apply(subject_data, 1, function(x){
+        sum(is.na(x))/ncol(subject_data)
+      }) %>% 
+        `==`(1) %>% 
+        which()
+    }else{
+      idx2 <- NULL
+    }
+    
+    remove_idx <- 
+      intersect(idx1, idx2)
+    
+    if(length(remove_idx) > 0){
+      qc_data <- qc_data[-remove_idx, , drop = FALSE]
+      subject_data <- subject_data[-remove_idx, , drop = FALSE]
+      object@ms1.data[[1]] <- object@ms1.data[[1]][-remove_idx, , drop = FALSE]
+      ms1_data <- object@ms1.data[[1]]
+    }
     
     subject_qc_data <- cbind(qc_data, subject_data)
     
@@ -186,11 +218,7 @@ setGeneric(
                  maxSteps = 100,
                  threshold = 1e-04,
                  ...) {
-    cat(
-      crayon::yellow(
-        "`imputeMV()` is deprecated, please use `impute_mv()`"
-      )  
-    )
+    cat(crayon::yellow("`imputeMV()` is deprecated, please use `impute_mv()`"))
     
     options(warn = -1)
     if (class(object) != "metflowClass") {
