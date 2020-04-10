@@ -26,6 +26,141 @@
 #' @export
 
 setGeneric(
+  name = "impute_mv",
+  def = function(object,
+                 method = c("knn",
+                            "rf",
+                            "mean",
+                            "median",
+                            "zero",
+                            "minimum",
+                            "bpca",
+                            "svdImpute",
+                            "ppca"),
+                 k = 10,
+                 rowmax = 0.5,
+                 colmax = 0.8,
+                 maxp = 1500,
+                 rng.seed = 362436069,
+                 # missForest parameters
+                 maxiter = 10,
+                 ntree = 100,
+                 decreasing = FALSE,
+                 #BPCA PPCA, and SVD parameters
+                 nPcs = 2,
+                 maxSteps = 100,
+                 threshold = 1e-04,
+                 ...) {
+    options(warn = -1)
+    if (class(object) != "metflowClass") {
+      stop("Only the metflowClass is supported!\n")
+    }
+    
+    #### MV imputation
+    ms1_data <- object@ms1.data
+    
+    if (length(ms1_data) > 1) {
+      stop("Please align batch first.\n")
+    }
+    
+    ms1_data <- ms1_data[[1]]
+    
+    qc_data <- get_data(object = object, slot = "QC")
+    
+    subject_data <-
+      get_data(object = object, slot = "Subject")
+    
+    subject_qc_data <- cbind(qc_data, subject_data)
+    
+    subject_qc_data <- tibble::as_tibble(subject_qc_data)
+    
+    if (sum(is.na(subject_qc_data)) == 0) {
+      cat("No missing values.\n")
+      invisible(object)
+    }
+    
+    subject_qc_data <- sxtMVimputation(
+      data = subject_qc_data,
+      method = method,
+      # knn parameters
+      k = k,
+      rowmax = rowmax,
+      colmax = colmax,
+      maxp = maxp,
+      rng.seed = rng.seed,
+      # missForest parameters
+      maxiter = maxiter,
+      ntree = ntree,
+      decreasing = decreasing,
+      #BPCA PPCA, and SVD parameters
+      nPcs = nPcs,
+      maxSteps = maxSteps,
+      threshold = threshold,
+      ...
+    )
+    
+    object@process.info$imputeMV <- list()
+    object@process.info$imputeMV$method = method
+    object@process.info$imputeMV$k = k
+    object@process.info$imputeMV$rowmax = rowmax
+    object@process.info$imputeMV$colmax = colmax
+    object@process.info$imputeMV$maxp = maxp
+    object@process.info$imputeMV$rng.seed = rng.seed
+    object@process.info$imputeMV$maxiter = maxiter
+    object@process.info$imputeMV$ntree = ntree
+    object@process.info$imputeMV$decreasing = decreasing
+    object@process.info$imputeMV$nPcs = nPcs
+    object@process.info$imputeMV$maxSteps = maxSteps
+    object@process.info$imputeMV$threshold = threshold
+    object@process.info$imputeMV$maxSteps = maxSteps
+    
+    sample_info <- object@sample.info
+    
+    subject_qc_name <-
+      dplyr::filter(.data = sample_info, class %in% c("Subject", "QC")) %>%
+      dplyr::pull(., sample.name)
+    
+    subject_qc_data <-
+      subject_qc_data[, match(subject_qc_name, colnames(subject_qc_data))]
+    
+    ms1_data[, match(subject_qc_name, colnames(ms1_data))] <-
+      subject_qc_data
+    ms1_data <- list(ms1_data)
+    object@ms1.data <- ms1_data
+    invisible(object)
+  }
+)
+
+
+
+#' @title Impute MV in data.
+#' @description Impute MV in data.
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param object A metflowClass object.
+#' @param method Imputation method. It
+#' contains "knn", "rf" (missForest), "mean", "median", "zero", "minium",
+#' "bpca" (BPCA), "svd" (SVD) and "ppca" (PPCA). Default is "knn".
+#' The detial of
+#' this method can be find in detail and reference paperes.
+#' @param k See ?impute.knn
+#' @param rowmax See ?impute.knn
+#' @param colmax See ?impute.knn
+#' @param maxp See ?impute.knn
+#' @param rng.seed See ?impute.knn
+#' @param maxiter See ?missForest
+#' @param ntree See ?missForest
+#' @param decreasing See ?missForest
+#' @param nPcs See ?bpca
+#' @param maxSteps See ?bpca
+#' @param threshold See ?bpca
+#' @param ... Other arguments.
+#' @import tibble
+#' @import tidyverse
+#' @return A new metflowClass object.
+#' @export
+
+setGeneric(
   name = "imputeMV",
   def = function(object,
                  method = c("knn",
@@ -51,6 +186,12 @@ setGeneric(
                  maxSteps = 100,
                  threshold = 1e-04,
                  ...) {
+    cat(
+      crayon::yellow(
+        "`imputeMV()` is deprecated, please use `impute_mv()`"
+      )  
+    )
+    
     options(warn = -1)
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
@@ -151,6 +292,7 @@ setGeneric(
                  maxSteps = 100,
                  threshold = 1e-04,
                  ...) {
+    
     method = match.arg(method)
     ## KNN method
     if (method == "knn") {
@@ -199,6 +341,7 @@ setGeneric(
           x
         }
       })
+      rownames(data.result) <- colnames(data)
       return(tibble::as_tibble(t(data.result)))
     }
     
