@@ -102,7 +102,17 @@ setGeneric(
       ms1_data <- object@ms1.data[[1]]
     }
     
-    subject_qc_data <- cbind(qc_data, subject_data)
+    if(is.null(qc_data)){
+      subject_qc_data <- subject_data
+    }
+    
+    if(is.null(subject_data)){
+      subject_qc_data <- qc_data
+    }
+    
+    if(!is.null(qc_data) & !is.null(subject_data)){
+      subject_qc_data <- cbind(qc_data, subject_data) 
+    }
     
     subject_qc_data <- tibble::as_tibble(subject_qc_data)
     
