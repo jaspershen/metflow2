@@ -46,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.1</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@
                         <h4 class="author">Xiaotao Shen PhD (<a href="https://www.shenxt.info/" class="uri">https://www.shenxt.info/</a>)</h4>
                                     <h4 class="author">true</h4>
             
-            <h4 class="date">Created on 2020-04-01 and updated on 2020-04-10</h4>
+            <h4 class="date">Created on 2020-04-01 and updated on 2020-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jaspershen/metflow2/blob/master/vignettes/data_normalization_integration.Rmd"><code>vignettes/data_normalization_integration.Rmd</code></a></small>
       <div class="hidden name"><code>data_normalization_integration.Rmd</code></div>
@@ -364,7 +364,7 @@
 <p>Now we can normalize data using different methods.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">object3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/normalizeData.html">normalizeData</a></span>(<span class="kw">object</span> <span class="kw">=</span> <span class="no">object2</span>, <span class="kw">method</span> <span class="kw">=</span> <span class="st">"mean"</span>)</pre></body></html></div>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">object3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/normalizeData.html">normalizeData</a></span>(<span class="kw">object</span> <span class="kw">=</span> <span class="no">object2</span>, <span class="kw">method</span> <span class="kw">=</span> <span class="st">"svr"</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"># object3 </pre></body></html></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"># object3 &lt;- normalizeData(object = object2, method = "pqn")</pre></body></html></div>
 <p>After data normaliztion, you can use the <code><a href="../reference/get_peak_int_distribution.html">get_peak_int_distribution()</a></code> function to see each peak intensity distributation plot.</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/get_peak_int_distribution.html">get_peak_int_distribution</a></span>(<span class="kw">object</span> <span class="kw">=</span> <span class="no">object3</span>, <span class="kw">peak_name</span> <span class="kw">=</span> <span class="st">"M114T670"</span>, <span class="kw">interactive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <div id="htmlwidget-7c372e46cfadbf03a0ba" style="width:100%;height:432.632880098888px;" class="plotly html-widget"></div>
@@ -411,7 +411,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

@@ -40,3 +40,7 @@
 --------------
 * All the documents for functions and a vignetter for metflow2.
 
+# Version 0.1.1 (20200617)
+--------------
+* Small bug fix.
+

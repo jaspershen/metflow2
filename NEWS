@@ -37,3 +37,7 @@ o New functions for extractPeaks.
 Version 0.1.0 (20200321)
 --------------
 o All the documents for functions and a vignetter for metflow2.
+
+Version 0.1.1 (20200617)
+--------------
+o Small bug fix.

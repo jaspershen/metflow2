@@ -136,7 +136,7 @@ setGeneric(
     }
 
     class <-  unique(as.character(sample.info[, 3]))
-    if (all(c("QC", "Subject") %in% class)) {
+    if (any(c("QC", "Subject") %in% class)) {
       sample.info.record <- c(sample.info.record, "OK")
     } else{
       cat(crayon::red(clisymbols::symbol$cross,

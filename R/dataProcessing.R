@@ -136,8 +136,7 @@ setGeneric(name = "processData",
              dir.create(output_path)
              intermediate_data_path <- file.path(output_path, "intermediate_data")
              dir.create(intermediate_data_path)
-             
-             
+            
              ##paramters
              parameters <- list(
                path = path,
