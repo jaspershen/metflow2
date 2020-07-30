@@ -1,4 +1,5 @@
 
+
 #' @title chromatogramPlot
 #' @description Draw TIC or BPC.
 #' @author Xiaotao Shen
@@ -24,20 +25,25 @@ setGeneric(
                  title = "",
                  interactive = FALSE,
                  group.for.figure = "QC") {
+    
+    cat(crayon::yellow("chromatogramPlot is deprecited, please use the plot_chromatogram().\n"))
+    
     options(warn = -1)
     info <- object@phenoData@data
     data <- object@.Data
-    data <- data[1,which(info$sample_group %in% group.for.figure), drop = FALSE]
-    info <- info[info$sample_group %in% group.for.figure,,drop = FALSE]
+    data <-
+      data[1, which(info$sample_group %in% group.for.figure), drop = FALSE]
+    info <-
+      info[info$sample_group %in% group.for.figure, , drop = FALSE]
     
-    if(nrow(info) == 0){
+    if (nrow(info) == 0) {
       return(NULL)
     }
     
-    if(nrow(info) > 10){
+    if (nrow(info) > 10) {
       idx <- sort(sample(1:nrow(info), 10))
       info <- info[idx, , drop = FALSE]
-      data <- data[,idx,drop = FALSE]
+      data <- data[, idx, drop = FALSE]
     }
     
     rm(list = c("object"))
@@ -82,10 +88,8 @@ setGeneric(
     plot <-
       ggplot2::ggplot(data = data,
                       ggplot2::aes(x = mz, y = intensity)) +
-      ggplot2::geom_line(
-        data = data,
-        mapping = ggplot2::aes(colour = sample, group = sample)
-      ) +
+      ggplot2::geom_line(data = data,
+                         mapping = ggplot2::aes(colour = sample, group = sample)) +
       ggsci::scale_fill_lancet() +
       ggplot2::theme_bw() +
       ggplot2::labs(x = "Retention time (RT, second)", y = "Intensity", title = title) +
@@ -116,6 +120,130 @@ setGeneric(
     
   }
 )
+
+
+
+
+
+#' @title plot_chromatogram
+#' @description Draw TIC or BPC.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object Object for tic.plot or bpc.plot.
+#' @param title.size Font size of title..
+#' @param lab.size Font size of lab title.
+#' @param axis.text.size Font size of axis text.
+#' @param alpha alpha.
+#' @param title Title of the plot..
+#' @param interactive interactive.
+#' @param group.for.figure What groups to show EIC.
+#' @return A ggplot2 object.
+#' @export
+
+setGeneric(
+  name = "plot_chromatogram",
+  def = function(object,
+                 title.size = 13,
+                 lab.size = 13,
+                 axis.text.size = 12,
+                 alpha = 0.5,
+                 title = "",
+                 interactive = FALSE,
+                 group.for.figure = "QC") {
+    options(warn = -1)
+    info <- object@phenoData@data
+    data <- object@.Data
+    data <-
+      data[1, which(info$sample_group %in% group.for.figure), drop = FALSE]
+    info <-
+      info[info$sample_group %in% group.for.figure, , drop = FALSE]
+    
+    if (nrow(info) == 0) {
+      return(NULL)
+    }
+    
+    if (nrow(info) > 10) {
+      idx <- sort(sample(1:nrow(info), 10))
+      info <- info[idx, , drop = FALSE]
+      data <- data[, idx, drop = FALSE]
+    }
+    
+    rm(list = c("object"))
+    data <- apply(data, 2, function(x) {
+      x <- x[[1]]
+      x <-
+        data.frame(
+          "mz" = x@rtime,
+          "intensity" = x@intensity,
+          stringsAsFactors = FALSE
+        )
+      list(x)
+    })
+    
+    data <- lapply(data, function(x) {
+      x[[1]]
+    })
+    
+    data <- mapply(
+      FUN = function(x, y, z) {
+        x <- data.frame(
+          x,
+          "group" = y,
+          "sample" = z,
+          stringsAsFactors = FALSE
+        )
+        list(x)
+      },
+      x = data,
+      y = info[, 2],
+      z = info[, 1]
+    )
+    
+    # data <- lapply(data, function(x){
+    #   x <- plyr::dlply(.data = x, .variables = plyr::.(sample))
+    # })
+    
+    data <- do.call(rbind, args = data)
+    
+    # data <- plyr::dlply(.data = data, .variables = plyr::.(sample))
+    
+    plot <-
+      ggplot2::ggplot(data = data,
+                      ggplot2::aes(x = mz, y = intensity)) +
+      ggplot2::geom_line(data = data,
+                         mapping = ggplot2::aes(color = sample, group = sample),
+                         alpha = alpha) +
+      ggsci::scale_color_aaas() +
+      ggplot2::theme_bw() +
+      ggplot2::labs(x = "Retention time (RT, second)", y = "Intensity", title = title) +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(
+          color = "black",
+          size = title.size,
+          face = "plain",
+          hjust = 0.5
+        ),
+        axis.title = ggplot2::element_text(
+          color = "black",
+          size = lab.size,
+          face = "plain"
+        ),
+        axis.text = ggplot2::element_text(
+          color = "black",
+          size = axis.text.size,
+          face = "plain"
+        )
+      )
+    
+    if (interactive) {
+      plot <- plotly::ggplotly(plot)
+    }
+    
+    return(plot)
+    
+  }
+)
+
 
 
 setGeneric(
@@ -240,7 +368,7 @@ setGeneric(
 #' @param rt.tolerance Rt tolerance.
 #' @return Result contains EIC of peaks.
 #' @export
-#' @import xcms 
+#' @import xcms
 #' @import MSnbase
 #' @importFrom MSnbase selectFeatureData
 #' @import mzR
@@ -287,7 +415,7 @@ setGeneric(
     cat(crayon::green("Reading raw data, it will take a while...\n"))
     
     if (any(dir(path) == "raw_data")) {
-      cat(crayon::yellow("Use old data.\n"))  
+      cat(crayon::yellow("Use old data.\n"))
       load(file.path(path, "raw_data"))
     } else{
       raw_data <- MSnbase::readMSData(
@@ -306,22 +434,22 @@ setGeneric(
     
     is.table <-
       try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
-      
+    
     if (!is.null(mz) & !is.null(rt)) {
-      if(length(mz) != length(rt)){
+      if (length(mz) != length(rt)) {
         cat(crayon::yellow("Lenght of mz and rt you provied are different.\n"))
       }
       is.table <- data.frame(mz = as.numeric(mz),
-                             rt = as.numeric(rt), 
+                             rt = as.numeric(rt),
                              stringsAsFactors = FALSE)
       is.table$name <- paste("feature", 1:nrow(is.table), sep = "_")
-        
-        is.table <- 
-        is.table %>% 
+      
+      is.table <-
+        is.table %>%
         dplyr::select(name, mz, rt)
     }
     
-    if(class(is.table)[1] == "try-error"){
+    if (class(is.table)[1] == "try-error") {
       stop(crayon::red('Please provide right is table or mz and rt.\n'))
     }
     
@@ -338,29 +466,29 @@ setGeneric(
     
     mz_range <- do.call(rbind, mz_range)
     
-    if(any(colnames(is.table) == "rt")){
+    if (any(colnames(is.table) == "rt")) {
       rt <-
         is.table %>%
-        dplyr::pull(3) %>% 
+        dplyr::pull(3) %>%
         as.numeric()
       
-      rt_range <- 
-        lapply(rt, function(x){
+      rt_range <-
+        lapply(rt, function(x) {
           c(x - rt.tolerance, x + rt.tolerance)
-        }) %>% 
-        do.call(rbind, .)      
-    }else{
+        }) %>%
+        do.call(rbind, .)
+    } else{
       rt_range <- NA
     }
-
+    
     cat(crayon::green("Extracting peaks, it will take a while..."))
-    if(!is.na(rt_range)){
+    if (!is.na(rt_range)) {
       peak_data <- xcms::chromatogram(object = raw_data,
-                                      mz = mz_range, 
-                                      rt = rt_range) 
-    }else{
+                                      mz = mz_range,
+                                      rt = rt_range)
+    } else{
       peak_data <- xcms::chromatogram(object = raw_data,
-                                      mz = mz_range) 
+                                      mz = mz_range)
     }
     cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
     
@@ -384,7 +512,7 @@ setGeneric(
 
 #' @return Result contains EIC of peaks.
 #' @export
-#' @import xcms 
+#' @import xcms
 #' @import MSnbase
 #' @import stringr
 #' @import tidyverse
@@ -443,21 +571,19 @@ setGeneric(
     plot <-
       ggplot2::ggplot(data = data,
                       ggplot2::aes(x = rt, y = intensity)) +
-      ggplot2::geom_line(
-        data = data,
-        mapping = ggplot2::aes(colour = group)
-      ) +
-      ggplot2::geom_area( mapping = ggplot2::aes(fill = group),
-                          alpha = alpha) +
+      ggplot2::geom_line(data = data,
+                         mapping = ggplot2::aes(colour = group)) +
+      ggplot2::geom_area(mapping = ggplot2::aes(fill = group),
+                         alpha = alpha) +
       # ggsci::scale_color_tron(alpha = alpha) +
       # ggsci::scale_fill_tron(alpha = alpha) +
       # ggplot2::scale_y_continuous(breaks = intensity,
-      #   labels = ecoflux::scientific_10x(values = intensity, digits = 2)) + 
+      #   labels = ecoflux::scientific_10x(values = intensity, digits = 2)) +
       # ggplot2::scale_y_continuous(breaks = intensity,
-      #                             labels = scales::math_format(10^.intensity)) + 
+      #                             labels = scales::math_format(10^.intensity)) +
       
       ggplot2::theme_bw() +
-      ggplot2::labs(x = "Retention time (RT, second)", 
+      ggplot2::labs(x = "Retention time (RT, second)",
                     y = "Intensity", title = title) +
       ggplot2::theme(
         plot.title = ggplot2::element_text(
@@ -508,7 +634,7 @@ setGeneric(
 #' @param message Show message or not.
 #' @return ggplot object.
 #' @export
-#' @import xcms 
+#' @import xcms
 #' @import tidyverse
 #' @import plotly
 
@@ -539,7 +665,7 @@ setGeneric(
     }
     
     feature_eic_data <-
-      object@.Data[1, ] %>%
+      object@.Data[1,] %>%
       lapply(function(x) {
         if (nrow(x@chromPeaks) == 0) {
           data.frame(
@@ -678,3 +804,87 @@ new_scale_color <- function() {
 }
 
 
+
+
+#' @title plot_tic
+#' @description Extract TIC or BPC from in a RT range from mzXML format data.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param file name of mzXML data.
+#' @param path work directory.
+#' @param type tic or bpc.
+#' @param threads thread number
+#' @param legend legend or not.
+#' @return A object for plot_chromatogram() function.
+#' @export
+
+setGeneric(
+  name = "plot_tic",
+  def = function(file,
+                 path = ".",
+                 type = c("tic", "bpc"),
+                 threads = 4,
+                 legend = FALSE) {
+    type <- match.arg(type)
+    sample_group <-
+      rep("QC", length(file))
+    
+    pd <-
+      data.frame(
+        sample_name = sub(
+          basename(file),
+          pattern = ".mzXML",
+          replacement = "",
+          fixed = TRUE
+        ),
+        sample_group = sample_group,
+        stringsAsFactors = FALSE
+      )
+    
+    
+    cat(crayon::green("Reading raw data, it will take a while...\n"))
+    
+    raw_data <- MSnbase::readMSData(
+      files = file.path(path, file),
+      pdata = new("NAnnotatedDataFrame", pd),
+      mode = "onDisk",
+      verbose = TRUE
+    )
+    
+    
+    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+    
+    #retention time correction
+    #Alignment
+    cat(crayon::green("Correcting rentention time...\n "))
+    
+    xdata <- try(xcms::adjustRtime(raw_data,
+                                   param = xcms::ObiwarpParam(binSize = 0.5)),
+                 silent = TRUE)
+    
+    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+    
+    if (class(xdata) == "try-error") {
+      xdata <- raw_data
+    }
+    
+    rm(list = "raw_data")
+    
+    tic.plot <- xcms::chromatogram(
+      object = xdata,
+      aggregationFun = ifelse(type == "tic", "sum", "max"),
+      BPPARAM =
+        BiocParallel::SnowParam(workers = threads,
+                                progressbar = TRUE)
+    )
+    
+    plot <- plot_chromatogram(object = tic.plot,
+                             title = "",
+                             alpha = 1,
+                             group.for.figure = "QC")
+    
+    plot +
+      ggplot2::theme(legend.position = "none")
+    
+  }
+)
