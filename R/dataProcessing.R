@@ -106,7 +106,6 @@
 #                                is.table = "is.xlsx")
 # metflow2::showPeak(object = test, peak.index = 6, alpha = 0)
 
-
 setGeneric(name = "processData", 
            def = function(
              path = ".",
@@ -424,6 +423,8 @@ setGeneric(name = "processData",
              values <- xcms::featureValues(xdata3, value = "into")
              definition <- xcms::featureDefinitions(object = xdata3)
              definition <- definition[, -ncol(definition)]
+             definition <- 
+               definition[names(definition) != "peakidx"]
              definition <- 
                definition@listData %>% 
                do.call(cbind, .) %>% 
