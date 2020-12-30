@@ -44,3 +44,7 @@
 --------------
 * Small bug fix.
 
+# Version 0.1.2 (20201230)
+--------------
+* Small bug fix.
+

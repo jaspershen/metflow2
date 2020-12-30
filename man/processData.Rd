@@ -25,6 +25,8 @@ processData(
   fill.peaks = FALSE,
   output.peak.eic = TRUE,
   is.table = "is.table.xlsx",
+  is.mz.tolerance = 25,
+  is.rt.tolerance = 50,
   group.for.figure = "QC"
 )
 }
@@ -69,6 +71,10 @@ processData(
 If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.}
 
 \item{is.table}{International standard table name.}
+
+\item{is.mz.tolerance}{mz tolerance for internal standards. Default is 25 ppm.}
+
+\item{is.rt.tolerance}{RT tolerance for internal standards. Default is 50 s..}
 
 \item{group.for.figure}{Which group you want to use to output TIC and BPC and EIC. Default is QC.}
 }

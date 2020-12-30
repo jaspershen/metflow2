@@ -23,6 +23,8 @@
 #' @param output.peak.eic Output some peaks EIC or not. 
 #' If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.
 #' @param is.table International standard table name.
+#' @param is.mz.tolerance mz tolerance for internal standards. Default is 25 ppm.
+#' @param is.rt.tolerance RT tolerance for internal standards. Default is 50 s..
 #' @param group.for.figure Which group you want to use to output TIC and BPC and EIC. Default is QC.
 #' @return Peak table.
 #' @export
@@ -128,6 +130,8 @@ setGeneric(name = "processData",
              fill.peaks = FALSE,
              output.peak.eic = TRUE,
              is.table = "is.table.xlsx",
+             is.mz.tolerance = 25,
+             is.rt.tolerance = 50,
              group.for.figure = "QC"
            ){
              polarity <- match.arg(polarity)
@@ -480,8 +484,8 @@ setGeneric(name = "processData",
                match_result <- 
                  SXTMTmatch(data1 = data1, 
                             data2 = data2,
-                            mz.tolerance = 25,
-                            rt.tolerance = 50)  
+                            mz.tolerance = is.mz.tolerance,
+                            rt.tolerance = is.rt.tolerance)  
                if(is.null(match_result) | nrow(match_result) == 0){
                  output.peak.eic <- FALSE
                }

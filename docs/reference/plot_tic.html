@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>processData — processData • metflow2</title>
+<title>plot_tic — plot_tic • metflow2</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,8 +52,8 @@
 
 
 
-<meta property="og:title" content="processData — processData" />
-<meta property="og:description" content="Raw MS data processing using xcms." />
+<meta property="og:title" content="plot_tic — plot_tic" />
+<meta property="og:description" content="Extract TIC or BPC from in a RT range from mzXML format data." />
 <meta property="og:image" content="https://jaspershen.github.io/metflow2/logo.png" />
 
 
@@ -207,142 +207,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>processData</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/dataProcessing.R'><code>R/dataProcessing.R</code></a></small>
-    <div class="hidden name"><code>processData.Rd</code></div>
+    <h1>plot_tic</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/functions4dataProcessing.R'><code>R/functions4dataProcessing.R</code></a></small>
+    <div class="hidden name"><code>plot_tic.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Raw MS data processing using xcms.</p>
+    <p>Extract TIC or BPC from in a RT range from mzXML format data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>processData</span>(
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>,
-  <span class='kw'>polarity</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"positive"</span>, <span class='st'>"negative"</span>),
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>15</span>,
-  <span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>30</span>),
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>prefilter</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>500</span>),
-  <span class='kw'>fitgauss</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>integrate</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
-  <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fl'>6</span>,
-  <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.025</span>,
-  <span class='kw'>bw</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>output.tic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>output.bpc</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>output.rt.correction.plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>min.fraction</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>fill.peaks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>output.peak.eic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>is.table</span> <span class='kw'>=</span> <span class='st'>"is.table.xlsx"</span>,
-  <span class='kw'>is.mz.tolerance</span> <span class='kw'>=</span> <span class='fl'>25</span>,
-  <span class='kw'>is.rt.tolerance</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>group.for.figure</span> <span class='kw'>=</span> <span class='st'>"QC"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>plot_tic</span>(<span class='no'>file</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"tic"</span>, <span class='st'>"bpc"</span>), <span class='kw'>threads</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>legend</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>file</th>
+      <td><p>name of mzXML data.</p></td>
+    </tr>
+    <tr>
       <th>path</th>
-      <td><p>Work directory.</p></td>
+      <td><p>work directory.</p></td>
     </tr>
     <tr>
-      <th>polarity</th>
-      <td><p>The polarity of data, "positive"or "negative".</p></td>
-    </tr>
-    <tr>
-      <th>ppm</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>peakwidth</th>
-      <td><p>See xcms.</p></td>
-    </tr>
-    <tr>
-      <th>snthresh</th>
-      <td><p>See xcms.</p></td>
-    </tr>
-    <tr>
-      <th>prefilter</th>
-      <td><p>See xcms.</p></td>
-    </tr>
-    <tr>
-      <th>fitgauss</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>integrate</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>mzdiff</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>noise</th>
-      <td><p>See xcms.</p></td>
+      <th>type</th>
+      <td><p>tic or bpc.</p></td>
     </tr>
     <tr>
       <th>threads</th>
-      <td><p>Number of threads.</p></td>
+      <td><p>thread number</p></td>
     </tr>
     <tr>
-      <th>binSize</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>bw</th>
-      <td><p>see xcms.</p></td>
-    </tr>
-    <tr>
-      <th>output.tic</th>
-      <td><p>Output TIC plot or not.</p></td>
-    </tr>
-    <tr>
-      <th>output.bpc</th>
-      <td><p>Output BPC plot or not.</p></td>
-    </tr>
-    <tr>
-      <th>output.rt.correction.plot</th>
-      <td><p>Output rt correction plot or not.</p></td>
-    </tr>
-    <tr>
-      <th>min.fraction</th>
-      <td><p>See xcms.</p></td>
-    </tr>
-    <tr>
-      <th>fill.peaks</th>
-      <td><p>Fill peaks NA or not.</p></td>
-    </tr>
-    <tr>
-      <th>output.peak.eic</th>
-      <td><p>Output some peaks EIC or not. 
-If you want to output this, please place the 'is.xlsx' in the folder. And three columns, name, mz and rt.</p></td>
-    </tr>
-    <tr>
-      <th>is.table</th>
-      <td><p>International standard table name.</p></td>
-    </tr>
-    <tr>
-      <th>is.mz.tolerance</th>
-      <td><p>mz tolerance for internal standards. Default is 25 ppm.</p></td>
-    </tr>
-    <tr>
-      <th>is.rt.tolerance</th>
-      <td><p>RT tolerance for internal standards. Default is 50 s..</p></td>
-    </tr>
-    <tr>
-      <th>group.for.figure</th>
-      <td><p>Which group you want to use to output TIC and BPC and EIC. Default is QC.</p></td>
+      <th>legend</th>
+      <td><p>legend or not.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Peak table.</p>
+    <p>A object for plot_chromatogram() function.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
