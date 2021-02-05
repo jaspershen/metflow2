@@ -15,7 +15,7 @@ setGeneric(
   def = function(object, 
                  peak_name,
                  interactive = TRUE) {
-    browser()
+    # browser()
     if (class(object) != "metflowClass") {
       stop("Only the metflowClass is supported!\n")
     }
