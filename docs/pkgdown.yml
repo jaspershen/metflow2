@@ -1,5 +1,5 @@
-pandoc: 2.7.3
-pkgdown: 1.5.1
+pandoc: 2.11.2
+pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   align_batch: align_batch.html
@@ -11,7 +11,7 @@ articles:
   other_tools: other_tools.html
   other_tools_for_raw_data_processing: other_tools_for_raw_data_processing.html
   raw_data_processing: raw_data_processing.html
-last_built: 2020-12-30T20:36Z
+last_built: 2021-02-10T05:42Z
 urls:
   reference: https://jaspershen.github.io/metflow2//reference
   article: https://jaspershen.github.io/metflow2//articles

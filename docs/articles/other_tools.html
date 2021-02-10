@@ -5,15 +5,32 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Other tools in metflow2 • metflow2</title>
+<!-- Inform modern browsers that this page supports both dark and light color schemes,
+  and the page author prefers light. --><meta name="color-scheme" content="dark light">
+<script>
+  // If `prefers-color-scheme` is not supported, fall back to light mode.
+  // i.e. In this case, inject the `light` CSS before the others, with
+  // no media filter so that it will be downloaded with highest priority.
+  if (window.matchMedia("(prefers-color-scheme: dark)").media === "not all") {
+    document.documentElement.style.display = "none";
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      "<link id=\"css\" rel=\"stylesheet\" href=\"https://bootswatch.com/3/flatly/bootstrap.css\" onload=\"document.documentElement.style.display = ''\">"
+    );
+  }
+</script><title>Other tools in metflow2 • metflow2</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/darkly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- Flatly Theme - Light  --><link id="css-light" rel="stylesheet" href="https://bootswatch.com/3/flatly/bootstrap.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+<!-- Darkly Theme - Dark --><link id="css-dark" rel="stylesheet" href="https://bootswatch.com/3/darkly/bootstrap.css" media="(prefers-color-scheme: dark)">
+<!-- preferably CSS --><link rel="stylesheet" href="../preferably.css">
+<link id="css-code-light" rel="stylesheet" href="../code-color-scheme-light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+<link id="css-code-dark" rel="stylesheet" href="../code-color-scheme-dark.css" media="(prefers-color-scheme: dark)">
+<script src="../darkswitch.js"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -54,7 +71,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -127,17 +144,27 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
+          <a href="#" id="css-toggle-btn">
+            <span class="fas fa-adjust fa-lg"></span>
+          </a>
+        </li>
+        
+        <li>
   <a href="https://github.com/jaspershen/metflow2/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="https://twitter.com/JasperShen1990">
-    <span class="fab fa fab fa-twitter fa-lg"></span>
+    <span class="fab fa-twitter fa-lg"></span>
      
   </a>
 </li>
+        
+        
+
+
       </ul>
 <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
@@ -154,14 +181,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="other_tools_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Other tools in metflow2</h1>
                         <h4 class="author">Xiaotao Shen PhD (<a href="https://www.shenxt.info/" class="uri">https://www.shenxt.info/</a>)</h4>
                                     <h4 class="author">true</h4>
             
-            <h4 class="date">Created on 2020-04-01 and updated on 2020-12-30</h4>
+            <h4 class="date">Created on 2020-04-01 and updated on 2021-02-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jaspershen/metflow2/blob/master/vignettes/other_tools.Rmd"><code>vignettes/other_tools.Rmd</code></a></small>
       <div class="hidden name"><code>other_tools.Rmd</code></div>
@@ -182,7 +209,8 @@
 <a href="#convert-chemical-id-based-on-httpcts-fiehnlab-ucdavis-edu" class="anchor"></a>Convert chemical ID based on <a href="http://cts.fiehnlab.ucdavis.edu/" class="uri">http://cts.fiehnlab.ucdavis.edu/</a>
 </h3>
 <p>You can use the <code><a href="../reference/databaseName.html">databaseName()</a></code> function to get the databases supported in <code><a href="../reference/transID.html">transID()</a></code>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">metflow2</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaspershen/metflow2">metflow2</a></span><span class="op">)</span>
 <span class="co">#&gt;                  _    __ _              ___  </span>
 <span class="co">#&gt;                 | |  / _| |            |__ \ </span>
 <span class="co">#&gt;   _ __ ___   ___| |_| |_| | _____      __ ) |</span>
@@ -197,19 +225,20 @@
 <span class="co">#&gt; Maintainer: Xiaotao Shen.</span>
 <span class="co">#&gt; Version 0.1.2 (20201230)</span>
 <span class="co">#&gt; Small bug fix.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)
-<span class="co">#&gt; ── Attaching packages ──────────────────────────────────────────── tidyverse 1.3.0 ──</span>
-<span class="co">#&gt; ✓ ggplot2 3.3.2.9000     ✓ purrr   0.3.4     </span>
-<span class="co">#&gt; ✓ tibble  3.0.1          ✓ dplyr   0.8.5     </span>
-<span class="co">#&gt; ✓ tidyr   1.0.2          ✓ stringr 1.4.0     </span>
-<span class="co">#&gt; ✓ readr   1.3.1          ✓ forcats 0.5.0</span>
-<span class="co">#&gt; ── Conflicts ─────────────────────────────────────────────── tidyverse_conflicts() ──</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="co">#&gt; ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</span>
+<span class="co">#&gt; ✓ ggplot2 3.3.3     ✓ purrr   0.3.4</span>
+<span class="co">#&gt; ✓ tibble  3.0.4     ✓ dplyr   1.0.2</span>
+<span class="co">#&gt; ✓ tidyr   1.1.2     ✓ stringr 1.4.0</span>
+<span class="co">#&gt; ✓ readr   1.4.0     ✓ forcats 0.5.0</span>
+<span class="co">#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span>
 <span class="co">#&gt; x dplyr::filter() masks stats::filter()</span>
-<span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span></pre></body></html></div>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">database</span> <span class="kw">&lt;-</span> <span class="kw pkg">metflow2</span><span class="kw ns">::</span><span class="fu"><a href="../reference/databaseName.html">databaseName</a></span>(<span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
+<span class="co">#&gt; x dplyr::lag()    masks stats::lag()</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">database</span> <span class="op">&lt;-</span> <span class="fu">metflow2</span><span class="fu">::</span><span class="fu"><a href="../reference/databaseName.html">databaseName</a></span><span class="op">(</span>server <span class="op">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span><span class="op">)</span>
 <span class="co">#&gt; 225 databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'from'.</span>
 <span class="co">#&gt; 226 databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'to'.</span>
-<span class="no">database</span>$<span class="no">From</span>
+<span class="va">database</span><span class="op">$</span><span class="va">From</span>
 <span class="co">#&gt; # A tibble: 225 x 1</span>
 <span class="co">#&gt;    From             </span>
 <span class="co">#&gt;    &lt;chr&gt;            </span>
@@ -224,7 +253,7 @@
 <span class="co">#&gt;  9 Active Biopharma </span>
 <span class="co">#&gt; 10 Adooq BioScience </span>
 <span class="co">#&gt; # … with 215 more rows</span>
-<span class="no">database</span>$<span class="no">To</span>
+<span class="va">database</span><span class="op">$</span><span class="va">To</span>
 <span class="co">#&gt; # A tibble: 226 x 1</span>
 <span class="co">#&gt;    From             </span>
 <span class="co">#&gt;    &lt;chr&gt;            </span>
@@ -238,33 +267,36 @@
 <span class="co">#&gt;  8 Acorn PharmaTech </span>
 <span class="co">#&gt;  9 Active Biopharma </span>
 <span class="co">#&gt; 10 Adooq BioScience </span>
-<span class="co">#&gt; # … with 216 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 216 more rows</span></code></pre></div>
 <p>Then you can convert ID using <code><a href="../reference/transID.html">transID()</a></code> function.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="st">"C00001"</span>, <span class="kw">from</span> <span class="kw">=</span> <span class="st">"KEGG"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"PubChem SID"</span>, <span class="kw">top</span> <span class="kw">=</span> <span class="fl">2</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"C00001"</span>, from <span class="op">=</span> <span class="st">"KEGG"</span>, 
+        to <span class="op">=</span> <span class="st">"PubChem SID"</span>, top <span class="op">=</span> <span class="fl">2</span>,
+        server <span class="op">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;   KEGG   `PubChem SID`</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;        </span>
 <span class="co">#&gt; 1 C00001 103059594    </span>
-<span class="co">#&gt; 2 C00001 10322299</span></pre></body></html></div>
+<span class="co">#&gt; 2 C00001 10322299</span></code></pre></div>
 <p>The <code>from</code> and <code>to</code> argument must be from <code><a href="../reference/databaseName.html">databaseName()</a></code> function.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="st">"C00001"</span>, <span class="kw">from</span> <span class="kw">=</span> <span class="st">"KEGG"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"Human Metabolome Database"</span>, <span class="kw">top</span> <span class="kw">=</span> <span class="fl">2</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"C00001"</span>, from <span class="op">=</span> <span class="st">"KEGG"</span>, 
+        to <span class="op">=</span> <span class="st">"Human Metabolome Database"</span>, top <span class="op">=</span> <span class="fl">2</span>,
+        server <span class="op">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;   KEGG   `Human Metabolome Database`</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;                      </span>
-<span class="co">#&gt; 1 C00001 HMDB0002111</span></pre></body></html></div>
+<span class="co">#&gt; 1 C00001 HMDB0002111</span></code></pre></div>
 </div>
 <div id="convert-chemical-id-based-on-httpswww-chemspider-cominchi-asmx" class="section level3">
 <h3 class="hasAnchor">
 <a href="#convert-chemical-id-based-on-httpswww-chemspider-cominchi-asmx" class="anchor"></a>Convert chemical ID based on <a href="https://www.chemspider.com/InChI.asmx" class="uri">https://www.chemspider.com/InChI.asmx</a>
 </h3>
 <p>Another databsae <a href="https://www.chemspider.com/InChI.asmx" class="uri">https://www.chemspider.com/InChI.asmx</a> also support ID conveter. First please use <code><a href="../reference/databaseName.html">databaseName()</a></code> to know which databases are supported in this website.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">database</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/databaseName.html">databaseName</a></span>(<span class="kw">server</span> <span class="kw">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">database</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/databaseName.html">databaseName</a></span><span class="op">(</span>server <span class="op">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span><span class="op">)</span>
 <span class="co">#&gt; 9 are supported in server https://www.chemspider.com/InChI.asmx.</span>
-<span class="no">database</span>
+<span class="va">database</span>
 <span class="co">#&gt; # A tibble: 9 x 2</span>
 <span class="co">#&gt;   From     To      </span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;   </span>
@@ -276,34 +308,37 @@
 <span class="co">#&gt; 6 inchi    inchikey</span>
 <span class="co">#&gt; 7 inchi    mol     </span>
 <span class="co">#&gt; 8 inchi    smiles  </span>
-<span class="co">#&gt; 9 smiles   inchi</span></pre></body></html></div>
+<span class="co">#&gt; 9 smiles   inchi</span></code></pre></div>
 <p>Here we first use the <a href="http://cts.fiehnlab.ucdavis.edu/service/convert" class="uri">http://cts.fiehnlab.ucdavis.edu/service/convert</a> convert C00001 to get it’s InChIKey ID.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="st">"C00010"</span>,
-        <span class="kw">from</span> <span class="kw">=</span> <span class="st">"KEGG"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"InChIKey"</span>,
-        <span class="kw">top</span> <span class="kw">=</span> <span class="fl">1</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"C00010"</span>, 
+        from <span class="op">=</span> <span class="st">"KEGG"</span>, 
+        to <span class="op">=</span> <span class="st">"InChIKey"</span>, 
+        top <span class="op">=</span> <span class="fl">1</span>,
+        server <span class="op">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;   KEGG   InChIKey                   </span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;                      </span>
-<span class="co">#&gt; 1 C00010 RGJOEKWQDUBAIZ-IBOSZNHHSA-N</span></pre></body></html></div>
+<span class="co">#&gt; 1 C00010 RGJOEKWQDUBAIZ-IBOSZNHHSA-N</span></code></pre></div>
 <p>Then we use InChIKey ID to get its smiles.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">inchi</span> <span class="kw">&lt;-</span>
-<span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="st">"RGJOEKWQDUBAIZ-IBOSZNHHSA-N"</span>,
-        <span class="kw">from</span> <span class="kw">=</span> <span class="st">"inchikey"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"inchi"</span>,
-        <span class="kw">top</span> <span class="kw">=</span> <span class="fl">2</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span>)
-<span class="no">inchi</span>
-<span class="co">#&gt; [1] "InChI=1S/C21H36N7O16P3S/c1-21(2,16(31)19(32)24-4-3-12(29)23-5-6-48)8-41-47(38,39)44-46(36,37)40-7-11-15(43-45(33,34)35)14(30)20(42-11)28-10-27-13-17(22)25-9-26-18(13)28/h9-11,14-16,20,30-31,48H,3-8H2,1-2H3,(H,23,29)(H,24,32)(H,36,37)(H,38,39)(H2,22,25,26)(H2,33,34,35)/t11-,14-,15-,16+,20-/m1/s1"</span></pre></body></html></div>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">smiles</span> <span class="kw">&lt;-</span>
-<span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="no">inchi</span>,
-        <span class="kw">from</span> <span class="kw">=</span> <span class="st">"inchi"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"smiles"</span>,
-        <span class="kw">top</span> <span class="kw">=</span> <span class="fl">2</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span>)
-<span class="no">smiles</span>
-<span class="co">#&gt; [1] "CC(C)(COP(=O)(O)OP(=O)(O)OC[C@@H]1[C@H]([C@H]([C@H](n2cnc3c(N)ncnc23)O1)O)OP(=O)(O)O)[C@H](C(=NCCC(=NCCS)O)O)O"</span></pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">inchi</span> <span class="op">&lt;-</span> 
+<span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"RGJOEKWQDUBAIZ-IBOSZNHHSA-N"</span>, 
+        from <span class="op">=</span> <span class="st">"inchikey"</span>, 
+        to <span class="op">=</span> <span class="st">"inchi"</span>,
+        top <span class="op">=</span> <span class="fl">2</span>,
+        server <span class="op">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span><span class="op">)</span>
+<span class="va">inchi</span>
+<span class="co">#&gt; [1] "InChI=1S/C21H36N7O16P3S/c1-21(2,16(31)19(32)24-4-3-12(29)23-5-6-48)8-41-47(38,39)44-46(36,37)40-7-11-15(43-45(33,34)35)14(30)20(42-11)28-10-27-13-17(22)25-9-26-18(13)28/h9-11,14-16,20,30-31,48H,3-8H2,1-2H3,(H,23,29)(H,24,32)(H,36,37)(H,38,39)(H2,22,25,26)(H2,33,34,35)/t11-,14-,15-,16+,20-/m1/s1"</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">smiles</span> <span class="op">&lt;-</span> 
+<span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="va">inchi</span>,
+        from <span class="op">=</span> <span class="st">"inchi"</span>, 
+        to <span class="op">=</span> <span class="st">"smiles"</span>,
+        top <span class="op">=</span> <span class="fl">2</span>,
+        server <span class="op">=</span> <span class="st">"https://www.chemspider.com/InChI.asmx"</span><span class="op">)</span>
+<span class="va">smiles</span>
+<span class="co">#&gt; [1] "CC(C)(COP(=O)(O)OP(=O)(O)OC[C@@H]1[C@H]([C@H]([C@H](n2cnc3c(N)ncnc23)O1)O)OP(=O)(O)O)[C@H](C(=NCCC(=NCCS)O)O)O"</span></code></pre></div>
 </div>
 </div>
 <div id="get-metabolite-class" class="section level2">
@@ -312,20 +347,24 @@
 </h2>
 <p>We can use <code><a href="../reference/get_metclass.html">get_metclass()</a></code> function to get the metabolite class based on <code>classyfire</code>.</p>
 <p>We need the <code>inchikey</code> for <code><a href="../reference/get_metclass.html">get_metclass()</a></code> function, so if we don’t have the <code>inchikey</code>, we can use the <code><a href="../reference/transID.html">transID()</a></code> function to get their <code>inchikey</code>.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">metflow2</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">inchikey</span> <span class="kw">&lt;-</span>
-<span class="fu"><a href="../reference/transID.html">transID</a></span>(<span class="kw">query</span> <span class="kw">=</span> <span class="st">"C00001"</span>,
-        <span class="kw">from</span> <span class="kw">=</span> <span class="st">"KEGG"</span>,
-        <span class="kw">to</span> <span class="kw">=</span> <span class="st">"InChIKey"</span>,
-        <span class="kw">top</span> <span class="kw">=</span> <span class="fl">1</span>,
-        <span class="kw">server</span> <span class="kw">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span>)
-<span class="no">inchikey</span> <span class="kw">&lt;-</span> <span class="no">inchikey</span>$<span class="no">InChIKey</span>
-<span class="no">inchikey</span>
-<span class="co">#&gt; [1] "XLYOFNOQVPJJNP-UHFFFAOYSA-N"</span></pre></body></html></div>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">class</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_metclass.html">get_metclass</a></span>(<span class="kw">inchikey</span> <span class="kw">=</span> <span class="no">inchikey</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaspershen/metflow2">metflow2</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">inchikey</span> <span class="op">&lt;-</span> 
+<span class="fu"><a href="../reference/transID.html">transID</a></span><span class="op">(</span>query <span class="op">=</span> <span class="st">"C00001"</span>, 
+        from <span class="op">=</span> <span class="st">"KEGG"</span>, 
+        to <span class="op">=</span> <span class="st">"InChIKey"</span>, 
+        top <span class="op">=</span> <span class="fl">1</span>,
+        server <span class="op">=</span> <span class="st">"http://cts.fiehnlab.ucdavis.edu/service/convert"</span><span class="op">)</span>
+<span class="va">inchikey</span> <span class="op">&lt;-</span> <span class="va">inchikey</span><span class="op">$</span><span class="va">InChIKey</span>
+<span class="va">inchikey</span>
+<span class="co">#&gt; [1] "XLYOFNOQVPJJNP-UHFFFAOYSA-N"</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_metclass.html">get_metclass</a></span><span class="op">(</span>inchikey <span class="op">=</span> <span class="va">inchikey</span><span class="op">)</span></code></pre></div>
 <p><code>class</code> is a <code>classfire</code> class.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">class</span>
-<span class="co">#&gt; ── classyfire Object ───────────────────────────────────────────── metflow2 v0.1.1 ── </span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span>
+<span class="co">#&gt; ── classyfire Object ──────────────────────────────────────── metflow2 v0.1.1 ── </span>
 <span class="co">#&gt; Object Size: 8.6 Kb </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Information: </span>
@@ -335,23 +374,26 @@
 <span class="co">#&gt; Mass:  18.015 </span>
 <span class="co">#&gt; Kingdom : Inorganic compounds</span>
 <span class="co">#&gt; └─Superclass : Homogeneous non-metal compounds</span>
-<span class="co">#&gt;   └─Class : Homogeneous other non-metal compounds</span></pre></body></html></div>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">class</span>@<span class="kw">compound_info</span>
+<span class="co">#&gt;   └─Class : Homogeneous other non-metal compounds</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span><span class="op">@</span><span class="va">compound_info</span>
 <span class="co">#&gt; # A tibble: 4 x 2</span>
 <span class="co">#&gt;   name     value                               </span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                               </span>
 <span class="co">#&gt; 1 SMILES   O                                   </span>
 <span class="co">#&gt; 2 InChIKey InChIKey=XLYOFNOQVPJJNP-UHFFFAOYSA-N</span>
 <span class="co">#&gt; 3 Formula  H2O                                 </span>
-<span class="co">#&gt; 4 Mass     18.015</span></pre></body></html></div>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">class</span>@<span class="kw">taxonomy_tree</span>
+<span class="co">#&gt; 4 Mass     18.015</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span><span class="op">@</span><span class="va">taxonomy_tree</span>
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt;   name       value                                </span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;                                </span>
 <span class="co">#&gt; 1 Kingdom    Inorganic compounds                  </span>
 <span class="co">#&gt; 2 Superclass Homogeneous non-metal compounds      </span>
-<span class="co">#&gt; 3 Class      Homogeneous other non-metal compounds</span></pre></body></html></div>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">class</span>@<span class="kw">classification_info</span>
+<span class="co">#&gt; 3 Class      Homogeneous other non-metal compounds</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span><span class="op">@</span><span class="va">classification_info</span>
 <span class="co">#&gt; # A tibble: 9 x 2</span>
 <span class="co">#&gt;   name                    value                                </span>
 <span class="co">#&gt;   &lt;chr&gt;                   &lt;chr&gt;                                </span>
@@ -363,17 +405,19 @@
 <span class="co">#&gt; 6 Direct Parent           Homogeneous other non-metal compounds</span>
 <span class="co">#&gt; 7 Alternative Parents     Not available                        </span>
 <span class="co">#&gt; 8 Molecular Framework     Not available                        </span>
-<span class="co">#&gt; 9 Substituents            Homogeneous other non metal</span></pre></body></html></div>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">class</span>@<span class="kw">description</span>
+<span class="co">#&gt; 9 Substituents            Homogeneous other non metal</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span><span class="op">@</span><span class="va">description</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;   name        value                                                             </span>
 <span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt;                                                             </span>
-<span class="co">#&gt; 1 Description This compound belongs to the class of inorganic compounds known a…</span></pre></body></html></div>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">class</span>@<span class="kw">external_descriptors</span>
+<span class="co">#&gt; 1 Description This compound belongs to the class of inorganic compounds known a…</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">class</span><span class="op">@</span><span class="va">external_descriptors</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;   name                 value        </span>
 <span class="co">#&gt;   &lt;chr&gt;                &lt;chr&gt;        </span>
-<span class="co">#&gt; 1 External Descriptors CHEBI:15377 :</span></pre></body></html></div>
+<span class="co">#&gt; 1 External Descriptors CHEBI:15377 :</span></code></pre></div>
 </div>
 <div id="generate-running-list" class="section level2">
 <h2 class="hasAnchor">
@@ -383,45 +427,49 @@
 <p>First, we should creat a <code>batch.xlsx</code> and put it in a folder. We use the demo data in <code>demoData</code> package.</p>
 <p>The <code>batch.xlsx</code> is like this:</p>
 <p><img src="../man/figures/Screen%20Shot%202020-04-05%20at%202.37.02%20PM.png"></p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">metflow2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">demoData</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co">##creat a folder nameed as example</span>
-<span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"."</span>, <span class="st">"example"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">showWarnings</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co">##get demo data</span>
-<span class="no">demo_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"metflow2"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"demoData"</span>)
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaspershen/metflow2">metflow2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">demoData</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##creat a folder nameed as example</span>
+<span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"."</span>, <span class="st">"example"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">path</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##get demo data</span>
+<span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"metflow2"</span>, package <span class="op">=</span> <span class="st">"demoData"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span>(<span class="kw">from</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">demo_data</span>, <span class="st">"batch.xlsx"</span>),
-          <span class="kw">to</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; [1] TRUE</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">demo_data</span>, <span class="st">"batch.xlsx"</span><span class="op">)</span>, 
+          to <span class="op">=</span> <span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>Next, run the <code><a href="../reference/getWorklist.html">getWorklist()</a></code> function.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/getWorklist.html">getWorklist</a></span>(
-  <span class="kw">table.name</span> <span class="kw">=</span> <span class="st">"batch.xlsx"</span>,
-  <span class="kw">instrument</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Thermo"</span>, <span class="st">"Agilent"</span>, <span class="st">"AB"</span>),
-  <span class="kw">each.mode.number</span> <span class="kw">=</span> <span class="fl">32</span>,
-  <span class="kw">randommethod</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"no"</span>, <span class="st">"position"</span>, <span class="st">"injection"</span>),
-  <span class="kw">samplenumber</span> <span class="kw">=</span> <span class="kw">NULL</span>,
-  <span class="kw">QCstep</span> <span class="kw">=</span> <span class="fl">8</span>,
-  <span class="kw">conditionQCnumber</span> <span class="kw">=</span> <span class="fl">8</span>,
-  <span class="kw">qc.index.from</span> <span class="kw">=</span> <span class="fl">1</span>,
-  <span class="kw">dir</span> <span class="kw">=</span> <span class="st">"D:\\Liang\\data\\PS4U\\HILIC\\batch3\\"</span>,
-  <span class="kw">method.path</span> <span class="kw">=</span> <span class="st">"D:\\Liang\\Method\\urine\\HILIC\\"</span>,
-  <span class="kw">ms1.method.pos</span> <span class="kw">=</span> <span class="st">"ZIC-HILIC_MS_pos"</span>,
-  <span class="kw">ms1.method.neg</span> <span class="kw">=</span> <span class="st">"ZIC-HILIC_MS_neg"</span>,
-  <span class="kw">ms2.method.pos</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/getWorklist.html">getWorklist</a></span><span class="op">(</span>
+  table.name <span class="op">=</span> <span class="st">"batch.xlsx"</span>,
+  instrument <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Thermo"</span>, <span class="st">"Agilent"</span>, <span class="st">"AB"</span><span class="op">)</span>,
+  each.mode.number <span class="op">=</span> <span class="fl">32</span>,
+  randommethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"no"</span>, <span class="st">"position"</span>, <span class="st">"injection"</span><span class="op">)</span>,
+  samplenumber <span class="op">=</span> <span class="cn">NULL</span>,
+  QCstep <span class="op">=</span> <span class="fl">8</span>,
+  conditionQCnumber <span class="op">=</span> <span class="fl">8</span>,
+  qc.index.from <span class="op">=</span> <span class="fl">1</span>,
+  dir <span class="op">=</span> <span class="st">"D:\\Liang\\data\\PS4U\\HILIC\\batch3\\"</span>,
+  method.path <span class="op">=</span> <span class="st">"D:\\Liang\\Method\\urine\\HILIC\\"</span>,
+  ms1.method.pos <span class="op">=</span> <span class="st">"ZIC-HILIC_MS_pos"</span>,
+  ms1.method.neg <span class="op">=</span> <span class="st">"ZIC-HILIC_MS_neg"</span>,
+  ms2.method.pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_pos_NCE25"</span>
-  ),
-  <span class="kw">ms2.method.neg</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+  <span class="op">)</span>,
+  ms2.method.neg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
     <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>,
     <span class="st">"ZIC-HILIC_MSMS_neg_NCE25"</span>
-  ),
-  <span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>
-)</pre></body></html></div>
+  <span class="op">)</span>,
+  path <span class="op">=</span> <span class="va">path</span>
+<span class="op">)</span></code></pre></div>
 <p>Then, the worklists will generated in this folder.</p>
 <p><img src="../man/figures/Screen%20Shot%202020-04-05%20at%204.53.37%20PM.png"></p>
 </div>
@@ -442,7 +490,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Made with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1, using <a href="https://preferably.amirmasoudabdol.name/?source=footer">preferably</a> template.</p>
 </div>
 
       </footer>

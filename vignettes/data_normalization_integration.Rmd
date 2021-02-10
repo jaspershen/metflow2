@@ -128,7 +128,7 @@ object2 <- filter_samples(object = object2,
 ### **Missing value imputation**
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object2 <- imputeMV(object = object2,
+object2 <- impute_mv(object = object2,
                     method = "knn")
 object2
 ```
@@ -138,15 +138,15 @@ object2
 Now we can normalize data using different methods.
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object3 <- normalizeData(object = object2, method = "mean")
+object3 <- normalize_data(object = object2, method = "mean")
 ```
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object3 <- normalizeData(object = object2, method = "svr")
+object3 <- normalize_data(object = object2, method = "svr", threads = 1)
 ```
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-# object3 <- normalizeData(object = object2, method = "pqn")
+# object3 <- normalize_data(object = object2, method = "pqn")
 ```
 
 
@@ -163,10 +163,10 @@ get_peak_int_distribution(object = object2, peak_name = "M114T670", interactive 
 
 ## **Data integration**
 
-Then we can use the `integrateData()` function to do data integration.
+Then we can use the `integrate_data()` function to do data integration.
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object4 <- integrateData(object = object3, method = "qc.mean")
+object4 <- integrate_data(object = object3, method = "qc.mean")
 ```
 
 

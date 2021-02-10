@@ -387,7 +387,7 @@ setGeneric(
                  rt.tolerance = 40) {
     options(warn = -1)
     output_path <- path
-    # dir.create(output_path)
+    # dir.create(output_path, showWarnings = FALSE)
     ##peak detection
     
     f.in <- list.files(

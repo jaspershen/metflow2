@@ -5,15 +5,32 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Align different batch peak tables • metflow2</title>
+<!-- Inform modern browsers that this page supports both dark and light color schemes,
+  and the page author prefers light. --><meta name="color-scheme" content="dark light">
+<script>
+  // If `prefers-color-scheme` is not supported, fall back to light mode.
+  // i.e. In this case, inject the `light` CSS before the others, with
+  // no media filter so that it will be downloaded with highest priority.
+  if (window.matchMedia("(prefers-color-scheme: dark)").media === "not all") {
+    document.documentElement.style.display = "none";
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      "<link id=\"css\" rel=\"stylesheet\" href=\"https://bootswatch.com/3/flatly/bootstrap.css\" onload=\"document.documentElement.style.display = ''\">"
+    );
+  }
+</script><title>Align different batch peak tables • metflow2</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/darkly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- Flatly Theme - Light  --><link id="css-light" rel="stylesheet" href="https://bootswatch.com/3/flatly/bootstrap.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+<!-- Darkly Theme - Dark --><link id="css-dark" rel="stylesheet" href="https://bootswatch.com/3/darkly/bootstrap.css" media="(prefers-color-scheme: dark)">
+<!-- preferably CSS --><link rel="stylesheet" href="../preferably.css">
+<link id="css-code-light" rel="stylesheet" href="../code-color-scheme-light.css" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
+<link id="css-code-dark" rel="stylesheet" href="../code-color-scheme-dark.css" media="(prefers-color-scheme: dark)">
+<script src="../darkswitch.js"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -54,7 +71,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -127,17 +144,27 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
+          <a href="#" id="css-toggle-btn">
+            <span class="fas fa-adjust fa-lg"></span>
+          </a>
+        </li>
+        
+        <li>
   <a href="https://github.com/jaspershen/metflow2/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="https://twitter.com/JasperShen1990">
-    <span class="fab fa fab fa-twitter fa-lg"></span>
+    <span class="fab fa-twitter fa-lg"></span>
      
   </a>
 </li>
+        
+        
+
+
       </ul>
 <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
@@ -154,14 +181,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="align_batch_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Align different batch peak tables</h1>
                         <h4 class="author">Xiaotao Shen (<a href="https://www.shenxt.info/" class="uri">https://www.shenxt.info/</a>)</h4>
                                     <h4 class="author">true</h4>
             
-            <h4 class="date">Created on 2020-04-01 and updated on 2020-12-30</h4>
+            <h4 class="date">Created on 2020-04-01 and updated on 2021-02-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jaspershen/metflow2/blob/master/vignettes/align_batch.Rmd"><code>vignettes/align_batch.Rmd</code></a></small>
       <div class="hidden name"><code>align_batch.Rmd</code></div>
@@ -196,7 +223,8 @@
 <a href="#read-data" class="anchor"></a><strong>Read data</strong>
 </h2>
 <p>Then place the peak table and sample information in a folder. We use the demo data from <code>demoData</code> package.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">metflow2</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaspershen/metflow2">metflow2</a></span><span class="op">)</span>
 <span class="co">#&gt;                  _    __ _              ___  </span>
 <span class="co">#&gt;                 | |  / _| |            |__ \ </span>
 <span class="co">#&gt;   _ __ ___   ___| |_| |_| | _____      __ ) |</span>
@@ -205,30 +233,33 @@
 <span class="co">#&gt;  |_| |_| |_|\___|\__|_| |_|\___/ \_/\_/|____|</span>
 <span class="co">#&gt;                                              </span>
 <span class="co">#&gt; </span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">demoData</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)</pre></body></html></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">demoData</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></code></pre></div>
 <div id="load-demo-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#load-demo-data" class="anchor"></a><strong>Load demo data</strong>
 </h3>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co">##creat a folder nameed as example</span>
-<span class="no">path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"."</span>, <span class="st">"example"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">showWarnings</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co">##get demo data</span>
-<span class="no">demo_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"metflow2"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"demoData"</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##creat a folder nameed as example</span>
+<span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"."</span>, <span class="st">"example"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">path</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">##get demo data</span>
+<span class="va">demo_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"metflow2"</span>, package <span class="op">=</span> <span class="st">"demoData"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span>(<span class="kw">from</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">demo_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span>(<span class="no">demo_data</span>)),
-          <span class="kw">to</span> <span class="kw">=</span> <span class="no">path</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; [1] TRUE TRUE TRUE</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">demo_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span><span class="op">)</span>, 
+          to <span class="op">=</span> <span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE TRUE TRUE TRUE TRUE</span></code></pre></div>
 <p>Here, we have two peak tables, <code>batch1.data.csv</code> and <code>batch2.data.csv</code>, and <code>sample_info.csv</code> are in your <code>./example</code> folder.</p>
 </div>
 <div id="creat-metflowclass-object" class="section level3">
 <h3 class="hasAnchor">
 <a href="#creat-metflowclass-object" class="anchor"></a><strong>Creat <code>metflowClass</code> object</strong>
 </h3>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">object</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/creatMetflowObject.html">creatMetflowObject</a></span>(<span class="kw">ms1.data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"batch1.data.csv"</span>, <span class="st">"batch2.data.csv"</span>),
-                             <span class="kw">sample.information</span> <span class="kw">=</span> <span class="st">"sample_info.csv"</span>,
-                             <span class="kw">path</span> <span class="kw">=</span> <span class="no">path</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">object</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/creatMetflowObject.html">creatMetflowObject</a></span><span class="op">(</span>ms1.data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"batch1.data.csv"</span>, <span class="st">"batch2.data.csv"</span><span class="op">)</span>,
+                             sample.information <span class="op">=</span> <span class="st">"sample_info.csv"</span>,
+                             path <span class="op">=</span> <span class="va">path</span><span class="op">)</span>
 <span class="co">#&gt; Reading data...</span>
 <span class="co">#&gt; --------------------------------------------------------------</span>
 <span class="co">#&gt; --------------------------------------------------------------</span>
@@ -245,9 +276,10 @@
 <span class="co">#&gt; Batch 2 is valid.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; sample.info:</span>
-<span class="co">#&gt; sample.info is valid.</span></pre></body></html></div>
+<span class="co">#&gt; sample.info is valid.</span></code></pre></div>
 <p><code>object</code> is a <code>metflowClass</code> object, so you can print it in the console.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">object</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">object</span>
 <span class="co">#&gt; -------------------- </span>
 <span class="co">#&gt; metflow2 version: 0.1.0 </span>
 <span class="co">#&gt; -------------------- </span>
@@ -268,20 +300,22 @@
 <span class="co">#&gt; 3    QC     50</span>
 <span class="co">#&gt; -------------------- </span>
 <span class="co">#&gt; Processing</span>
-<span class="co">#&gt; There are no processing for your data.</span></pre></body></html></div>
+<span class="co">#&gt; There are no processing for your data.</span></code></pre></div>
 </div>
 </div>
 <div id="run-align_batch-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-align_batch-function" class="anchor"></a><strong>Run <code>align_batch()</code> function</strong>
 </h2>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">object2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/align_batch.html">align_batch</a></span>(<span class="kw">object</span> <span class="kw">=</span> <span class="no">object</span>,
-            <span class="kw">combine.mz.tol</span> <span class="kw">=</span> <span class="fl">15</span>,
-            <span class="kw">combine.rt.tol</span> <span class="kw">=</span> <span class="fl">30</span>,
-            <span class="kw">use.int.tol</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">object2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_batch.html">align_batch</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, 
+            combine.mz.tol <span class="op">=</span> <span class="fl">15</span>, 
+            combine.rt.tol <span class="op">=</span> <span class="fl">30</span>, 
+            use.int.tol <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; Rough aligning...</span>
-<span class="co">#&gt; Accurate aligning...</span></pre></body></html></div>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">object2</span>
+<span class="co">#&gt; Accurate aligning...</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">object2</span>
 <span class="co">#&gt; -------------------- </span>
 <span class="co">#&gt; metflow2 version: 0.1.0 </span>
 <span class="co">#&gt; -------------------- </span>
@@ -304,7 +338,10 @@
 <span class="co">#&gt; alignBatch ---------- </span>
 <span class="co">#&gt;        Parameter Value</span>
 <span class="co">#&gt; 1 combine.mz.tol    15</span>
-<span class="co">#&gt; 2 combine.rt.tol    30</span></pre></body></html></div>
+<span class="co">#&gt; 2 combine.rt.tol    30</span>
+<span class="co">#&gt; combine.mz.tol</span>
+
+<span class="co">#&gt; combine.rt.tol</span></code></pre></div>
 </div>
   </div>
 
@@ -323,7 +360,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Made with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1, using <a href="https://preferably.amirmasoudabdol.name/?source=footer">preferably</a> template.</p>
 </div>
 
       </footer>

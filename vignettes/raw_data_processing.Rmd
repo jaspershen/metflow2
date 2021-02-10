@@ -52,7 +52,7 @@ You can convert raw MS data to mzXML format using [`ProteoWizard` software](http
 
 All the `mzXML` format files should be placed in different folder according to sample type, such as `QC`, `Subject`, and `Blank`. 
 
-!()[../man/figures/Screen Shot 2020-04-01 at 10.31.27 AM.png]
+![](../man/figures/figure2.png)
 
 ## **Run `processData()`** function
 
@@ -66,10 +66,13 @@ First we load the demo data from `demoData` package and then place them in a `ex
 library(demoData)
 library(metflow2)
 library(tidyverse)
+library(xcms)
+library(MSnbase)
+library(mzR)
 ```
 
 ```{r,eval=FALSE,warning=FALSE, R.options="", message=FALSE,cache = TRUE}
-##creat a folder nameed as example
+##create a folder named as `example`
 path <- file.path(".", "example")
 dir.create(path = path, showWarnings = FALSE)
 ```
@@ -84,8 +87,6 @@ file.copy(from = file.path(mzxml_data, "POS"),
 
 Now the demo mzXML data is in the `./example/POS` folder. There are two folder in this directory, namely `Subject` and `QC`.
 
-![](../man/figures/)
-
 ### **Data processing**
 
 Next, we use the `processData()` function for peak detection and alignment.
@@ -93,6 +94,7 @@ Next, we use the `processData()` function for peak detection and alignment.
 
 ```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=TRUE, message=FALSE}
 new_path <- file.path(path, "POS")
+setwd(path)
 metflow2::processData(
   path = ".",
   polarity = "positive",
@@ -106,7 +108,7 @@ metflow2::processData(
   output.rt.correction.plot = TRUE,
   min.fraction = 0.5,
   fill.peaks = FALSE,
-  is.table = "is.table.xlsx",
+  is.table = "is.xlsx",
   group.for.figure = "QC"
 )
 ```

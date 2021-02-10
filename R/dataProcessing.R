@@ -136,9 +136,9 @@ setGeneric(name = "processData",
            ){
              polarity <- match.arg(polarity)
              output_path <- file.path(path, "Result")
-             dir.create(output_path)
+             dir.create(output_path, showWarnings = FALSE)
              intermediate_data_path <- file.path(output_path, "intermediate_data")
-             dir.create(intermediate_data_path)
+             dir.create(intermediate_data_path, showWarnings = FALSE)
             
              ##paramters
              parameters <- list(
@@ -497,7 +497,7 @@ setGeneric(name = "processData",
              if(output.peak.eic){
                cat(crayon::green("Outputting peak EICs...\n"))
                feature_EIC_path <- file.path(output_path, "feature_EIC")
-               dir.create(feature_EIC_path)
+               dir.create(feature_EIC_path, showWarnings = FALSE)
                
                
                temp_fun <- function(idx = 100,
