@@ -17,17 +17,16 @@ development:
   version_tooltip: "Under development"
 
 template:
-  package: preferably
   params:
-    toggle: manual
     docsearch:
       api_key: 2f09495997a50f5008bc92fa73c5552d
       index_name: metidentify
-    bootswatch: darkly
+    bootswatch: flatly
     ganalytics: UA-000000-01
     
 navbar:
-  type: inverse
+  title: "sparklyr"
+  # type: inverse
   structure:
     left: [home, start, references, articles, news, contact]
     right: [github, twitter]

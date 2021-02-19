@@ -29,6 +29,8 @@
 #' @return Peak table.
 #' @export
 #' @import xcms 
+#' @importFrom xcms CentWaveParam findChromPeaks adjustRtime ObiwarpParam chromatogram PeakDensityParam groupChromPeaks featureChromatograms groupnames featureDefinitions featureValues fillChromPeaks
+#' @importFrom Biobase featureData
 #' @import MSnbase
 #' @import mzR
 #' @import ggsci
