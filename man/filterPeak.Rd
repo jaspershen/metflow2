@@ -9,7 +9,8 @@ filterPeak(
   min.fraction.qc = 0.8,
   min.fraction = 0.8,
   min.subject.qc.ratio = 2,
-  dl.qc.r2.cutoff = 0.7
+  dl.qc.r2.cutoff = 0.7,
+  silence.deprecated = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ filterPeak(
 \item{min.subject.qc.ratio}{Peak intensity ratio in subject and blank samples.}
 
 \item{dl.qc.r2.cutoff}{R2 cutoff for dilution QC.}
+
+\item{silence.deprecated}{Silence deprecated information or not.}
 }
 \value{
 A new metflowClass object.

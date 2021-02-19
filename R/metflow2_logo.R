@@ -1,13 +1,14 @@
-#' @title metflow2
-#' @description metflow2
+#' @title metflow2_logo
+#' @description metflow2_logo
 #' @author Xiaotao Shen
 #' \email{shenxt@@stanford.edu}
 #' @export
 
-metflow2 <- function(){
-  cat(crayon::yellow(
-    "`metflow2()` is deprecated, use `metflow2_logo()`."
-  ))  
+metflow2_logo <- function(){
+  cat(crayon::green("Thank you for using metflow2!\n"))
+  cat(crayon::green("Version 0.1.2 (20201230)\n"))
+  cat(crayon::green("Bug fixing\n"))
+  cat(crayon::green("More information can be found at https://jaspershen.github.io/metflow2/\n"))
   cat(crayon::green(
     c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ",
       "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ",

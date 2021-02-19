@@ -8,7 +8,6 @@
 #' @export
 #' @import tidyverse
 #' @return A ggplot2 object.
-#' @examples
 
 setGeneric(
   name = "get_peak_int_distribution",

@@ -7,7 +7,7 @@
 #' @param min.fraction Peaks minimun fraction in subject samples.
 #' @param min.subject.qc.ratio Peak intensity ratio in subject and blank samples.
 #' @param dl.qc.r2.cutoff R2 cutoff for dilution QC.
-#' @silence.deprecated Silence deprecated information or not.
+#' @param silence.deprecated Silence deprecated information or not.
 #' @import tidyverse
 #' @import tibble
 #' @return A new metflowClass object.
@@ -19,7 +19,8 @@ setGeneric(
                  min.fraction.qc = 0.8,
                  min.fraction = 0.8,
                  min.subject.qc.ratio = 2,
-                 dl.qc.r2.cutoff = 0.7) {
+                 dl.qc.r2.cutoff = 0.7,
+                 silence.deprecated = FALSE) {
     if(!silence.deprecated){
       cat(crayon::yellow("`filterPeak()` is deprecated, please use `filter_peaks()`"))
     }

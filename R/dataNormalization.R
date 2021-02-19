@@ -13,7 +13,6 @@
 #' @export
 #' @import tidyverse
 #' @return A new metflowClass object.
-#' @examples
 
 setGeneric(
   name = "normalize_data",
@@ -331,7 +330,6 @@ setGeneric(
 #' @export
 #' @import tidyverse
 #' @return A new metflowClass object.
-#' @examples
 
 setGeneric(
   name = "normalizeData",
