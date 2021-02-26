@@ -89,8 +89,9 @@ setGeneric(
       ggplot2::ggplot(data = data,
                       ggplot2::aes(x = mz, y = intensity)) +
       ggplot2::geom_line(data = data,
-                         mapping = ggplot2::aes(colour = sample, group = sample)) +
-      ggsci::scale_fill_lancet() +
+                         mapping = ggplot2::aes(colour = sample, 
+                                                group = sample)) +
+      # ggsci::scale_fill_lancet() +
       ggplot2::theme_bw() +
       ggplot2::labs(x = "Retention time (RT, second)", y = "Intensity", title = title) +
       ggplot2::theme(
@@ -873,18 +874,177 @@ setGeneric(
     tic.plot <- xcms::chromatogram(
       object = xdata,
       aggregationFun = ifelse(type == "tic", "sum", "max"),
-      BPPARAM =
-        BiocParallel::SnowParam(workers = threads,
-                                progressbar = TRUE)
+      # BPPARAM =
+      #   BiocParallel::SnowParam(workers = threads,
+      #                           progressbar = TRUE)
+      BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                             progressbar = TRUE)
     )
     
     plot <- plot_chromatogram(object = tic.plot,
                              title = "",
                              alpha = 1,
                              group.for.figure = "QC")
-    
     plot +
       ggplot2::theme(legend.position = "none")
     
   }
 )
+
+
+
+
+
+
+
+
+#' 
+#' #' @title get_eic
+#' #' @description After running process_data, you can use this function to get the peaks in samples EIC.
+#' #' @author Xiaotao Shen
+#' #' \email{shenxt1990@@163.com}
+#' #' @param path Work directory.
+#' #' @param polarity The polarity of data, "positive"or "negative".
+#' #' @return Peak table.
+#' #' @export
+#' #' @importFrom xcms CentWaveParam findChromPeaks adjustRtime ObiwarpParam chromatogram PeakDensityParam groupChromPeaks featureChromatograms groupnames featureDefinitions featureValues fillChromPeaks
+#' 
+#' tinyTools::setwd_project()
+#' setwd("example/POS/")
+#' 
+#' get_eic = function(path = ".",
+#'                    sample,
+#'                    peak) {
+#' 
+#'   ##check data
+#'   if(all(dir(path) != "Result")){
+#'     stop("No Result folder in your ",
+#'          path,
+#'          ", maybe you have not run data_process yet.\n")
+#'   }
+#'   
+#'   if(all(dir(file.path(path, "Result")) != "Peak_table.csv")){
+#'     stop("No Peak_table.csv in your ",
+#'          file.path(path, "Result"),
+#'          ", maybe you have not run data_process yet.\n")
+#'   }
+#'   
+#'   if(all(dir(file.path(path, "Result")) != "intermediate_data")){
+#'     stop("No intermediate_data in your ",
+#'          file.path(path, "Result"),
+#'          ", maybe you have not run data_process yet.\n")
+#'   }
+#'   
+#'   if(all(dir(file.path(path, "Result")) != "xdata3")){
+#'     stop("No xdata3 in your ",
+#'          file.path(path, "Result/intermediate_data"),
+#'          ", maybe you have not run data_process successfullyyet.\n")
+#'   }
+#'   
+#'   ###read peak table
+#'   peak_table = readr::read_csv(file.path(path, "Result/Peak_table.csv"),
+#'                                col_types = readr::cols())
+#'   
+#'   
+#'   ##load xdata3
+#'   load(file.path(path, "Result/intermediate_data/xdata3"))
+#'   
+#'   feature_eic = 
+#'   xcms::featureChromatograms(
+#'     x = xdata3,
+#'     features = 1:10,
+#'     expandRt = 0,
+#'     BPPARAM =
+#'       BiocParallel::SnowParam(workers = 1,
+#'                               progressbar = TRUE)
+#'   )
+#'   
+#'   
+#'   
+#'   feature_eic_data <- feature_eic@.Data %>% 
+#'     pbapply::pbapply(1, function(y){
+#'       y <- lapply(y, function(x){
+#'         if(class(x) == "XChromatogram"){
+#'           if(nrow(x@chromPeaks) == 0){
+#'             data.frame(rt.med = NA,
+#'                        rt.min = NA,
+#'                        rt.max = NA,
+#'                        rt = NA, 
+#'                        min.intensity = 0,
+#'                        max.intensity = NA,
+#'                        intensity = NA,
+#'                        stringsAsFactors = FALSE) 
+#'           }else{
+#'             if(nrow(x@chromPeaks) > 1){
+#'               x@chromPeaks <- 
+#'                 tibble::as_tibble(x@chromPeaks) %>%
+#'                 dplyr::filter(maxo == max(maxo)) %>% 
+#'                 as.matrix()
+#'             }
+#'             data.frame(rt.med = x@chromPeaks[,4],
+#'                        rt.min = x@chromPeaks[,5],
+#'                        rt.max = x@chromPeaks[,6],
+#'                        rt = x@rtime, 
+#'                        min.intensity = 0,
+#'                        max.intensity = x@chromPeaks[,"maxo"],
+#'                        intensity = x@intensity,
+#'                        stringsAsFactors = FALSE)  
+#'           } 
+#'         }else{
+#'         }
+#'       }
+#'       )
+#'       y <- 
+#'         mapply(function(y, sample.group, sample.name){
+#'           data.frame(y, 
+#'                      sample_group = sample.group,
+#'                      sample_name = sample.name,
+#'                      stringsAsFactors = FALSE) %>% 
+#'             list()
+#'         },
+#'         y = y,
+#'         sample.group = feature_eic@phenoData@data$sample_group,
+#'         sample.name = feature_eic@phenoData@data$sample_name
+#'         )
+#'       
+#'       y <- do.call(rbind, y)
+#'       y
+#'       
+#'     })
+#' 
+#'   feature_eic_data <- 
+#'     feature_eic_data %>% 
+#'     purrr::map(.f = function(x){
+#'       # x <- 
+#'       #   x %>% 
+#'       #   dplyr::filter(sample_group %in% group.for.figure)
+#'       # 
+#'       # if(length(unique(x$sample_name)) > 8){
+#'       #   idx <- which(x$sample_name %in% sort(sample(unique(x$sample_name), 18))) %>% 
+#'       #     sort()
+#'       #   x <- x[idx, , drop = FALSE]
+#'       # }
+#'       x
+#'     })
+#'   
+#'   BiocParallel::bplapply(
+#'     1:length(index2),
+#'     FUN = temp_fun,
+#'     BPPARAM = BiocParallel::SnowParam(workers = threads,
+#'                                       progressbar = TRUE),
+#'     feature_eic_data = feature_eic_data,
+#'     path = feature_EIC_path,
+#'     peak.name = peak_name[index2],
+#'     metabolite.name = metabolite_name
+#'   )
+#' 
+#'   
+#'       
+#'   
+#'     
+#' }
+#' 
+#' 
+#' 
+#' 
+#' 

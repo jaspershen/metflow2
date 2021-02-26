@@ -165,7 +165,11 @@ setGeneric(name = "processData",
              )
              
              save(parameters, file = file.path(intermediate_data_path, "parameters"))
-             
+             write.csv(
+               parameters,
+               file = file.path(intermediate_data_path, "parameters.csv"),
+               row.names = FALSE
+             )
              ##------------------------------------------------------------------------------------
              #peak detection
              
@@ -257,8 +261,10 @@ setGeneric(name = "processData",
                    try(xcms::findChromPeaks(
                      raw_data,
                      param = cwp,
-                     BPPARAM = BiocParallel::SnowParam(workers = threads,
-                                                       progressbar = TRUE)
+                     BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                                            progressbar = TRUE)
+                     # BPPARAM = BiocParallel::SnowParam(workers = threads,
+                     #                                   progressbar = TRUE)
                    ), silent = FALSE
                    )
                  )
@@ -331,9 +337,11 @@ setGeneric(name = "processData",
                cat(crayon::green("Drawing TIC plot..."))
                tic.plot <- xcms::chromatogram(object = xdata2,
                                               aggregationFun = "sum",
-                                              BPPARAM =
-                                                BiocParallel::SnowParam(workers = threads,
-                                                                        progressbar = TRUE)
+                                              # BPPARAM =
+                                              #   BiocParallel::SnowParam(workers = threads,
+                                              #                           progressbar = TRUE)
+                                              BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                                                                     progressbar = TRUE)
                )
                
                ## Plot all chromatograms.
@@ -362,9 +370,12 @@ setGeneric(name = "processData",
                cat(crayon::green("Drawing BPC plot..."))
                bpc.plot <- xcms::chromatogram(object = xdata2,
                                               aggregationFun = "max",
-                                              BPPARAM =
-                                                BiocParallel::SnowParam(workers = threads,
-                                                                        progressbar = TRUE))
+                                              BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                                                                     progressbar = TRUE)
+                                              # BPPARAM =
+                                              #   BiocParallel::SnowParam(workers = threads,
+                                              #                           progressbar = TRUE)
+                                              )
                
                ## Plot all chromatograms.
                # save(bpc.plot,
@@ -542,9 +553,11 @@ setGeneric(name = "processData",
                    x = xdata3,
                    features = index2,
                    expandRt = 0,
-                   BPPARAM =
-                     BiocParallel::SnowParam(workers = threads,
-                                             progressbar = TRUE)
+                   BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                                          progressbar = TRUE)
+                   # BPPARAM =
+                   #   BiocParallel::SnowParam(workers = threads,
+                   #                           progressbar = TRUE)
                  )
                
                
@@ -621,8 +634,10 @@ setGeneric(name = "processData",
                
                BiocParallel::bplapply(1:length(index2), 
                                       FUN = temp_fun,
-                                      BPPARAM = BiocParallel::SnowParam(workers = threads,
-                                                                        progressbar = TRUE),
+                                      # BPPARAM = BiocParallel::SnowParam(workers = threads,
+                                      #                                   progressbar = TRUE),
+                                      BPPARAM = BiocParallel::MulticoreParam(workers = threads,
+                                                                             progressbar = TRUE),
                                       feature_eic_data = feature_eic_data, 
                                       path = feature_EIC_path, 
                                       peak.name = peak_name[index2],
