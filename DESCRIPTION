@@ -62,15 +62,18 @@ Imports:
     webchem,
     tinyTools (>= 0.1.2),
     Biobase,
-    rstudioapi
+    rstudioapi,
+    Rtsne,
+    ggrepel,
+    BiocGenerics
 License: GPL-2 | file LICENSE
 URL: https://github.com/jaspershen/metflow2
 RoxygenNote: 7.1.1
-Suggests: knitr,
+Suggests: 
+    knitr,
     rmarkdown,
     BiocStyle,
-    RUnit,
-    BiocGenerics
+    RUnit
 VignetteBuilder: knitr
 Note:
 biocViews: Metabolomics, MassSpectrometry, Data processing, Data analysis.

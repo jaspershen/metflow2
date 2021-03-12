@@ -38,14 +38,6 @@ The demo data for peak picking are from MetDNA. You can download it from here: h
 
 The code for data processing are in the `dataProcessing.R` file. 
 
-
-
-
-
-
-
-
-
 *metflow2* is a R package which is used to process and analyze metabolomics data.
 
 

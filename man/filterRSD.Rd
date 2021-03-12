@@ -4,7 +4,12 @@
 \alias{filterRSD}
 \title{filterRSD}
 \usage{
-filterRSD(object, slot = c("Subject", "QC"), rsd.cutoff = 30)
+filterRSD(
+  object,
+  slot = c("Subject", "QC"),
+  rsd.cutoff = 30,
+  silence.deprecated = FALSE
+)
 }
 \arguments{
 \item{object}{A metflowClass object.}
@@ -12,6 +17,8 @@ filterRSD(object, slot = c("Subject", "QC"), rsd.cutoff = 30)
 \item{slot}{What group samples are used to calculate RSD.}
 
 \item{rsd.cutoff}{RSD cutoff.}
+
+\item{silence.deprecated}{Silence deprecated information or not.}
 }
 \value{
 A new metflowClass object.

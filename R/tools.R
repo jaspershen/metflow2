@@ -1016,8 +1016,6 @@ setGeneric(name = "sxtScale",
 #' @param peak.index Peak index
 #' @return Peak plot (ggplot2 object).
 #' @export
-#' @import tidyverse
-#' @import patchwork
 
 setGeneric(
   name = "showPeakPlot",
@@ -1114,94 +1112,7 @@ setGeneric(
 
 
 
-# art <- readLines("metflo2_logo.txt")
-# dput(art)
 
-#https://www.text-image.com/convert/ascii.html
-
-#' @title metflow2_logo
-#' @description Show logo of metflow2.
-#' @author Xiaotao Shen
-#' \email{shenxt@@sioc.ac.cn}
-#' @param logo.index Which logo you want to use.
-#' @param colour Logo colour.
-#' @return Ascii art logo.
-#' @export
-#' @import crayon
-
-metflow2_logo <- 
-  function(logo.index = 1, colour = c("yellow", "white", "green", "red")){
-    colour <- match.arg(colour)
-    if(logo.index == 1){
-      logo <- 
-        c("                                    `:smms:`                                    ", 
-          "                                 .+hmy/``/ymh+.                                 ", 
-          "                             `:smdo-        -odms:                              ", 
-          "                          .+hmy/`     `://-    `/ymh+.                          ", 
-          "                       :smdo-       `yMMMMMN+      -odms:                       ", 
-          "                   .+hmy/`          hMMMMMMMM/        `/ymh+.                   ", 
-          "                :smdo-              hMMMMMMMM/            -odms:                ", 
-          "            .+hmy/`                 `mMMMMMm/                `/ymh/.            ", 
-          "         :sddo-                     sMy-::.                      -oddo-         ", 
-          "     `/ymy/`                      .dM+                              `/ymy/`     ", 
-          "  -oddo-                         :Nm-                                   :smdo-  ", 
-          "ymh+.                       `-:.oMh`                                       .+hmy", 
-          "Mo                        :dMMMMMN.             .--`                          sM", 
-          "Mo                       .MMMMMMMMd          `yNMMMMh-                        sM", 
-          "Mo                       -MMMMMMMMMNNmdhyyso+dMMMMMMMM.                       sM", 
-          "Mo                        /NMMMMMd-  `.-:/+osmMMMMMMMM-                       sM", 
-          "Mo                          -/+/.            .dMMMMMN/                        sM", 
-          "Mo                                            -Nm+/-                          sM", 
-          "Mo                                           .NN.                             sM", 
-          "Mo                                          `mN-                              sM", 
-          "Mo                                         `dM:                               sM", 
-          "Mo                                     `/oodM/                                sM", 
-          "Mo                                    yMMMMMMd.                               sM", 
-          "Mo                                   +MMMMMMMMd                               sM", 
-          "Mo                                   :MMMMMMMMy                               sM", 
-          "Mo                                    -hMMMMm+                                sM", 
-          "Mo                                       ..`                                  sM", 
-          "Mo                                    `::``-                                  sM", 
-          "Mo                             -.    sm+/.dd                          syyydy. sM", 
-          "Mo       ``    ``      `.`    :M:   :M:  -M/    `.`                  `.   `My sM", 
-          "Mo   hdossmm:yssNh  `odyohm-`yNmyy:yNmyy`yN  `odysym+ .M:  `mM`  +N-     `sN- sM", 
-          "Mo  .Mh`  +Ms`  yN `mh` .+M/ .M+   .M+  `Mo  dm`   oM. N+ .moM- /N-    :ydo`  sM", 
-          "Mo  sN`   dd   `Ms /Mhyys+.  sN`   sN`  oM` :M:    yN` ds.m/ N//N.  .sdo.     sM", 
-          "Mo `Ns   -M/   +M. -Mo   -`  Ny ` `Ns   mh  -Ms  `sN:  ydm:  dhm.  /M+`````   sM", 
-          "ymysh.   /s    o+   -syyyo   +yy: +M.   +yy` -syyy+`   :s:   /s.   ssssssss-+hmy", 
-          "  -oddo-                          mh                                    -oddo-  ", 
-          "     .+hmy/`                      .`                                `/ymy/`     ", 
-          "         :smdo-                                                  -odds:         ", 
-          "            .+hmy/`                                          `/ymh+.            ", 
-          "                :smdo-                                    -odms:                ", 
-          "                   .+hmy/`                            `/ymh+.                   ", 
-          "                       :smdo-                      -odms:                       ", 
-          "                          .+hmy/`              `/ymh+.                          ", 
-          "                             `:smdo-        -odms:                              ", 
-          "                                 .+hmy/``/ymh+.                                 ", 
-          "                                    `:smms:`                                    "
-        )  
-    }else{
-      logo <- 
-        c("                 _    __ _              ___  ", "                | |  / _| |            |__ \\ ", 
-          "  _ __ ___   ___| |_| |_| | _____      __ ) |", " | '_ ` _ \\ / _ \\ __|  _| |/ _ \\ \\ /\\ / // / ", 
-          " | | | | | |  __/ |_| | | | (_) \\ V  V // /_ ", " |_| |_| |_|\\___|\\__|_| |_|\\___/ \\_/\\_/|____|", 
-          "                                             ", "                                             "
-        )
-    }
-    
-    
-
-    switch(colour, 
-           yellow = cat(crayon::yellow(logo), sep = "\n"),
-           white = cat(crayon::white(logo), sep = "\n"),
-           green = cat(crayon::green(logo), sep = "\n"),
-           red = cat(crayon::red(logo), sep = "\n")
-           )
-      
-    
-    
-  }
 
 
 

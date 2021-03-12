@@ -8,159 +8,150 @@
 #'@param top How many results should be returned?
 #'@param server server.
 #'@return A data frame.
-#'@import xml2
-#'@import httr
-#'@import rvest
-#'@import tidyverse
-#'@import stringr
-#'@import webchem
 #'@export
 
-
-setGeneric(
-  name = "transID",
-  def = function(query = "C00001",
-                 from = "KEGG",
-                 to = "PubChem SID",
-                 top = 1,
-                 server = c(
-                   "http://cts.fiehnlab.ucdavis.edu/service/convert",
-                   "https://www.chemspider.com/InChI.asmx"
-                 )) {
-    server <- match.arg(server)
-    top <- as.numeric(top)
-    if (is.na(top)) {
-      top <- 1
-    }
-    if (server == "http://cts.fiehnlab.ucdavis.edu/service/convert") {
-      url <- paste(server, from, to, query, sep = "/")
-      url <- stringr::str_replace_all(url, " ", "%20")
-      
-      result <-
-        try(expr = xml2::read_html(url, encoding = "UTF-8"),
-            silent = TRUE)
-      if (any(class(result) %in% "try-error")) {
-        warning(
-          'Please check you query, from and to again.
+transID = function(query = "C00001",
+                   from = "KEGG",
+                   to = "PubChem SID",
+                   top = 1,
+                   server = c(
+                     "http://cts.fiehnlab.ucdavis.edu/service/convert",
+                     "https://www.chemspider.com/InChI.asmx"
+                   )){
+  cat(crayon::yellow("transID() is deprecited, please use the trans_ID() in tinyTools.\n"))
+  server <- match.arg(server)
+  top <- as.numeric(top)
+  if (is.na(top)) {
+    top <- 1
+  }
+  if (server == "http://cts.fiehnlab.ucdavis.edu/service/convert") {
+    url <- paste(server, from, to, query, sep = "/")
+    url <- stringr::str_replace_all(url, " ", "%20")
+    
+    result <-
+      try(expr = xml2::read_html(url, encoding = "UTF-8"),
+          silent = TRUE)
+    if (any(class(result) %in% "try-error")) {
+      warning(
+        'Please check you query, from and to again.
 You can use databaseName() function to check the databases this package support.'
-        )
-        result <- NA
-      } else{
-        result <-
-          try(result %>%
-                html_nodes("p") %>%
-                html_text(trim = TRUE) %>%
-                stringr::str_split("\n") %>%
-                `[[`(1) %>%
-                sapply(function(x) {
-                  x <- stringr::str_trim(x, "both")
-                  x <-
-                    stringr::str_replace_all(string = x,
-                                             pattern = '\"',
-                                             replacement = "")
-                  x <-
-                    stringr::str_replace_all(string = x,
-                                             pattern = ',',
-                                             replacement = "")
-                  x
-                }) %>%
-                unname() %>%
-                data.frame(name = ., stringsAsFactors = FALSE) %>%
-                dplyr::filter(!name %in% c("[", "]", "{", "}", "result:")) %>%
-                dplyr::filter(!stringr::str_detect(name, "fromIdentifier|searchTerm|toIdentifier")) %>%
-                dplyr::pull(name))
-        
-        if (any(class(result) %in% "try-error")) {
-          result <- NA
-        }
-      }
-      
-      if (top > length(result)) {
-        top <- length(result)
-      }
-      result <- result[1:top]
-      result <-
-        data.frame(query, result, stringsAsFactors = FALSE)
-      colnames(result) <- c(from, to)
-      tibble::as_tibble(result)
-    } else{
-      from_to <- paste(from, to, sep = "_")
-      result <- data.frame(
-        name = c(
-          "csid_mol",
-          "inchikey_csid",
-          "inchikey_inchi",
-          "inchikey_mol",
-          "inchi_csid",
-          "inchi_inchikey",
-          "inchi_mol",
-          "inchi_smiles",
-          "smiles_inchi"
-        ),
-        server = c(
-          "https://www.chemspider.com/InChI.asmx/CSIDToMol?",
-          "https://www.chemspider.com/InChI.asmx/InChIKeyToCSID?",
-          "https://www.chemspider.com/InChI.asmx/InChIKeyToInChI?",
-          "https://www.chemspider.com/InChI.asmx/InChIKeyToMol?",
-          "https://www.chemspider.com/InChI.asmx/InChIToCSID",
-          "https://www.chemspider.com/InChI.asmx/InChIToInChIKey",
-          "https://www.chemspider.com/InChI.asmx/InChIToMol",
-          "https://www.chemspider.com/InChI.asmx/InChIToSMILES",
-          "https://www.chemspider.com/InChI.asmx/SMILESToInChI"
-        ),
-        stringsAsFactors = FALSE
       )
-      if (!from_to %in% result$name) {
-        cat(
-          crayon::red(
-            from_to,
-            "is not supported for server",
-            "https://www.chemspider.com/InChI.asmx\n"
-          )
-        )
-        return(NA)
-      }
-      baseurl <- 
-        result %>%  
-        dplyr::filter(name == from_to) %>% 
-        dplyr::pull(server)
-      # baseurl <-
-      #   "https://www.chemspider.com/InChI.asmx/InChIToSMILES"
-      Sys.sleep(rgamma(1, shape = 15, scale = 1 / 45))
+      result <- NA
+    } else{
+      result <-
+        try(result %>%
+              html_nodes("p") %>%
+              html_text(trim = TRUE) %>%
+              stringr::str_split("\n") %>%
+              `[[`(1) %>%
+              sapply(function(x) {
+                x <- stringr::str_trim(x, "both")
+                x <-
+                  stringr::str_replace_all(string = x,
+                                           pattern = '\"',
+                                           replacement = "")
+                x <-
+                  stringr::str_replace_all(string = x,
+                                           pattern = ',',
+                                           replacement = "")
+                x
+              }) %>%
+              unname() %>%
+              data.frame(name = ., stringsAsFactors = FALSE) %>%
+              dplyr::filter(!name %in% c("[", "]", "{", "}", "result:")) %>%
+              dplyr::filter(!stringr::str_detect(name, "fromIdentifier|searchTerm|toIdentifier")) %>%
+              dplyr::pull(name))
       
-      body <- 
+      if (any(class(result) %in% "try-error")) {
+        result <- NA
+      }
+    }
+    
+    if (top > length(result)) {
+      top <- length(result)
+    }
+    result <- result[1:top]
+    result <-
+      data.frame(query, result, stringsAsFactors = FALSE)
+    colnames(result) <- c(from, to)
+    tibble::as_tibble(result)
+  } else{
+    from_to <- paste(from, to, sep = "_")
+    result <- data.frame(
+      name = c(
+        "csid_mol",
+        "inchikey_csid",
+        "inchikey_inchi",
+        "inchikey_mol",
+        "inchi_csid",
+        "inchi_inchikey",
+        "inchi_mol",
+        "inchi_smiles",
+        "smiles_inchi"
+      ),
+      server = c(
+        "https://www.chemspider.com/InChI.asmx/CSIDToMol?",
+        "https://www.chemspider.com/InChI.asmx/InChIKeyToCSID?",
+        "https://www.chemspider.com/InChI.asmx/InChIKeyToInChI?",
+        "https://www.chemspider.com/InChI.asmx/InChIKeyToMol?",
+        "https://www.chemspider.com/InChI.asmx/InChIToCSID",
+        "https://www.chemspider.com/InChI.asmx/InChIToInChIKey",
+        "https://www.chemspider.com/InChI.asmx/InChIToMol",
+        "https://www.chemspider.com/InChI.asmx/InChIToSMILES",
+        "https://www.chemspider.com/InChI.asmx/SMILESToInChI"
+      ),
+      stringsAsFactors = FALSE
+    )
+    if (!from_to %in% result$name) {
+      cat(
+        crayon::red(
+          from_to,
+          "is not supported for server",
+          "https://www.chemspider.com/InChI.asmx\n"
+        )
+      )
+      return(NA)
+    }
+    baseurl <- 
+      result %>%  
+      dplyr::filter(name == from_to) %>% 
+      dplyr::pull(server)
+    # baseurl <-
+    #   "https://www.chemspider.com/InChI.asmx/InChIToSMILES"
+    Sys.sleep(rgamma(1, shape = 15, scale = 1 / 45))
+    
+    body <- 
       switch(EXPR = from,
              csid = list(csid = query),
              inchikey = list(inchi_key = query),
              inchi = list(inchi = query),
              smiles = list(smiles = query),
              mol = list(mol = query)
-             )
-      
-      res <-
-        try(httr::POST(url = baseurl, 
-                       body = body,
-                       encode = "form"),
-            silent = TRUE)
-      
-      if (inherits(res, "try-error")) {
-        warning("Problem with service... Returning NA.")
-        return(NA)
-      }
-      
-      out <- try(xml2::read_xml(httr::content(res, "raw")), silent = TRUE)
-      if (inherits(out, "try-error")) {
-        warning("inchi not found... Returning NA.")
-        return(NA)
-      }
-      
-      out <- xml2::xml_text(out)
-      out
-      
+      )
+    
+    res <-
+      try(httr::POST(url = baseurl, 
+                     body = body,
+                     encode = "form"),
+          silent = TRUE)
+    
+    if (inherits(res, "try-error")) {
+      warning("Problem with service... Returning NA.")
+      return(NA)
     }
     
+    out <- try(xml2::read_xml(httr::content(res, "raw")), silent = TRUE)
+    if (inherits(out, "try-error")) {
+      warning("inchi not found... Returning NA.")
+      return(NA)
+    }
+    
+    out <- xml2::xml_text(out)
+    out
+    
   }
-)
+  
+}
 
 
 #' @title databaseName
@@ -169,10 +160,6 @@ You can use databaseName() function to check the databases this package support.
 #' \email{shenxt1990@@163.com}
 #' @param server server.
 #' @return A vector..
-#' @import xml2
-#' @import rvest
-#' @import tidyverse
-#' @import stringr
 #' @export
 #' @examples 
 #' \dontrun{

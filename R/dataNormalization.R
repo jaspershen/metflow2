@@ -11,18 +11,17 @@
 #' @param step 0.2
 #' @param threads 4
 #' @export
-#' @import tidyverse
 #' @return A new metflowClass object.
 
-setGeneric(
-  name = "normalize_data",
-  def = function(object,
-                 method = c("svr", "total", "median", "mean", "pqn", "loess"),
-                 keep.scale = TRUE,
-                 begin = 0.5,
-                 end = 1, 
-                 step = 0.2, 
-                 threads = 4) {
+
+normalize_data = 
+  function(object,
+           method = c("svr", "total", "median", "mean", "pqn", "loess"),
+           keep.scale = TRUE,
+           begin = 0.5,
+           end = 1, 
+           step = 0.2, 
+           threads = 4){
     
     method <- match.arg(method)
     
@@ -115,19 +114,18 @@ setGeneric(
     
     ##pqn (Probabilistic Quotient Normalization) method
     if(method == "pqn"){
-      
-      object@process.info$normalizeData <- list()
-      object@process.info$normalizeData$method <- method
-      object@process.info$normalizeData$keep.scale <- keep.scale
-      
-      subject_data <- KODAMA::normalization(Xtrain = subject_data, 
-                                            method = "pqn")$newXtrain
-      if(!is.null(qc_data)){
-        qc_data <- KODAMA::normalization(Xtrain = qc_data, 
-                                         method = "pqn")$newXtrain
-      }
+      stop('Sorry, PQN now is not available.\n')
+      # object@process.info$normalizeData <- list()
+      # object@process.info$normalizeData$method <- method
+      # object@process.info$normalizeData$keep.scale <- keep.scale
+      # 
+      # subject_data <- KODAMA::normalization(Xtrain = subject_data, 
+      #                                       method = "pqn")$newXtrain
+      # if(!is.null(qc_data)){
+      #   qc_data <- KODAMA::normalization(Xtrain = qc_data, 
+      #                                    method = "pqn")$newXtrain
+      # }
     }
-    
     
     if(method == "loess") {
       
@@ -312,7 +310,6 @@ setGeneric(
     object@ms1.data <- ms1_data
     invisible(object)
   }
-)
 
 
 #' @title normalizeData
@@ -328,62 +325,70 @@ setGeneric(
 #' @param step 0.2
 #' @param threads 4
 #' @export
-#' @import tidyverse
 #' @return A new metflowClass object.
 
-setGeneric(
-  name = "normalizeData",
-  def = function(object,
-                 method = c("svr", "total", "median", "mean", "pqn", "loess"),
-                 keep.scale = TRUE,
-                 begin = 0.5,
-                 end = 1, 
-                 step = 0.2, 
-                 threads = 4) {
-
-    cat(crayon::yellow("`normalizeData()` is deprecated, please use `normalize_data()`"))
-    # 
-    method <- match.arg(method)
-    
-    if (class(object) != "metflowClass") {
-      stop("Only the metflowClass is supported!\n")
+normalizeData = function(object,
+                         method = c("svr", "total", "median", "mean", "pqn", "loess"),
+                         keep.scale = TRUE,
+                         begin = 0.5,
+                         end = 1, 
+                         step = 0.2, 
+                         threads = 4){
+  
+  cat(crayon::yellow("`normalizeData()` is deprecated, please use `normalize_data()`"))
+  # 
+  method <- match.arg(method)
+  
+  if (class(object) != "metflowClass") {
+    stop("Only the metflowClass is supported!\n")
+  }
+  
+  ms1_data <- object@ms1.data
+  
+  if(length(ms1_data) > 1){
+    stop("Please align batch first.\n")
+  }
+  
+  ms1_data <- ms1_data[[1]]
+  
+  if(method == "svr" | method == "loess"){
+    if(all(unique(object@sample.info$class) != "QC")){
+      stop("No qc samples in your data, svr and loess is not available.\n")
     }
-    
-    ms1_data <- object@ms1.data
-    
-    if(length(ms1_data) > 1){
-      stop("Please align batch first.\n")
+  }
+  
+  qc_data <- get_data(object = object, slot = "QC")
+  subject_data <- get_data(object = object, slot = "Subject")
+  
+  if(sum(is.na(qc_data)) + sum(is.na(subject_data)) > 0){
+    stop("Please impute MV first.\n")
+  }
+  
+  if(is.null(qc_data)){
+    if(method %in% c("svr", "loess")){
+      stop("No qc samples in your data, please change other method.\n")
     }
+  }
+  
+  ##sample-wise methods
+  if(method %in% c("total", "median", "mean")){
     
-    ms1_data <- ms1_data[[1]]
+    object@process.info$normalizeData <- list()
+    object@process.info$normalizeData$method <- method
+    object@process.info$normalizeData$keep.scale <- keep.scale
     
-    if(method == "svr" | method == "loess"){
-      if(all(unique(object@sample.info$class) != "QC")){
-        stop("No qc samples in your data, svr and loess is not available.\n")
-      }
-    }
+    subject_data <- apply(subject_data, 2, function(x){
+      x <- as.numeric(x)
+      switch(method,
+             total = {x/sum(x)},
+             median = {x/median(x)},
+             mean = {x/mean(x)}
+      )
+    })
+    subject_data <- as.data.frame(subject_data)
     
-    qc_data <- get_data(object = object, slot = "QC")
-    subject_data <- get_data(object = object, slot = "Subject")
-    
-    if(sum(is.na(qc_data)) + sum(is.na(subject_data)) > 0){
-      stop("Please impute MV first.\n")
-    }
-    
-    if(is.null(qc_data)){
-      if(method %in% c("svr", "loess")){
-        stop("No qc samples in your data, please change other method.\n")
-      }
-    }
-    
-    ##sample-wise methods
-    if(method %in% c("total", "median", "mean")){
-      
-      object@process.info$normalizeData <- list()
-      object@process.info$normalizeData$method <- method
-      object@process.info$normalizeData$keep.scale <- keep.scale
-      
-      subject_data <- apply(subject_data, 2, function(x){
+    if(!is.null(qc_data)){
+      qc_data <- apply(qc_data, 2, function(x){
         x <- as.numeric(x)
         switch(method,
                total = {x/sum(x)},
@@ -391,221 +396,215 @@ setGeneric(
                mean = {x/mean(x)}
         )
       })
-      subject_data <- as.data.frame(subject_data)
-      
-      if(!is.null(qc_data)){
-        qc_data <- apply(qc_data, 2, function(x){
-          x <- as.numeric(x)
-          switch(method,
-                 total = {x/sum(x)},
-                 median = {x/median(x)},
-                 mean = {x/mean(x)}
-          )
-        })
-        qc_data <- as.data.frame(qc_data)
-      }
+      qc_data <- as.data.frame(qc_data)
     }
-    
-    ##pqn (Probabilistic Quotient Normalization) method
-    if(method == "pqn"){
-      
-      object@process.info$normalizeData <- list()
-      object@process.info$normalizeData$method <- method
-      object@process.info$normalizeData$keep.scale <- keep.scale
-      
-      subject_data <- KODAMA::normalization(Xtrain = subject_data, 
-                                            method = "pqn")$newXtrain
-      if(!is.null(qc_data)){
-        qc_data <- KODAMA::normalization(Xtrain = qc_data, 
-                                         method = "pqn")$newXtrain
-      }
-    }
-    
-    
-    if(method == "loess") {
-      
-      object@process.info$normalizeData <- list()
-      object@process.info$normalizeData$method <- method
-      object@process.info$normalizeData$keep.scale <- keep.scale
-      object@process.info$normalizeData$begin <- begin
-      object@process.info$normalizeData$end <- end
-      object@process.info$normalizeData$step <- step
-      
-      sample_info <- object@sample.info
-      sample_info <- 
-        sample_info %>% 
-        dplyr::filter(class %in% c('QC', 'Subject'))
-      
-      ms1_data <- object@ms1.data[[1]]
-      
-      ms1_data <- 
-        ms1_data %>% 
-        select(one_of(sample_info$sample.name))
-      
-      ###split data according to batch
-      ##sample_info is a list
-      sample_info <- 
-        plyr::dlply(sample_info, .variables = plyr::.(batch))
-      
-      subject_data <- 
-        lapply(sample_info, function(x){
-          temp_subject_data <- 
-            ms1_data %>% 
-            dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
-        })
-      
-      qc_data <- 
-        lapply(sample_info, function(x){
-          temp_subject_data <- 
-            ms1_data %>% 
-            dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
-        })
-      
-      subject_order <- 
-        lapply(subject_data, function(x){
-          object@sample.info$injection.order[match(colnames(x), object@sample.info$sample.name)]
-        })
-      
-      qc_order <- 
-        lapply(qc_data, function(x){
-          object@sample.info$injection.order[match(colnames(x), 
-                                                   object@sample.info$sample.name)]
-        })
-      
-      ####begin data normalization
-      qc_subject_data <- 
-        vector(mode = "list", length = length(subject_data))
-      
-      for(batch_idx in 1:length(subject_data)){
-        cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
-        qc_subject_data[[batch_idx]] <-
-          loessNor(
-            subject_data = subject_data[[batch_idx]],
-            qc_data = qc_data[[batch_idx]],
-            subject_order = subject_order[[batch_idx]],
-            qc_order = qc_order[[batch_idx]],
-            optimization = TRUE,
-            path = ".", 
-            begin = begin, 
-            end = end,
-            step = step, 
-            threads = threads
-          )
-        cat("\n")
-      }
-      
-      qc_data <- 
-        lapply(qc_subject_data, function(x){
-          x[[1]]
-        }) %>% 
-        do.call(cbind, .)
-      
-      subject_data <- 
-        lapply(qc_subject_data, function(x){
-          x[[2]]
-        }) %>% 
-        do.call(cbind, .)
-      
-    }
-    
-    
-    if(method == "svr"){
-      
-      object@process.info$normalizeData <- list()
-      object@process.info$normalizeData$method <- method
-      
-      sample_info <- object@sample.info
-      sample_info <- 
-        sample_info %>% 
-        dplyr::filter(class %in% c('QC', 'Subject'))
-      
-      ms1_data <- object@ms1.data[[1]]
-      
-      ms1_data <- 
-        ms1_data %>% 
-        select(one_of(sample_info$sample.name))
-      
-      ###split data according to batch
-      ##sample_info is a list
-      sample_info <- 
-        plyr::dlply(sample_info, .variables = plyr::.(batch))
-      
-      subject_data <- 
-        lapply(sample_info, function(x){
-          temp_subject_data <- 
-            ms1_data %>% 
-            dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
-        })
-      
-      qc_data <- 
-        lapply(sample_info, function(x){
-          temp_subject_data <- 
-            ms1_data %>% 
-            dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
-        })
-      
-      subject_order <- 
-        lapply(subject_data, function(x){
-          object@sample.info$injection.order[match(colnames(x), object@sample.info$sample.name)]
-        })
-      
-      qc_order <- 
-        lapply(qc_data, function(x){
-          object@sample.info$injection.order[match(colnames(x), 
-                                                   object@sample.info$sample.name)]
-        })
-      
-      ####begin data normalization
-      qc_subject_data <- 
-        vector(mode = "list", length = length(subject_data))
-      
-      for(batch_idx in 1:length(subject_data)){
-        cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
-        
-        qc_subject_data[[batch_idx]] <-
-          svrNor(
-            sample = subject_data[[batch_idx]],
-            qc = qc_data[[batch_idx]],
-            sample.order = subject_order[[batch_idx]],
-            qc.order = qc_order[[batch_idx]],
-            path = ".", 
-            threads = threads
-          )
-        cat("\n")
-      }
-      
-      qc_data <- 
-        lapply(qc_subject_data, function(x){
-          x[[1]]
-        }) %>% 
-        do.call(cbind, .)
-      
-      subject_data <- 
-        lapply(qc_subject_data, function(x){
-          x[[2]]
-        }) %>% 
-        do.call(cbind, .)
-    }
-    
-    rownames(subject_data) <-
-      rownames(qc_data) <-
-      object@ms1.data[[1]]$name
-  
-    sample_info <- object@sample.info
-    subject_qc_data <- cbind(qc_data, subject_data)
-    
-    subject_qc_name <- dplyr::filter(.data = sample_info, class %in% c("Subject", "QC")) %>% 
-      dplyr::pull(., sample.name)
-    
-    subject_qc_data <- subject_qc_data[, match(subject_qc_name, colnames(subject_qc_data))]
-    ms1_data <- 
-      object@ms1.data[[1]]
-    ms1_data[,match(subject_qc_name, colnames(ms1_data))] <- subject_qc_data
-    ms1_data <- list(ms1_data)
-    object@ms1.data <- ms1_data
-    invisible(object)
   }
-)
+  
+  ##pqn (Probabilistic Quotient Normalization) method
+  if(method == "pqn"){
+    stop('Sorry, PQN now is not available.\n')
+    # object@process.info$normalizeData <- list()
+    # object@process.info$normalizeData$method <- method
+    # object@process.info$normalizeData$keep.scale <- keep.scale
+    # 
+    # subject_data <- KODAMA::normalization(Xtrain = subject_data, 
+    #                                       method = "pqn")$newXtrain
+    # if(!is.null(qc_data)){
+    #   qc_data <- KODAMA::normalization(Xtrain = qc_data, 
+    #                                    method = "pqn")$newXtrain
+    # }
+  }
+  
+  
+  if(method == "loess") {
+    
+    object@process.info$normalizeData <- list()
+    object@process.info$normalizeData$method <- method
+    object@process.info$normalizeData$keep.scale <- keep.scale
+    object@process.info$normalizeData$begin <- begin
+    object@process.info$normalizeData$end <- end
+    object@process.info$normalizeData$step <- step
+    
+    sample_info <- object@sample.info
+    sample_info <- 
+      sample_info %>% 
+      dplyr::filter(class %in% c('QC', 'Subject'))
+    
+    ms1_data <- object@ms1.data[[1]]
+    
+    ms1_data <- 
+      ms1_data %>% 
+      select(one_of(sample_info$sample.name))
+    
+    ###split data according to batch
+    ##sample_info is a list
+    sample_info <- 
+      plyr::dlply(sample_info, .variables = plyr::.(batch))
+    
+    subject_data <- 
+      lapply(sample_info, function(x){
+        temp_subject_data <- 
+          ms1_data %>% 
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
+      })
+    
+    qc_data <- 
+      lapply(sample_info, function(x){
+        temp_subject_data <- 
+          ms1_data %>% 
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
+      })
+    
+    subject_order <- 
+      lapply(subject_data, function(x){
+        object@sample.info$injection.order[match(colnames(x), object@sample.info$sample.name)]
+      })
+    
+    qc_order <- 
+      lapply(qc_data, function(x){
+        object@sample.info$injection.order[match(colnames(x), 
+                                                 object@sample.info$sample.name)]
+      })
+    
+    ####begin data normalization
+    qc_subject_data <- 
+      vector(mode = "list", length = length(subject_data))
+    
+    for(batch_idx in 1:length(subject_data)){
+      cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
+      qc_subject_data[[batch_idx]] <-
+        loessNor(
+          subject_data = subject_data[[batch_idx]],
+          qc_data = qc_data[[batch_idx]],
+          subject_order = subject_order[[batch_idx]],
+          qc_order = qc_order[[batch_idx]],
+          optimization = TRUE,
+          path = ".", 
+          begin = begin, 
+          end = end,
+          step = step, 
+          threads = threads
+        )
+      cat("\n")
+    }
+    
+    qc_data <- 
+      lapply(qc_subject_data, function(x){
+        x[[1]]
+      }) %>% 
+      do.call(cbind, .)
+    
+    subject_data <- 
+      lapply(qc_subject_data, function(x){
+        x[[2]]
+      }) %>% 
+      do.call(cbind, .)
+    
+  }
+  
+  
+  if(method == "svr"){
+    
+    object@process.info$normalizeData <- list()
+    object@process.info$normalizeData$method <- method
+    
+    sample_info <- object@sample.info
+    sample_info <- 
+      sample_info %>% 
+      dplyr::filter(class %in% c('QC', 'Subject'))
+    
+    ms1_data <- object@ms1.data[[1]]
+    
+    ms1_data <- 
+      ms1_data %>% 
+      select(one_of(sample_info$sample.name))
+    
+    ###split data according to batch
+    ##sample_info is a list
+    sample_info <- 
+      plyr::dlply(sample_info, .variables = plyr::.(batch))
+    
+    subject_data <- 
+      lapply(sample_info, function(x){
+        temp_subject_data <- 
+          ms1_data %>% 
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
+      })
+    
+    qc_data <- 
+      lapply(sample_info, function(x){
+        temp_subject_data <- 
+          ms1_data %>% 
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
+      })
+    
+    subject_order <- 
+      lapply(subject_data, function(x){
+        object@sample.info$injection.order[match(colnames(x), object@sample.info$sample.name)]
+      })
+    
+    qc_order <- 
+      lapply(qc_data, function(x){
+        object@sample.info$injection.order[match(colnames(x), 
+                                                 object@sample.info$sample.name)]
+      })
+    
+    ####begin data normalization
+    qc_subject_data <- 
+      vector(mode = "list", length = length(subject_data))
+    
+    for(batch_idx in 1:length(subject_data)){
+      cat(crayon::yellow("Batch", batch_idx, "...", "\n"))
+      
+      qc_subject_data[[batch_idx]] <-
+        svrNor(
+          sample = subject_data[[batch_idx]],
+          qc = qc_data[[batch_idx]],
+          sample.order = subject_order[[batch_idx]],
+          qc.order = qc_order[[batch_idx]],
+          path = ".", 
+          threads = threads
+        )
+      cat("\n")
+    }
+    
+    qc_data <- 
+      lapply(qc_subject_data, function(x){
+        x[[1]]
+      }) %>% 
+      do.call(cbind, .)
+    
+    subject_data <- 
+      lapply(qc_subject_data, function(x){
+        x[[2]]
+      }) %>% 
+      do.call(cbind, .)
+  }
+  
+  rownames(subject_data) <-
+    rownames(qc_data) <-
+    object@ms1.data[[1]]$name
+  
+  sample_info <- object@sample.info
+  subject_qc_data <- cbind(qc_data, subject_data)
+  
+  subject_qc_name <- dplyr::filter(.data = sample_info, class %in% c("Subject", "QC")) %>% 
+    dplyr::pull(., sample.name)
+  
+  subject_qc_data <- subject_qc_data[, match(subject_qc_name, colnames(subject_qc_data))]
+  ms1_data <- 
+    object@ms1.data[[1]]
+  ms1_data[,match(subject_qc_name, colnames(ms1_data))] <- subject_qc_data
+  ms1_data <- list(ms1_data)
+  object@ms1.data <- ms1_data
+  invisible(object)
+}
+
+
+
+
+
+
 
 
 # ##############svr normalization function
@@ -633,13 +632,19 @@ svrNor <- function(sample,
     
     ichunks <- split((1:ncol(sample)), 1:threads)
     
+    if(tinyTools::get_os() == "windows"){
+      bpparam =
+        BiocParallel::SnowParam(workers = threads,
+                                progressbar = TRUE)
+    }else{
+      bpparam = BiocParallel::MulticoreParam(workers = threads,
+                                             progressbar = TRUE)
+    }
+    
     svr.data <- BiocParallel::bplapply(
       ichunks,
       FUN = svr_function,
-      # BPPARAM = BiocParallel::SnowParam(workers = threads,
-      #                                   progressbar = TRUE),
-      BPPARAM = BiocParallel::MulticoreParam(workers = threads,
-                                             progressbar = TRUE),
+      BPPARAM = bpparam,
       sample = sample,
       qc = qc,
       sample.order = sample.order,
@@ -762,13 +767,19 @@ loessNor <- function(subject_data,
   
   peak_index <- 1:nrow(qc_data)
   
+  if(tinyTools::get_os() == "windows"){
+    bpparam =
+      BiocParallel::SnowParam(workers = threads,
+                              progressbar = TRUE)
+  }else{
+    bpparam = BiocParallel::MulticoreParam(workers = threads,
+                                           progressbar = TRUE)
+  }
+  
   data_nor <- 
     BiocParallel::bplapply(peak_index, 
                            FUN = temp.fun,
-                           # BPPARAM = BiocParallel::SnowParam(workers = threads,
-                           #                                   progressbar = TRUE), 
-                           BPPARAM = BiocParallel::MulticoreParam(workers = threads,
-                                                                  progressbar = TRUE),
+                           BPPARAM = bpparam,
                            qc_data = qc_data,
                            qc_order = qc_order,
                            subject_data = subject_data,
@@ -852,11 +863,6 @@ cvMSE <- function(qc, qc.order, begin1, end1, step1) {
 #' @param sample.order sample.order
 #' @param qc.order qc.order
 #' @param multiple multiple
-#' @import crayon
-#' @import tidyverse
-#' @import BiocParallel
-#' @import e1071
-#' @importFrom magrittr %>%
 
 setGeneric(
   name = "svr_function",

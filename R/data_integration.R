@@ -10,9 +10,6 @@
 #' \href{https://www.readcube.com/library/fe13374b-5bc9-4c61-9b7f-6a354690947e:abe41368-d08d-4806-871f-3aa035d21743}{Dunn's}
 #' method has been used in this function.
 #' @export
-#' @import tidyverse
-#' @import plyr
-#' @import purrr
 
 ## data integration
 setGeneric(
@@ -70,20 +67,20 @@ setGeneric(
     ###split data according to batch
     ##sample_info is a list
     sample_info <- 
-      plyr::dlply(sample_info, .variables = .(batch))
+      plyr::dlply(sample_info, .variables = plyr::.(batch))
     
     subject_data <- 
       lapply(sample_info, function(x){
         temp_subject_data <- 
           ms1_data %>% 
-          dplyr::select(one_of(x$sample.name[x$class == "Subject"]))
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "Subject"]))
       })
     
     qc_data <- 
       lapply(sample_info, function(x){
         temp_subject_data <- 
           ms1_data %>% 
-          dplyr::select(one_of(x$sample.name[x$class == "QC"]))
+          dplyr::select(dplyr::one_of(x$sample.name[x$class == "QC"]))
       })
     
     
@@ -156,9 +153,6 @@ setGeneric(
 #' \href{https://www.readcube.com/library/fe13374b-5bc9-4c61-9b7f-6a354690947e:abe41368-d08d-4806-871f-3aa035d21743}{Dunn's}
 #' method has been used in this function.
 #' @export
-#' @import tidyverse
-#' @import plyr
-#' @import purrr
 
 ## data integration
 setGeneric(
@@ -224,14 +218,14 @@ setGeneric(
       lapply(sample_info, function(x){
         temp_subject_data <- 
           ms1_data %>% 
-          dplyr::select(one_of(x$sample.name[x$class == "Subject"]))
+          dplyr::select(plyr::one_of(x$sample.name[x$class == "Subject"]))
       })
     
     qc_data <- 
       lapply(sample_info, function(x){
         temp_subject_data <- 
           ms1_data %>% 
-          dplyr::select(one_of(x$sample.name[x$class == "QC"]))
+          dplyr::select(plyr::one_of(x$sample.name[x$class == "QC"]))
       })
     
     correct_factor <- 

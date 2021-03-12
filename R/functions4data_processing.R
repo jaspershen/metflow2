@@ -369,134 +369,119 @@ setGeneric(
 #' @param rt.tolerance Rt tolerance.
 #' @return Result contains EIC of peaks.
 #' @export
-#' @import xcms
-#' @import MSnbase
-#' @importFrom MSnbase selectFeatureData
-#' @import mzR
-#' @import stringr
-#' @import tidyverse
-#' @importFrom magrittr %>%
 
-setGeneric(
-  name = "extractPeaks",
-  def = function(path = ".",
-                 ppm = 15,
-                 threads = 4,
-                 is.table = "is.xlsx",
-                 mz = NULL,
-                 rt = NULL,
-                 rt.tolerance = 40) {
-    options(warn = -1)
-    output_path <- path
-    # dir.create(output_path, showWarnings = FALSE)
-    ##peak detection
-    
-    f.in <- list.files(
-      path = path,
-      pattern = '\\.(mz[X]{0,1}ML|cdf)',
-      recursive = TRUE,
-      full.names = TRUE
+extractPeaks = function(path = ".",
+                        ppm = 15,
+                        threads = 4,
+                        is.table = "is.xlsx",
+                        mz = NULL,
+                        rt = NULL,
+                        rt.tolerance = 40){
+  options(warn = -1)
+  output_path <- path
+  dir.create(output_path, showWarnings = FALSE)
+  ##peak detection
+  
+  f.in <- list.files(
+    path = path,
+    pattern = '\\.(mz[X]{0,1}ML|cdf)',
+    recursive = TRUE,
+    full.names = TRUE
+  )
+  
+  sample_group <-
+    BiocGenerics::basename(f.in) %>%
+    stringr::str_replace("\\.(mz[X]{0,1}ML|cdf)", "")
+  
+  pd <-
+    data.frame(
+      basename(f.in),
+      sample_group = sample_group,
+      stringsAsFactors = FALSE)
+  
+  cat(crayon::green("Reading raw data, it will take a while...\n"))
+  
+  if (any(dir(path) == "raw_data")) {
+    cat(crayon::yellow("Use old data.\n"))
+    load(file.path(path, "raw_data"))
+  } else{
+    raw_data <- MSnbase::readMSData(
+      files = f.in,
+      pdata = new("NAnnotatedDataFrame", pd),
+      mode = "onDisk",
+      verbose = TRUE
     )
     
-    sample_group <-
-      BiocGenerics::basename(f.in) %>%
-      stringr::str_replace("\\.(mz[X]{0,1}ML|cdf)", "")
-    
-    pd <-
-      data.frame(# sample_name = sub(
-        basename(f.in),
-        #   pattern = ".mzXML",
-        #   replacement = "",
-        #   fixed = TRUE
-        # ),
-        sample_group = sample_group,
-        stringsAsFactors = FALSE)
-    
-    # requireNamespace("xcms")
-    cat(crayon::green("Reading raw data, it will take a while...\n"))
-    
-    if (any(dir(path) == "raw_data")) {
-      cat(crayon::yellow("Use old data.\n"))
-      load(file.path(path, "raw_data"))
-    } else{
-      raw_data <- MSnbase::readMSData(
-        files = f.in,
-        pdata = new("NAnnotatedDataFrame", pd),
-        mode = "onDisk",
-        verbose = TRUE
-      )
-      
-      save(raw_data,
-           file = file.path(output_path, "raw_data"),
-           compress = "xz")
+    save(raw_data,
+         file = file.path(output_path, "raw_data"),
+         compress = "xz")
+  }
+  
+  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+  
+  is.table <-
+    try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
+  
+  if (!is.null(mz) & !is.null(rt)) {
+    if (length(mz) != length(rt)) {
+      cat(crayon::yellow("Lenght of mz and rt you provied are different.\n"))
     }
-    
-    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+    is.table <- data.frame(mz = as.numeric(mz),
+                           rt = as.numeric(rt),
+                           stringsAsFactors = FALSE)
+    is.table$name <- paste("feature", 1:nrow(is.table), sep = "_")
     
     is.table <-
-      try(readxl::read_xlsx(file.path(path, is.table)), silent = TRUE)
-    
-    if (!is.null(mz) & !is.null(rt)) {
-      if (length(mz) != length(rt)) {
-        cat(crayon::yellow("Lenght of mz and rt you provied are different.\n"))
-      }
-      is.table <- data.frame(mz = as.numeric(mz),
-                             rt = as.numeric(rt),
-                             stringsAsFactors = FALSE)
-      is.table$name <- paste("feature", 1:nrow(is.table), sep = "_")
-      
-      is.table <-
-        is.table %>%
-        dplyr::select(name, mz, rt)
-    }
-    
-    if (class(is.table)[1] == "try-error") {
-      stop(crayon::red('Please provide right is table or mz and rt.\n'))
-    }
-    
-    mz <-
       is.table %>%
-      dplyr::pull(2)
-    
-    mz <- as.numeric(mz)
-    
-    mz_range <-
-      lapply(mz, function(x) {
-        c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
-      })
-    
-    mz_range <- do.call(rbind, mz_range)
-    
-    if (any(colnames(is.table) == "rt")) {
-      rt <-
-        is.table %>%
-        dplyr::pull(3) %>%
-        as.numeric()
-      
-      rt_range <-
-        lapply(rt, function(x) {
-          c(x - rt.tolerance, x + rt.tolerance)
-        }) %>%
-        do.call(rbind, .)
-    } else{
-      rt_range <- NA
-    }
-    
-    cat(crayon::green("Extracting peaks, it will take a while..."))
-    if (!is.na(rt_range)) {
-      peak_data <- xcms::chromatogram(object = raw_data,
-                                      mz = mz_range,
-                                      rt = rt_range)
-    } else{
-      peak_data <- xcms::chromatogram(object = raw_data,
-                                      mz = mz_range)
-    }
-    cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
-    
-    save(peak_data, file = file.path(output_path, "peak_data"))
-    return(peak_data)
+      dplyr::select(name, mz, rt)
   }
-)
+  
+  if (class(is.table)[1] == "try-error") {
+    stop(crayon::red('Please provide right is table or mz and rt.\n'))
+  }
+  
+  mz <-
+    is.table %>%
+    dplyr::pull(2) %>% 
+    as.numeric()
+  
+  mz_range <-
+    lapply(mz, function(x) {
+      c(x - ppm * x / 10 ^ 6, ppm * x / 10 ^ 6 + x)
+    }) %>% 
+    do.call(rbind, .) %>% 
+    as.data.frame()
+  
+  if (any(colnames(is.table) == "rt")) {
+    rt <-
+      is.table %>%
+      dplyr::pull(3) %>%
+      as.numeric()
+    
+    rt_range <-
+      lapply(rt, function(x) {
+        c(x - rt.tolerance, x + rt.tolerance)
+      }) %>%
+      do.call(rbind, .)
+  } else{
+    rt_range <- NA
+  }
+  
+  cat(crayon::green("Extracting peaks, it will take a while..."))
+  if (!is.na(rt_range)) {
+    peak_data <- xcms::chromatogram(object = raw_data,
+                                    mz = mz_range,
+                                    rt = rt_range)
+  } else{
+    peak_data <- xcms::chromatogram(object = raw_data,
+                                    mz = mz_range)
+  }
+  cat(crayon::red(clisymbols::symbol$tick, "OK\n"))
+  
+  save(peak_data, file = file.path(output_path, "peak_data"))
+  return(peak_data)
+}
+
 
 #' @title showPeak
 #' @description Show the peaks from result from extractPeaks function.
@@ -513,10 +498,6 @@ setGeneric(
 
 #' @return Result contains EIC of peaks.
 #' @export
-#' @import xcms
-#' @import MSnbase
-#' @import stringr
-#' @import tidyverse
 
 setGeneric(
   name = "showPeak",
@@ -635,9 +616,6 @@ setGeneric(
 #' @param message Show message or not.
 #' @return ggplot object.
 #' @export
-#' @import xcms
-#' @import tidyverse
-#' @import plotly
 
 
 setGeneric(
@@ -723,7 +701,7 @@ setGeneric(
       feature_eic_data %>%
       ggplot(aes(rt, intensity, group = sample_name)) +
       geom_line(aes(color = sample_group)) +
-      ggsci::scale_color_lancet() +
+      # ggsci::scale_color_lancet() +
       labs(x = "Retention time") +
       theme_bw()
     
@@ -741,8 +719,8 @@ setGeneric(
           ),
           fill = NA,
           linetype = 2
-        ) +
-        ggsci::scale_color_lancet(alpha = 0.3)
+        ) 
+        # ggsci::scale_color_lancet(alpha = 0.3)
     }
     
     if (save.plot) {
@@ -871,14 +849,19 @@ setGeneric(
     
     rm(list = "raw_data")
     
+    if(tinyTools::get_os() == "windows"){
+      bpparam =
+        BiocParallel::SnowParam(workers = threads,
+                                progressbar = TRUE)
+    }else{
+      bpparam = BiocParallel::MulticoreParam(workers = threads,
+                                             progressbar = TRUE)
+    }
+    
     tic.plot <- xcms::chromatogram(
       object = xdata,
       aggregationFun = ifelse(type == "tic", "sum", "max"),
-      # BPPARAM =
-      #   BiocParallel::SnowParam(workers = threads,
-      #                           progressbar = TRUE)
-      BPPARAM = BiocParallel::MulticoreParam(workers = threads,
-                                             progressbar = TRUE)
+      BPPARAM = bpparam
     )
     
     plot <- plot_chromatogram(object = tic.plot,
@@ -907,7 +890,6 @@ setGeneric(
 #' #' @param polarity The polarity of data, "positive"or "negative".
 #' #' @return Peak table.
 #' #' @export
-#' #' @importFrom xcms CentWaveParam findChromPeaks adjustRtime ObiwarpParam chromatogram PeakDensityParam groupChromPeaks featureChromatograms groupnames featureDefinitions featureValues fillChromPeaks
 #' 
 #' tinyTools::setwd_project()
 #' setwd("example/POS/")

@@ -7,10 +7,6 @@
 #' @param slot Class of data.
 #' @export
 #' @return A ggplot object.
-#' @import stats
-#' @import tidyverse
-#' @import dplyr
-#' @import ggplot2
 
 setGeneric(
   name = "doPCA",

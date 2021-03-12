@@ -9,50 +9,51 @@
 #' @return A new metflowClass object.
 #' @export
 
-setGeneric(name = "alignBatch",
-           function(object,
-                    combine.mz.tol = 25,
-                    combine.rt.tol = 30,
-                    use.int.tol = FALSE) {
-             
-             if(!silence.deprecated){
-               cat(crayon::yellow("`alignBatch()` is deprecated, please use `align_batch()`"))
-             }
-             
-             if (class(object) != "metflowClass") {
-               stop("Only for metflowClass object\n")
-             }
-             
-             ms1_data <- object@ms1.data
-             
-             if (length(ms1_data) == 1) {
-               return(object)
-             }
-             
-             cat("Rough aligning...\n")
-             roughMatchResult <- roughAlign(
-               peak.table = ms1_data,
-               combine.mz.tol = combine.mz.tol,
-               combine.rt.tol = combine.rt.tol
-             )
-             
-             cat("Accurate aligning...\n")
-             accurateMatchResult <-
-               accurateAlign(
-                 peak.table = ms1_data,
-                 simple.data = roughMatchResult,
-                 use.int.tol = use.int.tol
-               )
-             object@ms1.data <- list(accurateMatchResult)
-             
-             object@process.info$alignBatch <- list()
-             object@process.info$alignBatch$combine.mz.tol <-
-               combine.mz.tol
-             object@process.info$alignBatch$combine.rt.tol <-
-               combine.rt.tol
-             
-             invisible(object)
-           })
+alignBatch = function(
+  object,
+  combine.mz.tol = 25,
+  combine.rt.tol = 30,
+  use.int.tol = FALSE
+){
+  
+  if(!silence.deprecated){
+    cat(crayon::yellow("`alignBatch()` is deprecated, please use `align_batch()`"))
+  }
+  
+  if (class(object) != "metflowClass") {
+    stop("Only for metflowClass object\n")
+  }
+  
+  ms1_data <- object@ms1.data
+  
+  if (length(ms1_data) == 1) {
+    return(object)
+  }
+  
+  cat("Rough aligning...\n")
+  roughMatchResult <- roughAlign(
+    peak.table = ms1_data,
+    combine.mz.tol = combine.mz.tol,
+    combine.rt.tol = combine.rt.tol
+  )
+  
+  cat("Accurate aligning...\n")
+  accurateMatchResult <-
+    accurateAlign(
+      peak.table = ms1_data,
+      simple.data = roughMatchResult,
+      use.int.tol = use.int.tol
+    )
+  object@ms1.data <- list(accurateMatchResult)
+  
+  object@process.info$alignBatch <- list()
+  object@process.info$alignBatch$combine.mz.tol <-
+    combine.mz.tol
+  object@process.info$alignBatch$combine.rt.tol <-
+    combine.rt.tol
+  
+  invisible(object)
+}
 
 
 #' @title align_batch
@@ -66,44 +67,45 @@ setGeneric(name = "alignBatch",
 #' @return A new metflowClass object.
 #' @export
 
-setGeneric(name = "align_batch",
-           function(object,
-                    combine.mz.tol = 25,
-                    combine.rt.tol = 30,
-                    use.int.tol = FALSE) {
-             if (class(object) != "metflowClass") {
-               stop("Only for metflowClass object\n")
-             }
-             
-             ms1_data <- object@ms1.data
-             if (length(ms1_data) == 1) {
-               return(object)
-             }
-             
-             cat("Rough aligning...\n")
-             roughMatchResult <- roughAlign(
-               peak.table = ms1_data,
-               combine.mz.tol = combine.mz.tol,
-               combine.rt.tol = combine.rt.tol
-             )
-             
-             cat("Accurate aligning...\n")
-             accurateMatchResult <-
-               accurateAlign(
-                 peak.table = ms1_data,
-                 simple.data = roughMatchResult,
-                 use.int.tol = use.int.tol
-               )
-             object@ms1.data <- list(accurateMatchResult)
-             
-             object@process.info$alignBatch <- list()
-             object@process.info$alignBatch$combine.mz.tol <-
-               combine.mz.tol
-             object@process.info$alignBatch$combine.rt.tol <-
-               combine.rt.tol
-             
-             invisible(object)
-           })
+align_batch = function(
+  object,
+  combine.mz.tol = 25,
+  combine.rt.tol = 30,
+  use.int.tol = FALSE
+){
+  if (class(object) != "metflowClass") {
+    stop("Only for metflowClass object\n")
+  }
+  
+  ms1_data <- object@ms1.data
+  if (length(ms1_data) == 1) {
+    return(object)
+  }
+  
+  cat("Rough aligning...\n")
+  roughMatchResult <- roughAlign(
+    peak.table = ms1_data,
+    combine.mz.tol = combine.mz.tol,
+    combine.rt.tol = combine.rt.tol
+  )
+  
+  cat("Accurate aligning...\n")
+  accurateMatchResult <-
+    accurateAlign(
+      peak.table = ms1_data,
+      simple.data = roughMatchResult,
+      use.int.tol = use.int.tol
+    )
+  object@ms1.data <- list(accurateMatchResult)
+  
+  object@process.info$alignBatch <- list()
+  object@process.info$alignBatch$combine.mz.tol <-
+    combine.mz.tol
+  object@process.info$alignBatch$combine.rt.tol <-
+    combine.rt.tol
+  
+  invisible(object)
+}
 
 
 

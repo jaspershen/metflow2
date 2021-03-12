@@ -20,8 +20,6 @@
 #' @param maxSteps See ?bpca
 #' @param threshold See ?bpca
 #' @param ... Other arguments.
-#' @import tibble
-#' @import tidyverse
 #' @return A new metflowClass object.
 #' @export
 
@@ -197,8 +195,6 @@ setGeneric(
 #' @param maxSteps See ?bpca
 #' @param threshold See ?bpca
 #' @param ... Other arguments.
-#' @import tibble
-#' @import tidyverse
 #' @return A new metflowClass object.
 #' @export
 

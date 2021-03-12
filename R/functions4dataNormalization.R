@@ -6,7 +6,6 @@
 #' @param peak_name Peak name.
 #' @param interactive Interactive plot or not.
 #' @export
-#' @import tidyverse
 #' @return A ggplot2 object.
 
 setGeneric(
@@ -46,7 +45,7 @@ setGeneric(
       int %>%
       ggplot(aes(x = injection.order, y = int)) +
       geom_point(aes(color = class)) +
-      ggsci::scale_color_d3() +
+      # ggsci::scale_color_d3() +
       geom_smooth(aes(color = class)) +
       labs(x = "Injection order", y = 'Intensity') +
       theme_bw() +

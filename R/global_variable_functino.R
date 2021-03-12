@@ -1,0 +1,19 @@
+globalVariables(names = c(
+  "silence.deprecated",
+  "name",
+  "injection.order",
+  "peak.name",
+  "sample.name",
+  "min.fraction.qc",
+  "batch",
+  "median",
+  "maxo",
+  "sample_name",
+  "intensity",
+  "rt",
+  "rtmed",
+  "mzmed",
+  "x",
+  "freq",
+  "xdata3"
+))
