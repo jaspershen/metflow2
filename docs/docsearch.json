@@ -1,5 +1,5 @@
 {
-  "index_name": "metidentify",
+  "index_name": "metflow2",
   "start_urls": [
     {
       "url": "https://jaspershen.github.io/metflow2//index.html",

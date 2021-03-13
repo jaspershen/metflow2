@@ -45,3 +45,7 @@ o Small bug fix.
 Version 0.1.2 (20201230)
 --------------
 o Small bug fix.
+
+Version 0.9.2 (20210312)
+--------------
+o Add output_eic function.

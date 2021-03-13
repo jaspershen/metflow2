@@ -14,6 +14,7 @@ result
 }
 \description{
 new_scale
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

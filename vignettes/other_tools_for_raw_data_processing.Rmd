@@ -11,16 +11,18 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{other_tools_for_raw_data_processing}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  # fig.width = 7, 
-  # fig.height = 5,
   warning = FALSE,
   message = TRUE,
   out.width = "100%"
@@ -53,19 +55,19 @@ We use the demo data from `demoData` package.
 
 First we load the demo data from `demoData` package and then place them in a `example` folder.
 
-```{r,eval=TRUE,warning=FALSE, R.options="", message=TRUE}
+```{r,eval=TRUE,warning=FALSE, message=FALSE,R.options="", message=TRUE}
 library(demoData)
 library(metflow2)
 library(tidyverse)
 ```
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE}
-##creat a folder nameed as example
+##create a folder named as example
 path <- file.path(".", "example")
 dir.create(path = path, showWarnings = FALSE)
 ```
 
-```{r,eval=FALSE,warning=FALSE, R.options="", message=FALSE}
+```{r,eval=FALSE,warning=FALSE, message=FALSE, R.options="", message=FALSE}
 ##get demo data
 mzxml_data <- system.file("mzxml/POS/QC", package = "demoData")
 
@@ -113,20 +115,20 @@ Other parameters you can find here: `processData()`.
 
 ### **Draw plots**
 
-After get the `peak_data` using `extractPeaks()` function, we can use `showPeaks()` function to draw plot.
+After get the `peak_data` using `extractPeaks()` function, we can use `show_peak()` function to draw plot.
 
 ```{r,eval = TRUE,warning=FALSE, message=FALSE,R.options="",cache=TRUE, message=FALSE}
-showPeak(object = peak_data, peak.index = 1)
+show_peak(object = peak_data, peak.index = 1)
 ```
 
 If you don't want to get the interactive plot, you can just set `interactive` as `FALSE`.
 
 ```{r,eval = TRUE,warning=FALSE, message=FALSE,R.options="",cache=TRUE, message=FALSE}
-showPeak(object = peak_data, peak.index = 1, interactive = FALSE)
+show_peak(object = peak_data, peak.index = 1, interactive = FALSE)
 ```
 
 You can also set `alpha` as 0 to avoid the area color.
 
 ```{r,eval = TRUE,warning=FALSE, message=FALSE,R.options="",cache=TRUE, message=FALSE}
-showPeak(object = peak_data, peak.index = 5, alpha = 0)
+show_peak(object = peak_data, peak.index = 5, alpha = 0)
 ```

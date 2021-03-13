@@ -11,8 +11,12 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{other_tools}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
@@ -32,6 +36,8 @@ knitr::opts_chunk$set(
 ***
 
 ## **Metabolite ID convert**
+
+> **Note**: This function has been deprecated, try to new function in [`tinyTools` package](https://jaspershen.github.io/tinyTools/).
 
 `transID()` function can be used to convert metabolites in more than 225 databases. It is based on the http://cts.fiehnlab.ucdavis.edu/ and https://www.chemspider.com/InChI.asmx.
 
@@ -108,6 +114,8 @@ smiles
 ```
 
 ## **Get metabolite class**
+
+> **Note**: This function has been deprecated, try to new function in [`tinyTools` package](https://jaspershen.github.io/tinyTools/).
 
 We can use `get_metclass()` function to get the metabolite class based on `classyfire`.
 

@@ -46,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.9.2</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Blog posts</li>
     <li>
-      <a href="../articles/metflow2_instruction.html">Version 0.0.1</a>
+      <a href="../articles/version_0_9_2.html">Version 0.9.2</a>
     </li>
     <li class="divider">
     <li>
@@ -161,7 +161,7 @@
                         <h4 class="author">Xiaotao Shen (<a href="https://www.shenxt.info/" class="uri">https://www.shenxt.info/</a>)</h4>
                                     <h4 class="author">true</h4>
             
-            <h4 class="date">2021-02-19</h4>
+            <h4 class="date">2021-03-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jaspershen/metflow2/blob/master/vignettes/metflow2_mindmaster.Rmd"><code>vignettes/metflow2_mindmaster.Rmd</code></a></small>
       <div class="hidden name"><code>metflow2_mindmaster.Rmd</code></div>
@@ -220,12 +220,12 @@
 <li><p>Subject</p></li>
 </ol>
 </div>
-<div id="run-processdata-function" class="section level3">
+<div id="run-process_data-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#run-processdata-function" class="anchor"></a><strong>Run <code>processData</code> function</strong>
+<a href="#run-process_data-function" class="anchor"></a><strong>Run <code>process_data</code> function</strong>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">metflow2</span><span class="fu">::</span><span class="fu"><a href="../reference/processData.html">processData</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, 
+<code class="sourceCode R"><span class="fu">metflow2</span><span class="fu">::</span><span class="fu"><a href="../reference/process_data.html">process_data</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"."</span>, 
                       polarity <span class="op">=</span> <span class="st">"positive"</span>, 
                       peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">30</span><span class="op">)</span>, 
                       threads <span class="op">=</span> <span class="fl">5</span>, 
@@ -234,7 +234,6 @@
                       min.fraction <span class="op">=</span> <span class="fl">0.8</span>, 
                       output.rt.correction.plot <span class="op">=</span> <span class="cn">TRUE</span>,
                       fill.peaks <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>This is just want to test the pull request function of github.</p>
 </div>
 </div>
   </div>
@@ -266,7 +265,7 @@
     
     
     apiKey: '2f09495997a50f5008bc92fa73c5552d',
-    indexName: 'metidentify',
+    indexName: 'metflow2',
     inputSelector: 'input#search-input.form-control',
     transformData: function(hits) {
       return hits.map(function (hit) {

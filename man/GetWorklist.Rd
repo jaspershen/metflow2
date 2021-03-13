@@ -59,7 +59,8 @@ getWorklist(
 Peak table.
 }
 \description{
-Generate sample and worklist..
+Generate sample and worklist.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

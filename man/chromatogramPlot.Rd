@@ -37,6 +37,7 @@ A ggplot2 object.
 }
 \description{
 Draw TIC or BPC.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

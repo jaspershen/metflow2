@@ -96,7 +96,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.9.2</span>
       </span>
     </div>
 
@@ -160,7 +160,7 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Blog posts</li>
     <li>
-      <a href="../articles/metflow2_instruction.html">Version 0.0.1</a>
+      <a href="../articles/version_0_9_2.html">Version 0.9.2</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -208,7 +208,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>SXTMTmatch</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/tools.R'><code>R/tools.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
     <div class="hidden name"><code>SXTMTmatch.Rd</code></div>
     </div>
 
@@ -244,79 +244,6 @@ and seconod column must be rt.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Return a result which give the matching result of data1 and database.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>HeatMap &lt;- function(MetFlowData,
-                    log.scale = FALSE,
-                    color = c("palegreen",
-                              "firebrick1",
-                              "royalblue",
-                              "yellow",
-                              "black",
-                              "cyan",
-                              "gray48"),
-                    variable = "all",
-                    Group = c("control", "case"),
-                    scale.method = "auto",
-                    show_rownames = FALSE,
-                    show_colnames = FALSE,
-                    path = ".",
-                    width = 7,
-                    height = 7,
-                    border_color = NA,
-                    fontsize_row = 10,
-                    cluster_rows = TRUE,
-                    cluster_cols = TRUE,
-                    clustering_method = "ward.D",
-                    ...) 
-  if (path != ".") 
-    dir.create(path)  subject &lt;- MetFlowData@subject
-  tags &lt;- MetFlowData@tags
-  subject.info &lt;- MetFlowData@subject.info
-  group &lt;- subject.info[, "group"]  idx &lt;- which(group <!-- %in% Group) -->
-  subject.info &lt;- subject.info[idx, ]
-  subject &lt;- subject[, idx]
-  group &lt;- subject.info[, "group"]
-  ## data organization
-  if (variable == "all") 
-    data &lt;- t(subject)
-   else
-    if (all(colnames(tags) != "is.marker")) 
-      stop("Please select marker first.")    is.marker &lt;- tags[, "is.marker"]
-    var.index &lt;- which(is.marker == "yes")
-    data &lt;- t(subject[var.index, ])  ##log transformation
-  if (log.scale == FALSE) 
-    data &lt;- data  if (log.scale == "e") 
-    data &lt;- log(data + 1)  if (log.scale != FALSE &amp; log.scale != "e") 
-    data &lt;- log(data + 1, as.numeric(log.scale))  data1 &lt;- SXTscale(data, method = scale.method)
-  data1.range &lt;- abs(range(data1))
-  dif &lt;- data1.range[1] - data1.range[2]
-  if (dif &lt; 0) 
-    data1[data1 &gt; data1.range[1]] &lt;- data1.range[1]  if (dif &gt; 0) 
-    data1[data1 &lt; -1 * data1.range[2]] &lt;- -1 * data1.range[2]  annotation_col &lt;- data.frame(Group = factor(c(group)))  rownames(annotation_col) &lt;- rownames(data)  # Specify colors
-  ann_col &lt;- NULL
-  for (i in seq_along(Group)) 
-    ann_col[i] &lt;- color[i]  ann_colors = list(Group = ann_col)
-  names(ann_colors[[1]]) &lt;- Group  pdf(file.path(path, "heatmap.pdf"),
-      width = width,
-      height = height)
-  par(mar = c(5,5,4,2))
-  pheatmap::pheatmap(
-    t(data1),
-    color = colorRampPalette(c("green", "black", "red"))(1000),
-    scale = "none",
-    show_rownames = show_rownames,
-    show_colnames = show_colnames,
-    border_color = border_color,
-    annotation_col = annotation_col,
-    annotation_colors = ann_colors,
-    fontsize_row = fontsize_row,
-    cluster_rows = cluster_rows,
-    cluster_cols = cluster_cols,
-    clustering_method = clustering_method,
-    ...
-  )
-  dev.off()</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Xiaotao Shen
@@ -350,7 +277,7 @@ and seconod column must be rt.</p></td>
     
     
     apiKey: '2f09495997a50f5008bc92fa73c5552d',
-    indexName: 'metidentify',
+    indexName: 'metflow2',
     inputSelector: 'input#search-input.form-control',
     transformData: function(hits) {
       return hits.map(function (hit) {

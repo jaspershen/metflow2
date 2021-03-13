@@ -11,16 +11,18 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{metflow2_mindmaster}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  # fig.width = 7, 
-  # fig.height = 5,
   warning = FALSE,
   message = TRUE
 )
@@ -43,7 +45,7 @@ The code for data processing are in the `dataProcessing.R` file.
 
 Please install it via [github](https://github.com/jaspershen/metflow2).
 
-```{r,eval=FALSE,warning=FALSE, R.options="", cache=TRUE}
+```{r,eval=FALSE,warning=FALSE, message=FALSE,R.options="", cache=TRUE}
 if(!require(devtools)){
   install.packages("devtools")
 }
@@ -52,7 +54,7 @@ devtools::install_github("jaspershen/metflow2")
 
 We use the demo data in `demoData` package to show how to use `metflow2`. Please install it first.
 
-```{r,eval=FALSE,warning=FALSE, R.options=""}
+```{r,eval=FALSE,warning=FALSE, message=FALSE,R.options=""}
 devtools::install_github("jaspershen/demoData")
 ```
 
@@ -78,11 +80,11 @@ Secondly, please organize your mzXML data into different folders.
 4. Subject
 
 
-### **Run `processData` function**
+### **Run `process_data` function**
 
 
 ```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=TRUE}
-metflow2::processData(path = ".", 
+metflow2::process_data(path = ".", 
                       polarity = "positive", 
                       peakwidth = c(5,30), 
                       threads = 5, 
@@ -92,5 +94,3 @@ metflow2::processData(path = ".",
                       output.rt.correction.plot = TRUE,
                       fill.peaks = FALSE)
 ```
-
-This is just want to test the pull request function of github.

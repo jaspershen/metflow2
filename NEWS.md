@@ -48,3 +48,6 @@
 --------------
 * Small bug fix.
 
+# Version 0.9.2 (20210312)
+--------------
+* Add output_eic function.

@@ -37,6 +37,7 @@ Result contains EIC of peaks.
 }
 \description{
 Show the peaks from result from extractPeaks function.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

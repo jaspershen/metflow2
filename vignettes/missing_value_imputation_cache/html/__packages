@@ -11,3 +11,12 @@ forcats
 plyr
 metflow2
 demoData
+BiocGenerics
+Biobase
+BiocParallel
+Rcpp
+mzR
+S4Vectors
+ProtGenerics
+MSnbase
+xcms

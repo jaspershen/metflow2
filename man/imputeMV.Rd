@@ -60,6 +60,7 @@ A new metflowClass object.
 }
 \description{
 Impute MV in data.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

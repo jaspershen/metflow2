@@ -1,5 +1,6 @@
 #' @title chromatogramPlot
 #' @description Draw TIC or BPC.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param object Object for tic.plot or bpc.plot.
@@ -124,6 +125,7 @@ chromatogramPlot = function(
 
 #' @title showPeak
 #' @description Show the peaks from result from extractPeaks function.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param object Object from extractPeaks.
@@ -245,6 +247,7 @@ showPeak = function(object,
 ##-------------------------------------------------------------------------
 #' @title outputFeatureEIC
 #' @description Output EICs of all peaks in peak table.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param object xdata class object from dataProcessing.
@@ -419,6 +422,7 @@ outputFeatureEIC = function(object,
 
 #' @title new_scale
 #' @description new_scale
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param new_aes new_aes
@@ -430,6 +434,7 @@ new_scale <- function(new_aes) {
 
 #' @title new_scale_color
 #' @description new_scale_color
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @return result
@@ -448,7 +453,8 @@ new_scale_color <- function() {
 
 
 #' @title getWorklist
-#' @description Generate sample and worklist..
+#' @description Generate sample and worklist.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
 #' @param table.name Sample name.
@@ -976,6 +982,7 @@ getWorklist = function(table.name = "batch.xlsx",
 
 #' @title Impute MV in data.
 #' @description Impute MV in data.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param object A metflowClass object.
@@ -1109,6 +1116,7 @@ imputeMV = function(object,
 
 #' @title creatMetflowObject
 #' @description Creat metflowClass object.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param ms1.data MS1 peak table name.
@@ -1161,6 +1169,7 @@ creatMetflowObject = function(ms1.data,
 
 #' @title getData
 #' @description Get data from metflowClass object.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param object A metflowClass object.
@@ -1211,6 +1220,7 @@ getData = function(
 
 #' @title getMVplot4sample
 #' @description get MV plot of subject samples.
+#' \lifecycle{deprecated}
 #' @author Xiaotao Shen
 #' \email{shenxt@@sioc.ac.cn}
 #' @param object A metflowClass object.

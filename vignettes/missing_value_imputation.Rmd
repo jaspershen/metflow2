@@ -11,16 +11,18 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{missing_value_imputation}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  # fig.width = 7, 
-  # fig.height = 5,
   warning = FALSE,
   message = TRUE,
   out.width = "100%"
@@ -35,9 +37,9 @@ First, we need to prepare samples for `metflow2`.
 
 ### **Peak table**
 
-The peak table (csv format) can be from any software. We recomment that you use the `Peak_table_for_cleaning.csv` from `processData()` function from `metflow2`.
+The peak table (csv format) can be from any software. We recommend that you use the `Peak_table_for_cleaning.csv` from `processData()` function from `metflow2`.
 
-If you use other software, please make sure that the top 3 columns are `name` (peak name), `mz` and `rt` (rentention time, second). And the left column are sample intensity.
+If you use other software, please make sure that the top 3 columns are `name` (peak name), `mz` and `rt` (retention time, second). And the left column are sample intensity.
 
 ![](../man/figures/Screen Shot 2020-04-01 at 1.07.37 PM.png)
 
@@ -80,9 +82,12 @@ Here, we have two peak tables, `batch1.data.csv` and `batch2.data.csv`, and `sam
 ### **Creat `metflowClass` object**
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object <- creatMetflowObject(ms1.data = c("batch1.data.csv", "batch2.data.csv"),
-                             sample.information = "sample_info.csv",
-                             path = path)
+object <-
+  create_metflow_object(
+    ms1.data = c("batch1.data.csv", "batch2.data.csv"),
+    sample.information = "sample_info.csv",
+    path = path
+  )
 ```
 
 `object` is a `metflowClass` object, so you can print it in the console.
@@ -213,11 +218,11 @@ get_mv_plot_samples(object = object2, interactive = TRUE)
 
 ### **Missing value imputation**
 
-The function `imputeMV()` is uesed to do missing value imputation.
+The function `impute_mv()` is used to do missing value imputation.
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object2 <- imputeMV(object = object2,
-                    method = "knn")
+object2 <- impute_mv(object = object2,
+                     method = "knn")
 object2
 ```
 

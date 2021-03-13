@@ -8,6 +8,13 @@
 [![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 -----
+## **News**
+
+* **Version0.9.2**: Output EICs of some features in some sample. [Click here.](https://jaspershen.github.io/metflow2/articles/version_0_9_2.html)
+
+* **More news**: [Click here](https://jaspershen.github.io/metflow2/news/index.html)
+
+------
 
 ## **About**
 

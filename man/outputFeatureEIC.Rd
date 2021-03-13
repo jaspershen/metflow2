@@ -49,6 +49,7 @@ ggplot object.
 }
 \description{
 Output EICs of all peaks in peak table.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

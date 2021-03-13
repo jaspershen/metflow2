@@ -96,7 +96,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.9.2</span>
       </span>
     </div>
 
@@ -160,7 +160,7 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Blog posts</li>
     <li>
-      <a href="../articles/metflow2_instruction.html">Version 0.0.1</a>
+      <a href="../articles/version_0_9_2.html">Version 0.9.2</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -208,7 +208,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>calP</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/tools.R'><code>R/tools.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
     <div class="hidden name"><code>calP.Rd</code></div>
     </div>
 
@@ -263,32 +263,6 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>p values.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>#' @title SXTvip
-#' @description Get VIP from pls object.
-#' @author Xiaotao Shen
-#' <a href='mailto:shenxt@sioc.ac.cn'>shenxt@sioc.ac.cn</a>
-#' @param object PLS object.
-#' @return Return VIP.
-#' @export
-#' @examples
-#' library(pls)
-#' x &lt;- matrix(rnorm(1000),nrow = 10,ncol = 100)
-#' y &lt;- rep(0:1,5)
-#' res &lt;- plsr(y~x, method = "oscorespls")
-#' SXTvip(res)</p>
-
-<p>SXTvip &lt;- function(object) 
-  if (object$method != "oscorespls")
-    stop("Only implemented for orthogonal scores algorithm.
-         Refit with 'method = \"oscorespls\"'")
-  if (nrow(object$Yloadings) &gt; 1)
-    stop("Only implemented for single-response models")
-  SS &lt;- c(object$Yloadings)^2 * colSums(object$scores^2)
-  Wnorm2 &lt;- colSums(object$loading.weights^2)
-  SSW &lt;- sweep(object$loading.weights^2, 2, SS / Wnorm2, "*")
-  sqrt(nrow(SSW) * apply(SSW, 1, cumsum) / cumsum(SS))</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Xiaotao Shen
@@ -322,7 +296,7 @@
     
     
     apiKey: '2f09495997a50f5008bc92fa73c5552d',
-    indexName: 'metidentify',
+    indexName: 'metflow2',
     inputSelector: 'input#search-input.form-control',
     transformData: function(hits) {
       return hits.map(function (hit) {

@@ -22,6 +22,7 @@ A data frame.
 }
 \description{
 Get data from metflowClass object.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

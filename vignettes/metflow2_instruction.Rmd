@@ -11,16 +11,18 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{metflow2_instruction}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  # fig.width = 7, 
-  # fig.height = 5,
   warning = FALSE,
   message = TRUE
 )
@@ -36,7 +38,7 @@ knitr::opts_chunk$set(
 
 Please install it via [github](https://github.com/jaspershen/metflow2).
 
-```{r,eval=FALSE,warning=FALSE, R.options="", cache=TRUE}
+```{r,eval=FALSE,warning=FALSE, message=FALSE,R.options="", cache=TRUE}
 if(!require(devtools)){
   install.packages("devtools")
 }
@@ -45,7 +47,7 @@ devtools::install_github("jaspershen/metflow2")
 
 We use the demo data in `demoData` package to show how to use `metflow2`. Please install it first.
 
-```{r,eval=FALSE,warning=FALSE, R.options=""}
+```{r,eval=FALSE,warning=FALSE, message=FALSE, R.options=""}
 devtools::install_github("jaspershen/demoData")
 ```
 
@@ -53,14 +55,14 @@ devtools::install_github("jaspershen/demoData")
 
 ## **Usage**
 
-Please see the [Get started](https://jaspershen.github.io/metflow2/articles/metflow2_instruction.html) page to get the instrduction of `metflow2`.
+Please see the [Get started](https://jaspershen.github.io/metflow2/articles/metflow2_instruction.html) page to get the instruction of `metflow2`.
 
 ***
 
 ## **Need help?**
 
 
-If you have any quesitions about `metflow2`, please don’t hesitate to email me (shenxt@stanford.edu).
+If you have any questions about `metflow2`, please don’t hesitate to email me (shenxt@stanford.edu).
 
 <i class="fa fa-weixin"></i> [shenzutao1990](https://www.shenxt.info/files/wechat_QR.jpg)
 

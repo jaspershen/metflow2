@@ -14,6 +14,7 @@ A ggplot2 object.
 }
 \description{
 get MV plot of subject samples.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

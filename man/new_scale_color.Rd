@@ -11,6 +11,7 @@ result
 }
 \description{
 new_scale_color
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

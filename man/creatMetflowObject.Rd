@@ -18,6 +18,7 @@ A metflowClass object.
 }
 \description{
 Creat metflowClass object.
+\lifecycle{deprecated}
 }
 \author{
 Xiaotao Shen

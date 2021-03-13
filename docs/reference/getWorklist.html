@@ -53,7 +53,8 @@
 
 
 <meta property="og:title" content="getWorklist — getWorklist" />
-<meta property="og:description" content="Generate sample and worklist.." />
+<meta property="og:description" content="Generate sample and worklist.
+deprecated" />
 <meta property="og:image" content="https://jaspershen.github.io/metflow2/logo.png" />
 
 
@@ -96,7 +97,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">metflow2</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.1.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Under development">0.9.2</span>
       </span>
     </div>
 
@@ -160,7 +161,7 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Blog posts</li>
     <li>
-      <a href="../articles/metflow2_instruction.html">Version 0.0.1</a>
+      <a href="../articles/version_0_9_2.html">Version 0.9.2</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -208,12 +209,13 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>getWorklist</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/getWorklist.R'><code>R/getWorklist.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/jaspershen/metflow2/blob/master/R/deprecated_functions.R'><code>R/deprecated_functions.R</code></a></small>
     <div class="hidden name"><code>getWorklist.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate sample and worklist..</p>
+    <p>Generate sample and worklist.
+deprecated</p>
     </div>
 
     <pre class="usage"><span class='fu'>getWorklist</span><span class='op'>(</span>
@@ -337,7 +339,7 @@
     
     
     apiKey: '2f09495997a50f5008bc92fa73c5552d',
-    indexName: 'metidentify',
+    indexName: 'metflow2',
     inputSelector: 'input#search-input.form-control',
     transformData: function(hits) {
       return hits.map(function (hit) {

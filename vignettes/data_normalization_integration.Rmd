@@ -11,16 +11,18 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{data_normalization_integration}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  # fig.width = 7, 
-  # fig.height = 5,
   warning = FALSE,
   message = TRUE,
   out.width = "100%"
@@ -62,7 +64,7 @@ library(tidyverse)
 ### **Load demo data**
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE,cache = TRUE}
-##creat a folder nameed as example
+##create a folder named as example
 path <- file.path(".", "example")
 dir.create(path = path, showWarnings = FALSE)
 ```
@@ -77,12 +79,15 @@ file.copy(from = file.path(demo_data, dir(demo_data)),
 
 Here, we have two peak tables, `batch1.data.csv` and `batch2.data.csv`, and `sample_info.csv` are in your `./example` folder.
 
-### **Creat `metflowClass` object**
+### **Create `metflowClass` object**
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
-object <- creatMetflowObject(ms1.data = c("batch1.data.csv", "batch2.data.csv"),
-                             sample.information = "sample_info.csv",
-                             path = path)
+object <-
+  create_metflow_object(
+    ms1.data = c("batch1.data.csv", "batch2.data.csv"),
+    sample.information = "sample_info.csv",
+    path = path
+  )
 ```
 
 `object` is a `metflowClass` object, so you can print it in the console.
@@ -170,7 +175,7 @@ object4 <- integrate_data(object = object3, method = "qc.mean")
 ```
 
 
-We can also get the RSDs of all the peaks before and after data normalization and data intergration.
+We can also get the RSDs of all the peaks before and after data normalization and data integration.
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
 rsd2 <- calculate_rsd(object = object2, slot = "QC")
@@ -181,6 +186,7 @@ rsd4 <- calculate_rsd(object = object4, slot = "QC")
 Then we can draw the comprison plot:
 
 ```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE, cache=TRUE}
+library(ggplot2)
 dplyr::left_join(rsd2, rsd4, by = c("index", "name")) %>% 
   dplyr::mutate(class = dplyr::case_when(rsd.y < rsd.x ~ "Decrease",
                                          rsd.y > rsd.x ~ "Increase",

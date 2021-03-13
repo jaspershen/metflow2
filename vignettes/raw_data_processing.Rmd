@@ -11,8 +11,12 @@ output:
     toc: no
   pdf_document:
     toc: no
-vignette: "%\\VignetteIndexEntry{Vignette Title} \n%\\VignetteEncoding{UTF-8}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n"
+vignette: >
+  %\VignetteIndexEntry{raw_data_processing}
+  %\VignettePackage{metflow2}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE, echo=FALSE}
@@ -62,7 +66,7 @@ We use the demo data from `demoData` to show how to process raw MS data using `m
 
 First we load the demo data from `demoData` package and then place them in a `example` folder.
 
-```{r,eval=FALSE,warning=FALSE, R.options="", message=FALSE}
+```{r,eval=TRUE,warning=FALSE, R.options="", message=FALSE}
 library(demoData)
 library(metflow2)
 library(tidyverse)
@@ -89,13 +93,13 @@ Now the demo mzXML data is in the `./example/POS` folder. There are two folder i
 
 ### **Data processing**
 
-Next, we use the `processData()` function for peak detection and alignment.
+Next, we use the `process_data()` function for peak detection and alignment.
 
 
 ```{r,eval = FALSE,warning=FALSE, message=FALSE,R.options="",cache=TRUE, message=FALSE}
 new_path <- file.path(path, "POS")
 setwd(path)
-metflow2::processData(
+metflow2::process_data(
   path = ".",
   polarity = "positive",
   ppm = 15,
