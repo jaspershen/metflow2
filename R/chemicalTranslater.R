@@ -18,7 +18,7 @@ transID = function(query = "C00001",
                      "http://cts.fiehnlab.ucdavis.edu/service/convert",
                      "https://www.chemspider.com/InChI.asmx"
                    )){
-  cat(crayon::yellow("transID() is deprecited, please use the trans_ID() in tinyTools.\n"))
+  cat(crayon::yellow("transID() is deprecated, please use the trans_ID() in tinyTools.\n"))
   server <- match.arg(server)
   top <- as.numeric(top)
   if (is.na(top)) {
@@ -167,121 +167,118 @@ You can use databaseName() function to check the databases this package support.
 #' databaseNames(server = "https://www.chemspider.com/InChI.asmx")
 #' }
 
-
-
-setGeneric(
-  name = "databaseName",
-  def = function(server = c(
-    "http://cts.fiehnlab.ucdavis.edu/service/convert",
-    "https://www.chemspider.com/InChI.asmx"
-  )) {
-    server <- match.arg(server)
+databaseName = function(server = c(
+  "http://cts.fiehnlab.ucdavis.edu/service/convert",
+  "https://www.chemspider.com/InChI.asmx"
+)){
+  cat(crayon::yellow("databaseName() is deprecated, please use the trans_id_database() in tinyTools.\n"))
+  server <- match.arg(server)
+  
+  if (server == "http://cts.fiehnlab.ucdavis.edu/service/convert") {
+    chemical_database_from = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/fromValues")
     
-    if (server == "http://cts.fiehnlab.ucdavis.edu/service/convert") {
-      chemical_database_from = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/fromValues")
-      
-      chemical_database_to = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/toValues")
-      
-      chemical_database_from <-
-        chemical_database_from %>%
-        rvest::html_nodes("p") %>%
-        rvest::html_text(TRUE) %>%
-        stringr::str_split(pattern = "\n") %>%
-        `[[`(1) %>%
-        sapply(function(x) {
-          x <- stringr::str_trim(x, "both")
-          x <-
-            stringr::str_replace_all(string = x,
-                                     pattern = '\"',
-                                     replacement = "")
-          x <-
-            stringr::str_replace_all(string = x,
-                                     pattern = ',',
-                                     replacement = "")
-        }) %>%
-        unname() %>%
-        data.frame(name = ., stringsAsFactors = FALSE) %>%
-        dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
-        dplyr::pull(name)
-      
-      
-      chemical_database_to <-
-        chemical_database_to %>%
-        rvest::html_nodes("p") %>%
-        rvest::html_text(TRUE) %>%
-        stringr::str_split(pattern = "\n") %>%
-        `[[`(1) %>%
-        sapply(function(x) {
-          x <- stringr::str_trim(x, "both")
-          x <-
-            stringr::str_replace_all(string = x,
-                                     pattern = '\"',
-                                     replacement = "")
-          x <-
-            stringr::str_replace_all(string = x,
-                                     pattern = ',',
-                                     replacement = "")
-        }) %>%
-        unname() %>%
-        data.frame(name = ., stringsAsFactors = FALSE) %>%
-        dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
-        dplyr::pull(name)
-      
-      
-      chemical_database_from <- sort(chemical_database_from)
-      chemical_database_to <- sort(chemical_database_to)
-      cat(
-        crayon::green(
-          length(chemical_database_from),
-          "databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'from'.\n"
-        )
-      )
-      cat(
-        crayon::green(
-          length(chemical_database_to),
-          "databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'to'.\n"
-        )
-      )
-      result <-
-        list(
-          From =  tibble::as_tibble(
-            data.frame(From = chemical_database_from,
-                       stringsAsFactors = FALSE)
-          ),
-          To = tibble::as_tibble(
-            data.frame(From = chemical_database_to,
-                       stringsAsFactors = FALSE)
-          )
-        )
-      
-      result
-    } else{
-      result <- c(
-        "csid_mol",
-        "inchikey_csid",
-        "inchikey_inchi",
-        "inchikey_mol",
-        "inchi_csid",
-        "inchi_inchikey",
-        "inchi_mol",
-        "inchi_smiles",
-        "smiles_inchi"
-      )
-      
-      result <-
-        stringr::str_split(result, "_") %>%
-        dplyr::bind_cols() %>%
-        t() %>%
-        tibble::as_tibble(.name_repair = "minimal")
-      colnames(result) <- c("From", "To")
-      cat(
-        crayon::green(
-          nrow(result),
-          "are supported in server https://www.chemspider.com/InChI.asmx.\n"
-        )
-      )
-      result
-    }
+    chemical_database_to = xml2::read_html("http://cts.fiehnlab.ucdavis.edu/service/conversion/toValues")
     
+    chemical_database_from <-
+      chemical_database_from %>%
+      rvest::html_nodes("p") %>%
+      rvest::html_text(TRUE) %>%
+      stringr::str_split(pattern = "\n") %>%
+      `[[`(1) %>%
+      sapply(function(x) {
+        x <- stringr::str_trim(x, "both")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = '\"',
+                                   replacement = "")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = ',',
+                                   replacement = "")
+      }) %>%
+      unname() %>%
+      data.frame(name = ., stringsAsFactors = FALSE) %>%
+      dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
+      dplyr::pull(name)
+    
+    
+    chemical_database_to <-
+      chemical_database_to %>%
+      rvest::html_nodes("p") %>%
+      rvest::html_text(TRUE) %>%
+      stringr::str_split(pattern = "\n") %>%
+      `[[`(1) %>%
+      sapply(function(x) {
+        x <- stringr::str_trim(x, "both")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = '\"',
+                                   replacement = "")
+        x <-
+          stringr::str_replace_all(string = x,
+                                   pattern = ',',
+                                   replacement = "")
+      }) %>%
+      unname() %>%
+      data.frame(name = ., stringsAsFactors = FALSE) %>%
+      dplyr::filter(!name %in% c("[", "]", "{", "}")) %>%
+      dplyr::pull(name)
+    
+    
+    chemical_database_from <- sort(chemical_database_from)
+    chemical_database_to <- sort(chemical_database_to)
+    cat(
+      crayon::green(
+        length(chemical_database_from),
+        "databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'from'.\n"
+      )
+    )
+    cat(
+      crayon::green(
+        length(chemical_database_to),
+        "databases are supported in server http://cts.fiehnlab.ucdavis.edu/service/convert for 'to'.\n"
+      )
+    )
+    result <-
+      list(
+        From =  tibble::as_tibble(
+          data.frame(From = chemical_database_from,
+                     stringsAsFactors = FALSE)
+        ),
+        To = tibble::as_tibble(
+          data.frame(From = chemical_database_to,
+                     stringsAsFactors = FALSE)
+        )
+      )
+    
+    result
+  } else{
+    result <- c(
+      "csid_mol",
+      "inchikey_csid",
+      "inchikey_inchi",
+      "inchikey_mol",
+      "inchi_csid",
+      "inchi_inchikey",
+      "inchi_mol",
+      "inchi_smiles",
+      "smiles_inchi"
+    )
+    
+    result <-
+      stringr::str_split(result, "_") %>%
+      dplyr::bind_cols() %>%
+      t() %>%
+      tibble::as_tibble(.name_repair = "minimal")
+    colnames(result) <- c("From", "To")
+    cat(
+      crayon::green(
+        nrow(result),
+        "are supported in server https://www.chemspider.com/InChI.asmx.\n"
+      )
+    )
+    result
   }
-)
+  
+}
+

@@ -608,6 +608,20 @@ normalizeData = function(object,
 
 
 # ##############svr normalization function
+#' @title svrNor
+#' @description svrNor
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param sample sample.
+#' @param qc qc
+#' @param sample.order sample.order
+#' @param qc.order qc.order
+#' @param multiple multiple
+#' @param path path
+#' @param dimension1 dimension1
+#' @param threads threads
+#' @return result
+
 svrNor <- function(sample,
                    qc,
                    sample.order,
@@ -696,7 +710,26 @@ svrNor <- function(sample,
   return(return_result)
 }
 
+
+
+
+
 ####LOESS normalization function
+#' @title loessNor
+#' @description loessNor
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param subject_data subject_data
+#' @param qc_data qc_data
+#' @param subject_order subject_order
+#' @param qc_order qc_order
+#' @param optimization optimization
+#' @param begin begin
+#' @param end end
+#' @param step step
+#' @param path path
+#' @param threads threads
+#' @return result
 loessNor <- function(subject_data,
                      qc_data,
                      subject_order,
@@ -818,7 +851,21 @@ loessNor <- function(subject_data,
 }
 
 
+
+
+
 #cvMSE is loess parameter optimization function
+#' @title cvMSE
+#' @description cvMSE
+#' @author Xiaotao Shen
+#' \email{shenxt@@sioc.ac.cn}
+#' @param qc qc
+#' @param qc.order qc.order
+#' @param begin1 begin1
+#' @param end1 end1
+#' @param step1 step1
+#' @return result
+
 cvMSE <- function(qc, qc.order, begin1, end1, step1) {
   mse <- NULL
   nmse <- NULL
@@ -864,78 +911,77 @@ cvMSE <- function(qc, qc.order, begin1, end1, step1) {
 #' @param qc.order qc.order
 #' @param multiple multiple
 
-setGeneric(
-  name = "svr_function",
-  def = function(index,
-                 sample,
-                 qc,
-                 sample.order,
-                 qc.order,
-                 multiple) {
-    # library(e1071)
-    colnames(sample) <- colnames(qc)
-    sample <- sample[, index, drop = FALSE]
-    qc <- qc[, index, drop = FALSE]
-    # cat("SVR normalization is finished: %\n")
-    data.order <- c(sample.order, qc.order)
+svr_function = function(
+  index,
+  sample,
+  qc,
+  sample.order,
+  qc.order,
+  multiple
+){
+  # library(e1071)
+  colnames(sample) <- colnames(qc)
+  sample <- sample[, index, drop = FALSE]
+  qc <- qc[, index, drop = FALSE]
+  # cat("SVR normalization is finished: %\n")
+  data.order <- c(sample.order, qc.order)
+  
+  data.nor <- lapply(c(1:ncol(sample)), function(i) {
+    if (multiple != 1) {
+      correlation <-
+        abs(cor(x = rbind(sample, qc)[, i], y = rbind(sample, qc))[1, ])
+      cor.peak <-
+        match(names(sort(correlation, decreasing = TRUE)[1:6][-1]),
+              names(correlation))
+      rm(list = "correlation")
+      svr.reg <- e1071::svm(qc[, cor.peak], qc[, i])
+    } else{
+      svr.reg <- e1071::svm(unlist(qc[, i]) ~ qc.order)
+    }
     
-    data.nor <- lapply(c(1:ncol(sample)), function(i) {
-      if (multiple != 1) {
-        correlation <-
-          abs(cor(x = rbind(sample, qc)[, i], y = rbind(sample, qc))[1, ])
-        cor.peak <-
-          match(names(sort(correlation, decreasing = TRUE)[1:6][-1]),
-                names(correlation))
-        rm(list = "correlation")
-        svr.reg <- e1071::svm(qc[, cor.peak], qc[, i])
-      } else{
-        svr.reg <- e1071::svm(unlist(qc[, i]) ~ qc.order)
-      }
-      
-      predict.qc <- summary(svr.reg)$fitted
-      qc.nor1 <- qc[, i] / predict.qc
-      
-      #if the predict value is 0, then set the ratio to 0
-      qc.nor1[is.nan(unlist(qc.nor1))] <- 0
-      qc.nor1[is.infinite(unlist(qc.nor1))] <- 0
-      qc.nor1[is.na(unlist(qc.nor1))] <- 0
-      qc.nor1[which(unlist(qc.nor1) < 0)] <- 0
-      
-      if (multiple != 1) {
-        predict.sample <- predict(svr.reg, sample[, cor.peak])
-      } else{
-        predict.sample <-
-          predict(svr.reg, data.frame(qc.order = c(sample.order)))
-      }
-      
-      sample.nor1 <- sample[, i] / predict.sample
-      sample.nor1[is.nan(unlist(sample.nor1))] <- 0
-      sample.nor1[is.infinite(unlist(sample.nor1))] <- 0
-      sample.nor1[is.na(unlist(sample.nor1))] <- 0
-      sample.nor1[which(unlist(sample.nor1) < 0)] <- 0
-      
-      return(list(sample.nor1, qc.nor1))
-      
-    })
+    predict.qc <- summary(svr.reg)$fitted
+    qc.nor1 <- qc[, i] / predict.qc
     
-    sample.nor <- lapply(data.nor, function(x)
-      x[[1]])
-    qc.nor <- lapply(data.nor, function(x)
-      x[[2]])
-    rm(list = "data.nor")
-    sample.nor <- t(do.call(rbind, sample.nor))
-    qc.nor <- t(do.call(rbind, qc.nor))
+    #if the predict value is 0, then set the ratio to 0
+    qc.nor1[is.nan(unlist(qc.nor1))] <- 0
+    qc.nor1[is.infinite(unlist(qc.nor1))] <- 0
+    qc.nor1[is.na(unlist(qc.nor1))] <- 0
+    qc.nor1[which(unlist(qc.nor1) < 0)] <- 0
     
-    colnames(sample.nor) <-
-      colnames(qc.nor) <- colnames(sample)
-    rm(list = c("sample", "qc"))
+    if (multiple != 1) {
+      predict.sample <- predict(svr.reg, sample[, cor.peak])
+    } else{
+      predict.sample <-
+        predict(svr.reg, data.frame(qc.order = c(sample.order)))
+    }
     
-    svr.data <-
-      list(sample.nor = sample.nor,
-           qc.nor = qc.nor,
-           index = index)
-    rm(list = c("sample.nor", "qc.nor"))
-    return(svr.data)
+    sample.nor1 <- sample[, i] / predict.sample
+    sample.nor1[is.nan(unlist(sample.nor1))] <- 0
+    sample.nor1[is.infinite(unlist(sample.nor1))] <- 0
+    sample.nor1[is.na(unlist(sample.nor1))] <- 0
+    sample.nor1[which(unlist(sample.nor1) < 0)] <- 0
     
-  }
-)
+    return(list(sample.nor1, qc.nor1))
+    
+  })
+  
+  sample.nor <- lapply(data.nor, function(x)
+    x[[1]])
+  qc.nor <- lapply(data.nor, function(x)
+    x[[2]])
+  rm(list = "data.nor")
+  sample.nor <- t(do.call(rbind, sample.nor))
+  qc.nor <- t(do.call(rbind, qc.nor))
+  
+  colnames(sample.nor) <-
+    colnames(qc.nor) <- colnames(sample)
+  rm(list = c("sample", "qc"))
+  
+  svr.data <-
+    list(sample.nor = sample.nor,
+         qc.nor = qc.nor,
+         index = index)
+  rm(list = c("sample.nor", "qc.nor"))
+  return(svr.data)
+}
+

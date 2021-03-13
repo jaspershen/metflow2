@@ -11,12 +11,12 @@
 #' @importFrom xml2 read_html read_xml
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringr str_split str_replace_all str_trim str_detect str_extract
-#' @importFrom dplyr filter select pull everything distinct one_of left_join mutate bind_cols
-#' @importFrom tibble as_tibble enframe tibble
+#' @importFrom dplyr filter select pull everything distinct one_of left_join mutate bind_cols arrange
+#' @importFrom tibble as_tibble enframe tibble rownames_to_column
 #' @importFrom httr POST content
 #' @importFrom clisymbols symbol
 #' @importFrom cli rule col_cyan tree
-#' @importFrom utils packageVersion object.size
+#' @importFrom utils packageVersion object.size write.csv tail
 #' @importFrom purrr map map2
 #' @importFrom plyr dlply .
 #' @importFrom RColorBrewer brewer.pal
@@ -37,8 +37,8 @@
 #' @importFrom patchwork plot_layout
 #' @import patchwork
 #' @importFrom Rtsne Rtsne
-#' @importFrom stats coefficients lm loess median predict rgamma rt sd
-#' @importFrom utils write.csv
+#' @importFrom stats coefficients lm loess median predict 
+#' @importFrom stats rgamma rt sd cor p.adjust prcomp t.test wilcox.test
 #' @export
 
 metflow2_logo <- function(){

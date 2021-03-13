@@ -15,5 +15,20 @@ globalVariables(names = c(
   "mzmed",
   "x",
   "freq",
-  "xdata3"
+  "xdata3",
+  "group",
+  "mz",
+  "colou.index",
+  "X1",
+  "X2",
+  "Class",
+  "value",
+  "sample_group",
+  "rt.min",
+  "rt.max",
+  "min.intensity",
+  "max.intensity",
+  "diffRT",
+  "data.bpca",
+  "int"
 ))

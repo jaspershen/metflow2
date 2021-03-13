@@ -1,3 +1,55 @@
+#' @title align_batch
+#' @description Align different batch peaks tables.
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param object A metflowClass object.
+#' @param combine.mz.tol m/z tolerance for batch alignment, default is 25 ppm.
+#' @param combine.rt.tol RT tolerance for batch alignment, default is 30 seconds.
+#' @param use.int.tol Whether use intensity match for batch aglignment.
+#' @return A new metflowClass object.
+#' @export
+
+align_batch = function(
+  object,
+  combine.mz.tol = 25,
+  combine.rt.tol = 30,
+  use.int.tol = FALSE
+){
+  if (class(object) != "metflowClass") {
+    stop("Only for metflowClass object\n")
+  }
+  
+  ms1_data <- object@ms1.data
+  if (length(ms1_data) == 1) {
+    return(object)
+  }
+  
+  cat("Rough aligning...\n")
+  roughMatchResult <- roughAlign(
+    peak.table = ms1_data,
+    combine.mz.tol = combine.mz.tol,
+    combine.rt.tol = combine.rt.tol
+  )
+  
+  cat("Accurate aligning...\n")
+  accurateMatchResult <-
+    accurateAlign(
+      peak.table = ms1_data,
+      simple.data = roughMatchResult,
+      use.int.tol = use.int.tol
+    )
+  object@ms1.data <- list(accurateMatchResult)
+  
+  object@process.info$alignBatch <- list()
+  object@process.info$alignBatch$combine.mz.tol <-
+    combine.mz.tol
+  object@process.info$alignBatch$combine.rt.tol <-
+    combine.rt.tol
+  
+  invisible(object)
+}
+
+
 #' @title alignBatch
 #' @description Align different batch peaks tables.
 #' @author Xiaotao Shen
@@ -56,59 +108,16 @@ alignBatch = function(
 }
 
 
-#' @title align_batch
-#' @description Align different batch peaks tables.
+
+
+#' @title roughAlign
+#' @description roughAlign
 #' @author Xiaotao Shen
 #' \email{shenxt1990@@163.com}
-#' @param object A metflowClass object.
-#' @param combine.mz.tol m/z tolerance for batch alignment, default is 25 ppm.
-#' @param combine.rt.tol RT tolerance for batch alignment, default is 30 seconds.
-#' @param use.int.tol Whether use intensity match for batch aglignment.
-#' @return A new metflowClass object.
-#' @export
-
-align_batch = function(
-  object,
-  combine.mz.tol = 25,
-  combine.rt.tol = 30,
-  use.int.tol = FALSE
-){
-  if (class(object) != "metflowClass") {
-    stop("Only for metflowClass object\n")
-  }
-  
-  ms1_data <- object@ms1.data
-  if (length(ms1_data) == 1) {
-    return(object)
-  }
-  
-  cat("Rough aligning...\n")
-  roughMatchResult <- roughAlign(
-    peak.table = ms1_data,
-    combine.mz.tol = combine.mz.tol,
-    combine.rt.tol = combine.rt.tol
-  )
-  
-  cat("Accurate aligning...\n")
-  accurateMatchResult <-
-    accurateAlign(
-      peak.table = ms1_data,
-      simple.data = roughMatchResult,
-      use.int.tol = use.int.tol
-    )
-  object@ms1.data <- list(accurateMatchResult)
-  
-  object@process.info$alignBatch <- list()
-  object@process.info$alignBatch$combine.mz.tol <-
-    combine.mz.tol
-  object@process.info$alignBatch$combine.rt.tol <-
-    combine.rt.tol
-  
-  invisible(object)
-}
-
-
-
+#' @param peak.table peak.table
+#' @param combine.mz.tol combine.mz.tol
+#' @param combine.rt.tol combine.rt.tol
+#' @return result
 
 roughAlign <- function(peak.table,
                        combine.mz.tol = 25,
@@ -159,6 +168,15 @@ roughAlign <- function(peak.table,
 }
 
 
+#' @title simplyData
+#' @description simplyData
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param data data
+#' @param combine.mz.tol combine.mz.tol
+#' @param combine.rt.tol combine.rt.tol
+#' @return result
+
 simplyData <- function(data,
                        combine.mz.tol = 5,
                        combine.rt.tol = 30) {
@@ -205,6 +223,13 @@ simplyData <- function(data,
 }
 
 
+#' @title baMZplot
+#' @description baMZplot
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param simple.data data
+#' @return result
+
 baMZplot <- function(simple.data) {
   my.theme <- ggplot2::theme_bw() +
     ggplot2::theme(
@@ -245,7 +270,12 @@ baMZplot <- function(simple.data) {
 }
 
 
-
+#' @title baRTplot
+#' @description baRTplot
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param simple.data simple.data
+#' @return result
 baRTplot <- function(simple.data) {
   my.theme <- ggplot2::theme_bw() +
     ggplot2::theme(
@@ -285,6 +315,13 @@ baRTplot <- function(simple.data) {
   return(rt.plot)
 }
 
+
+#' @title baINTplot
+#' @description baINTplot
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param simple.data simple.data
+#' @return result
 
 baINTplot <- function(simple.data) {
   my.theme <- ggplot2::theme_bw() +
@@ -329,6 +366,16 @@ baINTplot <- function(simple.data) {
     )
   return(int.plot)
 }
+
+
+#' @title peak.table
+#' @description peak.table
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param peak.table peak.table
+#' @param simple.data simple.data
+#' @param use.int.tol use.int.tol
+#' @return result
 
 accurateAlign <- function(peak.table,
                           simple.data,
@@ -383,6 +430,20 @@ accurateAlign <- function(peak.table,
 }
 
 
+#' @title align2Batch
+#' @description peak.table
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param batch1 batch1
+#' @param batch2 batch2
+#' @param mz.error.sd mz.error.sd
+#' @param rt.error.sd rt.error.sd
+#' @param int.error.sd int.error.sd
+#' @param fold fold
+#' @param mz.weight mz.weight
+#' @param rt.weight rt.weight
+#' @param int.weight int.weight
+#' @return result
 
 align2Batch <- function(batch1,
                         batch2,
@@ -537,15 +598,28 @@ align2Batch <- function(batch1,
 
 
 
-
+#' @title matchScore
+#' @description matchScore
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param error error
+#' @param sd sd
+#' @return result
 matchScore <- function(error, sd) {
   (sd / error) ^ 2
 }
 
 
+#' @title reName
+#' @description reName
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param name name
+#' @return result
+
 reName <- function(name) {
   temp.name <- unique(name)
-  laply(temp.name, function(x) {
+  lapply(temp.name, function(x) {
     temp.idx <- which(x == name)
     if (length(temp.idx) > 1) {
       paste(name[temp.idx], 1:length(temp.idx), sep = "_")
@@ -554,19 +628,27 @@ reName <- function(name) {
 }
 
 
-reName <- function(name) {
-  temp.name <- unique(name)
-  for (i in 1:length(temp.name)) {
-    temp.idx <- which(temp.name[i] == name)
-    if (length(temp.idx) > 1) {
-      name[temp.idx] <-
-        paste(name[temp.idx], 1:length(temp.idx), sep = "_")
-    }
-  }
-  name
-}
+# reName <- function(name) {
+#   temp.name <- unique(name)
+#   for (i in 1:length(temp.name)) {
+#     temp.idx <- which(temp.name[i] == name)
+#     if (length(temp.idx) > 1) {
+#       name[temp.idx] <-
+#         paste(name[temp.idx], 1:length(temp.idx), sep = "_")
+#     }
+#   }
+#   name
+# }
 
 
+#' @title getBatchAlignmentInfo
+#' @description getBatchAlignmentInfo
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param raw.data raw.data
+#' @param rough.align.data rough.align.data
+#' @param accurate.align.data accurate.align.data
+#' @return result
 
 
 getBatchAlignmentInfo <- function(raw.data,
@@ -627,166 +709,183 @@ getBatchAlignmentInfo <- function(raw.data,
 
 
 
-setGeneric(
-  name = "MRImatch",
-  def = function(data1,
-                 data2,
-                 mz.tol,
-                 #rt.tol is relative
-                 rt.tol = 30,
-                 rt.error.type = c("relative", "abs"),
-                 int.tol = 1) {
-    rt.error.type <- match.arg(rt.error.type)
-    #
-    if (nrow(data1) == 0 | nrow(data2) == 0) {
-      result <- NULL
-      return(result)
-    }
-    # mz1 <- as.numeric(data1[, 1])
-    # rt1 <- as.numeric(data1[, 2])
-    info1 <- data1[, c(1, 2, 3)]
-    info1 <- apply(info1, 1, list)
-    
-    mz2 <- as.numeric(data2[, 1])
-    rt2 <- as.numeric(data2[, 2])
-    int2 <- as.numeric(data2[, 3])
-    
-    result <- pbapply::pblapply(info1, function(x) {
-      temp.mz1 <- x[[1]][[1]]
-      temp.rt1 <- x[[1]][[2]]
-      temp.int1 <- x[[1]][[3]]
-      mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
-      if (rt.error.type == "relative") {
-        rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
-      } else{
-        rt.error <- abs(temp.rt1 - rt2)
-      }
-      
-      int.error <- abs(temp.int1 - int2)
-      
-      j <-
-        which(mz.error <= mz.tol &
-                rt.error <= rt.tol & int.error <= int.tol)
-      if (length(j) == 0) {
-        matrix(NA, ncol = 10)
-      } else{
-        cbind(
-          j,
-          temp.mz1,
-          mz2[j],
-          mz.error[j],
-          temp.rt1,
-          rt2[j],
-          rt.error[j],
-          temp.int1,
-          int2[j],
-          int.error[j]
-        )
-      }
-    })
-    
-    if (length(result) == 1) {
-      result <- cbind(1, result[[1]])
+#' @title MRImatch
+#' @description MRImatch
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param data1 data1
+#' @param data2 data2
+#' @param mz.tol mz.tol
+#' @param rt.tol rt.tol
+#' @param rt.error.type rt.error.type
+#' @param int.tol int.tol
+#' @return result
+
+MRImatch = function(data1,
+                    data2,
+                    mz.tol,
+                    #rt.tol is relative
+                    rt.tol = 30,
+                    rt.error.type = c("relative", "abs"),
+                    int.tol = 1){
+  rt.error.type <- match.arg(rt.error.type)
+  #
+  if (nrow(data1) == 0 | nrow(data2) == 0) {
+    result <- NULL
+    return(result)
+  }
+  # mz1 <- as.numeric(data1[, 1])
+  # rt1 <- as.numeric(data1[, 2])
+  info1 <- data1[, c(1, 2, 3)]
+  info1 <- apply(info1, 1, list)
+  
+  mz2 <- as.numeric(data2[, 1])
+  rt2 <- as.numeric(data2[, 2])
+  int2 <- as.numeric(data2[, 3])
+  
+  result <- pbapply::pblapply(info1, function(x) {
+    temp.mz1 <- x[[1]][[1]]
+    temp.rt1 <- x[[1]][[2]]
+    temp.int1 <- x[[1]][[3]]
+    mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
+    if (rt.error.type == "relative") {
+      rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
     } else{
-      result <- mapply(function(x, y) {
-        list(cbind(x, y))
-      },
-      x <- 1:length(info1),
-      y = result)
-      result <- do.call(rbind, result)
+      rt.error <- abs(temp.rt1 - rt2)
     }
     
-    result <-
-      matrix(result[which(!apply(result, 1, function(x)
-        any(is.na(x)))),], ncol = 11)
-    if (nrow(result) == 0)
-      return(NULL)
-    colnames(result) <-
-      c(
-        "Index1",
-        "Index2",
-        "mz1",
-        "mz2",
-        "mz.error",
-        "rt1",
-        "rt2",
-        "rt.error",
-        "int1",
-        "int2",
-        "int.error"
+    int.error <- abs(temp.int1 - int2)
+    
+    j <-
+      which(mz.error <= mz.tol &
+              rt.error <= rt.tol & int.error <= int.tol)
+    if (length(j) == 0) {
+      matrix(NA, ncol = 10)
+    } else{
+      cbind(
+        j,
+        temp.mz1,
+        mz2[j],
+        mz.error[j],
+        temp.rt1,
+        rt2[j],
+        rt.error[j],
+        temp.int1,
+        int2[j],
+        int.error[j]
       )
-    result <- result
-  }
-)
-
-
-
-
-setGeneric(
-  name = "SXTMTmatch2",
-  def = function(data1,
-                 data2,
-                 mz.tol,
-                 #rt.tol is relative
-                 rt.tol = 30,
-                 rt.error.type = c("relative", "abs")) {
-    rt.error.type <- match.arg(rt.error.type)
-    #
-    if (nrow(data1) == 0 | nrow(data2) == 0) {
-      result <- NULL
-      return(result)
     }
-    # mz1 <- as.numeric(data1[, 1])
-    # rt1 <- as.numeric(data1[, 2])
-    info1 <- data1[, c(1, 2)]
-    info1 <- apply(info1, 1, list)
-    
-    mz2 <- as.numeric(data2[, 1])
-    rt2 <- as.numeric(data2[, 2])
-    
-    result <- pbapply::pblapply(info1, function(x) {
-      temp.mz1 <- x[[1]][[1]]
-      temp.rt1 <- x[[1]][[2]]
-      mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
-      if (rt.error.type == "relative") {
-        rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
-      } else{
-        rt.error <- abs(temp.rt1 - rt2)
-      }
-      
-      j <- which(mz.error <= mz.tol & rt.error <= rt.tol)
-      if (length(j) == 0) {
-        matrix(NA, ncol = 7)
-      } else{
-        cbind(j, temp.mz1, mz2[j], mz.error[j], temp.rt1, rt2[j], rt.error[j])
-      }
-    })
-    
-    if (length(result) == 1) {
-      result <- cbind(1, result[[1]])
+  })
+  
+  if (length(result) == 1) {
+    result <- cbind(1, result[[1]])
+  } else{
+    result <- mapply(function(x, y) {
+      list(cbind(x, y))
+    },
+    x <- 1:length(info1),
+    y = result)
+    result <- do.call(rbind, result)
+  }
+  
+  result <-
+    matrix(result[which(!apply(result, 1, function(x)
+      any(is.na(x)))),], ncol = 11)
+  if (nrow(result) == 0)
+    return(NULL)
+  colnames(result) <-
+    c(
+      "Index1",
+      "Index2",
+      "mz1",
+      "mz2",
+      "mz.error",
+      "rt1",
+      "rt2",
+      "rt.error",
+      "int1",
+      "int2",
+      "int.error"
+    )
+  result <- result 
+}
+
+
+
+#' @title SXTMTmatch2
+#' @description SXTMTmatch2
+#' @author Xiaotao Shen
+#' \email{shenxt1990@@163.com}
+#' @param data1 data1
+#' @param data2 data2
+#' @param mz.tol mz.tol
+#' @param rt.tol rt.tol
+#' @param rt.error.type rt.error.type
+#' @return result
+
+SXTMTmatch2 = function(data1,
+                       data2,
+                       mz.tol,
+                       #rt.tol is relative
+                       rt.tol = 30,
+                       rt.error.type = c("relative", "abs")){
+  rt.error.type <- match.arg(rt.error.type)
+  #
+  if (nrow(data1) == 0 | nrow(data2) == 0) {
+    result <- NULL
+    return(result)
+  }
+  # mz1 <- as.numeric(data1[, 1])
+  # rt1 <- as.numeric(data1[, 2])
+  info1 <- data1[, c(1, 2)]
+  info1 <- apply(info1, 1, list)
+  
+  mz2 <- as.numeric(data2[, 1])
+  rt2 <- as.numeric(data2[, 2])
+  
+  result <- pbapply::pblapply(info1, function(x) {
+    temp.mz1 <- x[[1]][[1]]
+    temp.rt1 <- x[[1]][[2]]
+    mz.error <- abs(temp.mz1 - mz2) * 10 ^ 6 / temp.mz1
+    if (rt.error.type == "relative") {
+      rt.error <- abs(temp.rt1 - rt2) * 100 / temp.rt1
     } else{
-      result <- mapply(function(x, y) {
-        list(cbind(x, y))
-      },
-      x <- 1:length(info1),
-      y = result)
-      result <- do.call(rbind, result)
+      rt.error <- abs(temp.rt1 - rt2)
     }
     
-    result <-
-      matrix(result[which(!apply(result, 1, function(x)
-        any(is.na(x)))), ], ncol = 8)
-    if (nrow(result) == 0)
-      return(NULL)
-    colnames(result) <-
-      c("Index1",
-        "Index2",
-        "mz1",
-        "mz2",
-        "mz error",
-        "rt1",
-        "rt2",
-        "rt error")
-    result <- result
+    j <- which(mz.error <= mz.tol & rt.error <= rt.tol)
+    if (length(j) == 0) {
+      matrix(NA, ncol = 7)
+    } else{
+      cbind(j, temp.mz1, mz2[j], mz.error[j], temp.rt1, rt2[j], rt.error[j])
+    }
+  })
+  
+  if (length(result) == 1) {
+    result <- cbind(1, result[[1]])
+  } else{
+    result <- mapply(function(x, y) {
+      list(cbind(x, y))
+    },
+    x <- 1:length(info1),
+    y = result)
+    result <- do.call(rbind, result)
   }
-)
+  
+  result <-
+    matrix(result[which(!apply(result, 1, function(x)
+      any(is.na(x)))), ], ncol = 8)
+  if (nrow(result) == 0)
+    return(NULL)
+  colnames(result) <-
+    c("Index1",
+      "Index2",
+      "mz1",
+      "mz2",
+      "mz error",
+      "rt1",
+      "rt2",
+      "rt error")
+  result <- result
+}
+
